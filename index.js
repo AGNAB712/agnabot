@@ -34,6 +34,11 @@ client.on('ready', () => {
 
 client.on('messageCreate', (message) => {
 if (lockdown === 'false') {
+
+  if(message.author.id === '907055124503994398') {
+message.react('🤓');
+}
+  
     if(message.author.id !== '1107764918293372989') {
     if (message.content.toLowerCase().includes('ohio')) {
         message.channel.send('OHIO KILLED MY GRANDMA............');
