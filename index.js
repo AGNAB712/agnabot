@@ -27,7 +27,7 @@ let lockdown = 'false';
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('831714424658198532').send('hallo guys it is me i am online');
-      client.user.setActivity(`doing your mom`);
+      client.user.setActivity(`your mom`);
 });
 
 
