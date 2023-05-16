@@ -53,7 +53,7 @@ if (lockdown === 'false') {
     if (message.content.toLowerCase().includes('cybergrind')) {
         message.channel.send('https://media.discordapp.net/attachments/1100521311534592041/1107968544492224532/image.png?width=197&height=585');
     }
-    
+  
     if (message.content.includes('(A)lockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     message.channel.send("ya'll are dumb");
     lockdown = 'true';
