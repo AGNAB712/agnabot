@@ -28,7 +28,7 @@ let lockdown = 'false';
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('831714424658198532').send('hallo guys it is me i am online');
-      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Watching });
+      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`the screams of the damned`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
 //      client.user.
 });
 
