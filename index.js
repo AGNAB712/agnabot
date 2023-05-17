@@ -35,7 +35,7 @@ const youtube = google.youtube({
 
 let lastVideoId = null;
 
-const channelId = '831714424658198532';
+const channelId = '1092546678613094461';
 const youtubeChannelId = process.env.YOUTUBECHANNELID;
 
 const prefix = `(A)`;
