@@ -103,9 +103,11 @@ if (lockdown === 'false') {
 		message.react('🤓');
 	}
 
+  if(message.author.id !== '437808476106784770') {
   if(message.author.id !== '1107764918293372989') {
 if (message.content.toLowerCase().includes('pirate')) {
   message.channel.send('yo ho yo ho a pirate\'s life for me');
+  }
   }
   }
 
