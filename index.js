@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 require("dotenv").config();
 const keepAlive = require('./server.js')
 const { ActivityType } = require("discord.js");
+const fs = require('fs');
 
 // Create a new Client instance
 const client = new Discord.Client({ intents: [
@@ -28,6 +29,7 @@ const { google } = require('googleapis');
 
 const googleAuth = process.env.GOOGLEAPIAUTH;
 
+
 const youtube = google.youtube({
   version: 'v3',
   auth: googleAuth
@@ -38,18 +40,59 @@ let lastVideoId = null;
 const channelId = '1092546678613094461';
 const youtubeChannelId = process.env.YOUTUBECHANNELID;
 
-const prefix = `(A)`;
+const prefix = `a.`;
 
 let noFirst = 'true';
 
-const categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
+let categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
+
+let users = [];
+
+let bubbles = [];
+
+let dataFilePath = './categoryNames.json';
+
+function loadCategoryNames() {
+dataFilePath = './categoryNames.json';
+  try {
+    const data = fs.readFileSync(dataFilePath, 'utf8');
+    categoryNames = JSON.parse(data);
+  } catch (error) {
+    console.error('Error loading category names:', error);
+    categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
+  }
+}
+
+function saveCategoryNames() {
+  const data = JSON.stringify(categoryNames);
+  fs.writeFileSync(dataFilePath, data, 'utf8');
+}
+
+function loadStopUsers() {
+dataFilePath = './users.json';
+  try {
+    const data = fs.readFileSync(dataFilePath, 'utf8');
+    users = JSON.parse(data);
+  } catch (error) {
+    console.error('Error loading users:', error);
+    users = [];
+  }
+}
+
+function saveStopUsers() {
+  const data = JSON.stringify(users);
+  fs.writeFileSync(dataFilePath, data, 'utf8');
+}
+
 
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
-      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`your chat messages`, { type: ActivityType./* you can change this to be the prefix of the status*/Watching });
-
+      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`to you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
+//      client.user.
+  loadCategoryNames();
+  loadStopUsers();
   updateCategoryName(); 
   setInterval(updateCategoryName, 600000); 
 
@@ -95,7 +138,7 @@ client.on('ready', async () => {
 
 
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
 if (lockdown === 'false') {
 
 //dumb shit
@@ -103,15 +146,8 @@ if (lockdown === 'false') {
 		message.react('🤓');
 	}
 
-  if(message.author.id !== '437808476106784770') {
-  if(message.author.id !== '1107764918293372989') {
-if (message.content.toLowerCase().includes('pirate')) {
-  message.channel.send('yo ho yo ho a pirate\'s life for me');
-  }
-  }
-  }
-  
-if(message.author.id!== '437808476106784770') {
+    if(message.author.id!== '437808476106784770') {
+
   
     if(message.author.id !== '1107764918293372989') {
     if (message.content.toLowerCase().includes('ohio')) {
@@ -119,21 +155,21 @@ if(message.author.id!== '437808476106784770') {
     }
     }
 
-  
-    if (message.content.toLowerCase().includes('sussy')) {
+    if (message.content.toLowerCase().includes('sus') && !(message.content.toLowerCase().includes('jesus'))) {
         message.channel.send('lol you are So funny LOL lol lol i am lmfao i am');
     }
-  
-  
-  if (message.content.toLowerCase().includes('sus')) {
-        message.channel.send('lol you are So funny LOL lol lol i am lmfao i am');
+    
+    if (message.content.toLowerCase().includes('ayo') || message.content.toLowerCase().includes('🤨')) {
+        message.channel.send('you are 9 years old');
     }
-  
+        
     if (message.content.toLowerCase().includes('cybergrind')) {
         message.channel.send('https://media.discordapp.net/attachments/1100521311534592041/1107968544492224532/image.png?width=197&height=585');
     }
-}
-    if (message.content.includes('(A)lockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+
+    }
+  
+    if (message.content.includes('a.lockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     message.channel.send("ya'll are dumb");
     lockdown = 'true';
     }
@@ -158,13 +194,19 @@ if(message.author.id!== '437808476106784770') {
 	//.setDescription('Some description here')
 	//.setThumbnail('https://i.imgur.com/AfFp7pu.png')
 	.addFields(
-		{ name: '(A)help', value: 'brings up this screen' },
-		{ name: '(A)lockdown', value: 'locks down agnabots responses in case of abuse' },
-		{ name: '(A)unlockdown', value: 'stops lockdown' },
-		{ name: '(A)invite', value: 'gives the invite link' },
-		{ name: '(A)setstatus', value: `sets status obv\nformatted as (A)setstatus (status)` },
-		{ name: '(A)timer', value: `timer/reminder command, formatted as "(A)timer hours minutes seconds" \n optionally you can add a reminder by typing in a one string phrase at the end starting with "-"` },
-		{ name: '(A)mean', value: 'He will never be mean!' },
+		{ name: 'a.help', value: 'brings up this screen' },
+		{ name: 'a.lockdown', value: 'locks down agnabots responses in case of abuse' },
+		{ name: 'a.unlockdown', value: 'stops lockdown' },
+		{ name: 'a.invite', value: 'gives the invite link' },
+		{ name: 'a.setstatus', value: `sets status obv\nformatted as a.setstatus (status)` },
+		{ name: 'a.timer', value: `timer/reminder command, formatted as "a.timer hours minutes seconds" \n optionally you can add a reminder by typing in a one string phrase at the end starting with "-"` },
+		{ name: 'a.addcategory', value: `suggests something for the random selection of category names \n once a message reaches 5 thumbs ups it is added` },
+		{ name: 'a.say', value: `makes agnabot say whatever... \n formatted as a.say text` },
+		{ name: 'a.toggleautoreact', value: `toggles agnabot reacting to your messages when someone else reacts to it` },
+		{ name: 'a.speechbubble', value: `gets a random speechbubble from agnabs collection (why does he have so many)` },
+		{ name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
+		{ name: 'a.deletecategory', value: `deletes a category from the list (admin only) \n formatted as a.deletecategory (category index)` },
+		{ name: 'a.mean', value: 'He will never be mean!' },
 	)
 	//.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
 	//.setImage('https://i.imgur.com/AfFp7pu.png')
@@ -227,14 +269,148 @@ if(message.author.id!== '437808476106784770') {
     message.channel.send(`lol no perms`);
     }
     
-
      }
+     
+if (command === 'addcategory') {
+    // Check if any category name was provided after the command
+    if (args.length === 0) {
+      message.channel.send('Please provide a category name.');
+      return;
+    }
 
+    // Join the arguments into a single string
+    const categoryName = args.join(' ');
 
+    // Send the message and add thumbs up reaction
+    const sentMessage = await message.channel.send(categoryName);
+    await sentMessage.react('👍');
+
+    // Create a filter to check for 5 thumbs up reactions
+    const filter = (reaction, user) => reaction.emoji.name === '👍' && !user.bot;
+    const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
+
+    // Event listener for collecting reactions
+    collector.on('collect', (reaction) => {
+      if (reaction.count === 5) {
+        // Add the category name to the array
+        categoryNames.push(categoryName);
+
+        // Save the array data to the file
+        saveCategoryNames();
+
+        // Send a confirmation message
+        message.channel.send(`Category "${categoryName}" has been added.`);
+
+        // Stop the collector
+        collector.stop();
+      }
+    });
+
+    // Event listener for the collector end event
+    collector.on('end', (collected, reason) => {
+      if (reason === 'time') {
+        // Remove the thumbs up reaction if the collector times out
+        sentMessage.reactions.cache.get('👍').users.remove(client.user);
+        message.channel.send('Command timed out. Please try again.');
+      }
+    });
+  }
+    
+    if (command === 'toggleautoreact') {
+    if (!(users.includes(message.author.id))) {
+      users.push(message.author.id);
+      message.channel.send(`my bad`);
+      saveStopUsers()
+    } else {
+	const index = users.indexOf(message.author.id);
+	if (index > -1) { // only splice array when item is found
+	  users.splice(index, 1); // 2nd parameter means remove one item only
+	}
+    message.channel.send(`im back baby`);
+    saveStopUsers()
+    }
+  }
+
+  
+    if (command === 'say') {
+    if (args.length === 0) {
+      message.channel.send('i cant just say nothing bro');
+      return;
+    }
+    message.channel.send(args.join(' '));
+    message.delete()
+  }
+
+  
+  if (command === 'showcategories') {
+    if (categoryNames.length === 0) {
+      message.channel.send('its blank bro');
+      return;
+    }
+    const categoriesMessage = categoryNames.map((category, index) => `${index + 1}. ${category}`).join('\n');
+
+    message.channel.send(`current possible category names:\n${categoriesMessage}`);
+  }
+    
+      if (command === 'showusers') {
+    if (users.length === 0) {
+      message.channel.send('its blank bro');
+      return;
+    }
+    const categoriesMessage = users.map((category, index) => `${index + 1}. ${category}`).join('\n');
+
+    message.channel.send(`current possible category names:\n${categoriesMessage}`);
+  }
+
+  
+if (command === 'deletecategory') {
+ if (message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    if (args.length === 0) {
+      message.channel.send('gimme the index to delete');
+      return;
+    }
+
+    const index = parseInt(args[0], 10);
+
+    if (isNaN(index) || index < 1 || index > categoryNames.length) {
+      message.channel.send('cant delete that bro');
+      return;
+    }
+
+    const deletedCategory = categoryNames.splice(index - 1, 1)[0];
+    saveCategoryNames();
+    message.channel.send(`deleted "${deletedCategory}"`);
+    
+   } else {
+    message.channel.send(`lol no perms`);
+    }
+
+  }
+
+    if (command === 'speechbubble') {
+    const channel = client.channels.cache.get('1085289780901842996');
+    if (!channel) return console.log('Invalid channel ID.');
+
+    // Fetch all messages in the channel
+    const messages = await channel.messages.fetch();
+
+    // Filter messages with attachments
+    const attachments = messages.filter((msg) => msg.attachments.size > 0);
+
+    if (attachments.size === 0) {
+      return console.log('No attachments found in the channel.');
+    }
+
+    // Select a random message with attachment
+    const randomMessage = attachments.random();
+
+    // Send the attachment to the current channel
+    message.channel.send(randomMessage.attachments.first().url);
+    }
     
     } else {
     
-    if (message.content.includes('(A)unlockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    if (message.content.includes('a.unlockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     message.channel.send('im free yipee');
     lockdown = 'false';
     }
@@ -278,11 +454,13 @@ function formatDuration(duration) {
 }
 
 client.on('messageReactionAdd', (reaction, user) => {
-    if(user.id !== '1107764918293372989') {
-    if(reaction.emoji.name !== '⭐') {
-            reaction.message.react('<:yeah:1106953116311625768>');
-    }
-    }
+
+loadStopUsers();
+	
+if (!(users.includes(user.id)) && user.id != '1107764918293372989') {
+reaction.message.react('yeah:1106953116311625768');
+}
+
 });
 
 function updateCategoryName() {
