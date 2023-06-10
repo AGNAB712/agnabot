@@ -37,7 +37,7 @@ const youtube = google.youtube({
 
 let lastVideoId = null;
 
-const channelId = '1092546678613094461';
+const channelId = '1117068125586866218';
 const youtubeChannelId = process.env.YOUTUBECHANNELID;
 
 const prefix = `a.`;
@@ -48,45 +48,56 @@ let categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the t
 
 let users = [];
 
-let bubbles = [];
-
-let dataFilePath = './categoryNames.json';
-
-function loadCategoryNames() {
-dataFilePath = './categoryNames.json';
-  try {
-    const data = fs.readFileSync(dataFilePath, 'utf8');
+async function loadCategoryNames() {
+  const channelId = '1117068125586866218';
+  
+  const channel = client.channels.cache.get(channelId);
+  channel.messages.fetch({ limit: 1 })
+    .then(messages => {
+      const firstMessage = messages.first();
+      console.log('First message content:', firstMessage.content);
+    const data = firstMessage.content;
     categoryNames = JSON.parse(data);
-  } catch (error) {
-    console.error('Error loading category names:', error);
-    categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
+    console.log('Data loaded successfully!');
+    })
+    .catch(console.error);
+
+}
+
+async function saveCategoryNames() {
+const channel = await client.channels.cache.get('1117068125586866218')
+const lastMessage = await client.channels.cache.get(channelId).messages.lastMessage;
+    await channel.send(JSON.stringify(categoryNames));
+  console.log('Data saved successfully!');
   }
-}
 
-function saveCategoryNames() {
-  const data = JSON.stringify(categoryNames);
-  fs.writeFileSync(dataFilePath, data, 'utf8');
-}
-
-function loadStopUsers() {
-dataFilePath = './users.json';
-  try {
-    const data = fs.readFileSync(dataFilePath, 'utf8');
+async function loadStopUsers() {
+  const channelId = '1117068093953409094';
+  
+  const channel = client.channels.cache.get(channelId);
+  channel.messages.fetch({ limit: 1 })
+    .then(messages => {
+      const firstMessage = messages.first();
+      console.log('First message content:', firstMessage.content);
+    const data = firstMessage.content;
     users = JSON.parse(data);
-  } catch (error) {
-    console.error('Error loading users:', error);
-    users = [];
-  }
+    console.log('Data loaded successfully!');
+    })
+    .catch(console.error);
 }
 
-function saveStopUsers() {
-  const data = JSON.stringify(users);
-  fs.writeFileSync(dataFilePath, data, 'utf8');
+async function saveStopUsers() {
+const channel = await client.channels.cache.get('1117068093953409094')
+const lastMessage = await client.channels.cache.get(channelId).messages.lastMessage;
+    await channel.send(JSON.stringify(users));
+  console.log('Data saved successfully!');
 }
 
 
 
 client.on('ready', async () => {
+
+    
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
       client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`to you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
@@ -142,9 +153,10 @@ client.on('messageCreate', async (message) => {
 if (lockdown === 'false') {
 
 //dumb shit
-	  if(message.author.id === '907055124503994398') {
+	if(message.author.id === '907055124503994398') {
 		message.react('🤓');
 	}
+	
 
     if(message.author.id!== '437808476106784770') {
 
@@ -203,7 +215,9 @@ if (lockdown === 'false') {
 		{ name: 'a.addcategory', value: `suggests something for the random selection of category names \n once a message reaches 5 thumbs ups it is added` },
 		{ name: 'a.say', value: `makes agnabot say whatever... \n formatted as a.say text` },
 		{ name: 'a.toggleautoreact', value: `toggles agnabot reacting to your messages when someone else reacts to it` },
-		{ name: 'a.speechbubble', value: `gets a random speechbubble from agnabs collection (why does he have so many)` },
+		{ name: 'a.sb/a.speechbubble', value: `gets a random speechbubble from agnabs collection (why does he have so many)` },
+		{ name: 'a.autoresponses/a.ar', value: `gives a list of agnabot's automatic responses` },
+		{ name: 'a.forcecategory', value: 'forces a possible category name \n formatted as a.forcecategory (category name)' },
 		{ name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
 		{ name: 'a.deletecategory', value: `deletes a category from the list (admin only) \n formatted as a.deletecategory (category index)` },
 		{ name: 'a.mean', value: 'He will never be mean!' },
@@ -216,6 +230,22 @@ if (lockdown === 'false') {
 	message.channel.send({ embeds: [helpEmbed] });
 	
  }
+ 
+   if (command === 'ar' || command === 'autoresponses' ) {
+      const arembed = new EmbedBuilder()
+	.setColor('Green')
+	.setTitle('AGNABOT Autoresponses')
+	.setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+	.addFields(
+		{ name: 'Ohio', value: 'OHIO KILLED MY GRANDMA............' },
+		{ name: 'sus', value: 'lol you are So funny LOL lol lol i am lmfao i am' },
+		{ name: 'Ayo/🤨', value: 'you are 9 years old' },
+		{ name: 'cybergrind', value: 'hehe weezer' },
+	)
+	message.channel.send({ embeds: [arembed] });
+	
+	}
+
 
 
 
@@ -277,6 +307,8 @@ if (command === 'addcategory') {
       message.channel.send('Please provide a category name.');
       return;
     }
+    
+    message.delete();
 
     // Join the arguments into a single string
     const categoryName = args.join(' ');
@@ -315,6 +347,22 @@ if (command === 'addcategory') {
       }
     });
   }
+  
+  if (command === 'forceaddcategory') {
+    // Check if any category name was provided after the command
+    if (args.length === 0) {
+      message.channel.send('Please provide a category name.');
+      return;
+    }
+
+    // Join the arguments into a single string
+    const categoryName = args.join(' ');
+
+        categoryNames.push(categoryName);
+        saveCategoryNames();
+        message.channel.send(`Category "${categoryName}" has been added.`);
+  }
+
     
     if (command === 'toggleautoreact') {
     if (!(users.includes(message.author.id))) {
@@ -387,26 +435,38 @@ if (command === 'deletecategory') {
 
   }
 
-    if (command === 'speechbubble') {
+    if (command === 'sb' || command === 'speechbubble') {
     const channel = client.channels.cache.get('1085289780901842996');
     if (!channel) return console.log('Invalid channel ID.');
-
-    // Fetch all messages in the channel
     const messages = await channel.messages.fetch();
-
-    // Filter messages with attachments
     const attachments = messages.filter((msg) => msg.attachments.size > 0);
-
     if (attachments.size === 0) {
       return console.log('No attachments found in the channel.');
     }
-
-    // Select a random message with attachment
     const randomMessage = attachments.random();
-
-    // Send the attachment to the current channel
     message.channel.send(randomMessage.attachments.first().url);
+    message.delete()
     }
+    
+      if (command === 'piss') {
+      //thanks chat-gpt for completely writing this code for me LMAO
+    const targetUser = message.mentions.users.first();
+
+    if (!targetUser) {
+      return message.reply('You need to mention a user to piss on!');
+    }
+
+    const pissGifUrl = 'https://tenor.com/view/xluna-high-five-gif-25422702'; 
+    const pissEmbed = new EmbedBuilder()
+      .setColor('#FFFF00')
+      .setTitle('piss')
+      .setDescription(`${message.author} pissed on ${targetUser}`)
+      .setImage(targetUser.displayAvatarURL({ format: 'png', dynamic: true }));
+
+    message.channel.send({ embeds: [pissEmbed] });
+  }
+    
+
     
     } else {
     
@@ -453,14 +513,32 @@ function formatDuration(duration) {
   return `${hours} ${minutes} ${seconds}`.trim();
 }
 
-client.on('messageReactionAdd', (reaction, user) => {
 
-loadStopUsers();
-	
-if (!(users.includes(user.id)) && user.id != '1107764918293372989') {
+client.on('messageReactionAdd', async (reaction, user) => {
+  const message = !reaction.message.author
+    ? await reaction.message.fetch()
+    : reaction.message;
+    
+  if (users.includes(reaction.message.author.id) === false && user.id !== '1107764918293372989') {
 reaction.message.react('yeah:1106953116311625768');
-}
-
+  }
+  
+ 
+  if (reaction.emoji.id === '1112395248337965166') {
+  const reactedMessage = reaction.message;
+  const messageContent = reactedMessage.content;
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const embeddedUrls = messageContent.match(urlRegex);
+  if (embeddedUrls && embeddedUrls.length > 0) {
+    console.log('Embedded URL(s) detected in the reacted message!');
+    embeddedUrls.forEach(url => {
+      reaction.message.channel.send('added whatever that was to the speechbubble pool')
+      client.channels.cache.get('1085289780901842996').send(url)
+    });
+  }   } 
+  
+ 
+  
 });
 
 function updateCategoryName() {
