@@ -100,7 +100,7 @@ client.on('ready', async () => {
     
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
-      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`to you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
+      client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
 //      client.user.
   loadCategoryNames();
   loadStopUsers();
