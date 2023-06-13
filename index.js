@@ -112,7 +112,7 @@ client.on('ready', async () => {
     client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
   client.user.setPresence({
 			process: process.pid,
-			status: 'invisible'
+			status: 'idle'
 		});
       client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
 //      client.user.
