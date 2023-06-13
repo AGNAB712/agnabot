@@ -3,6 +3,10 @@ require("dotenv").config();
 const keepAlive = require('./server.js')
 const { ActivityType } = require("discord.js");
 const fs = require('fs');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus } = require('@discordjs/voice');
+const voice = require('@discordjs/voice');
+const ytdl = require('ytdl-core');
+const scdl = require('soundcloud-downloader').default;
 
 // Create a new Client instance
 const client = new Discord.Client({ intents: [
@@ -11,11 +15,16 @@ const client = new Discord.Client({ intents: [
   Discord.GatewayIntentBits.MessageContent,
   Discord.GatewayIntentBits.GuildMembers,
   Discord.GatewayIntentBits.GuildMessageReactions,
+  Discord.GatewayIntentBits.GuildVoiceStates
   ],
   partials: [Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction],
   })
-
+  
 const token = process.env.TOKEN;
+
+const player = createAudioPlayer();
+
+    let curPlay = false;
 
 let msgId = [];
 
@@ -28,7 +37,6 @@ let lockdown = 'false';
 const { google } = require('googleapis');
 
 const googleAuth = process.env.GOOGLEAPIAUTH;
-
 
 const youtube = google.youtube({
   version: 'v3',
@@ -47,6 +55,8 @@ let noFirst = 'true';
 let categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
 
 let users = [];
+
+let queue = [];
 
 async function loadCategoryNames() {
   const channelId = '1117068125586866218';
@@ -152,6 +162,8 @@ client.on('ready', async () => {
 client.on('messageCreate', async (message) => {
 if (lockdown === 'false') {
 
+
+
 //dumb shit
 	if(message.author.id === '907055124503994398') {
 		message.react('🤓');
@@ -196,38 +208,285 @@ if (lockdown === 'false') {
 
   const args = message.content.slice(prefix.length).trim().split(' ');
   const command = args.shift().toLowerCase();
+
+  if (command === "play") {
+
+
+    // Check if the message author is in a voice channel
+    const voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) {
+      return message.reply('You need to be in a voice channel to use this command.');
+    }
+
+    // Join the voice channel
+    const connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: voiceChannel.guild.id,
+      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+    });
+
+      const streamOptions = {
+      seek: 0,
+      volume: 0.9,
+      bitrate: 'auto',
+      passes: 3,
+      quality: 'highestaudio',
+    };
+
+    const streamUrl = args.join(' ');
+    queue.push(streamUrl);
+
+let regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
+
+const regex2 = /^(?:https?:\/\/)?(?:www\.)?youtu\.be(?:\S+)?$/;
+
+player.addListener("stateChange", async (oldOne, newOne) => {
+    if (newOne.status == "idle") {
+      queue.shift();
+      console.log(queue);
+      curPlay = false
+
+let regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
+
+const regex2 = /^(?:https?:\/\/)?(?:www\.)?youtu\.be(?:\S+)?$/;
+
+if (regex.test(queue[0]) || regex2.test(queue[0])) {
+
+    const stream = ytdl(queue[0], { filter: 'audioonly', ...streamOptions });
+
+    // Create an audio player and play the audio stream
+    const resource = createAudioResource(stream);
+    player.play(resource);
+    connection.subscribe(player);
+
+    message.channel.send(`now playing ${queue[0]}`);
+
+  } else {
+
+  regex = /^(?:https?:\/\/)?(?:www\.)?soundcloud\.com(?:\S+)?$/;
+
+  if (regex.test(queue[0])) {
+try {
+
+        const trackInfo = await scdl.getInfo(queue[0]);
+        const stream = await scdl.download(queue[0], process.env.SOUNDCLOUDID);
+        const resource = createAudioResource(stream);
+
+        connection.subscribe(player);
+        player.play(resource);
+
+        message.reply(`now playing ${queue[0]}`);
+
+          } catch (error) {
+      console.error('Error fetching SoundCloud track:', error);
+      message.reply('An error occurred while playing the SoundCloud track.');
+    }
+
+  }
+
+}
+    }
+});
+
+player.addListener(AudioPlayerStatus.Playing, () => {
+  curPlay = true
+});
+
+regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
+
+
+
+
+if (!curPlay) {
+
+if (regex.test(queue[0]) || regex2.test(queue[0])) {
+
+    const stream = ytdl(queue[0], { filter: 'audioonly', ...streamOptions });
+
+    // Create an audio player and play the audio stream
+    const resource = createAudioResource(stream);
+    player.play(resource);
+    connection.subscribe(player);
+
+    message.channel.send(`now playing ${queue[0]}`);
+
+  } else {
+
+  regex = /^(?:https?:\/\/)?(?:www\.)?soundcloud\.com(?:\S+)?$/;
+
+  if (regex.test(queue[0])) {
+try {
+
+        const trackInfo = await scdl.getInfo(queue[0]);
+        const stream = await scdl.download(queue[0], process.env.SOUNDCLOUDID);
+        const resource = createAudioResource(stream);
+
+        connection.subscribe(player);
+        player.play(resource);
+
+    message.channel.send(`now playing ${queue[0]}`);
+
+          } catch (error) {
+      console.error('Error fetching SoundCloud track:', error);
+      message.reply('An error occurred while playing the SoundCloud track.');
+    }
+
+  }
+
+}
+
+} else { message.channel.send(`added that to the queue`); }
+
+};
+
+if (command === 'stop') {
+  try {
+  const gid = message.guild.id
+  voice.getVoiceConnection(gid).disconnect();
+  queue = [];
+  } catch (error) { console.error('bro', error); }
+  }
+
+if (command === 'skip') {
+
+if (queue.length > 0) {
+  player.stop();
+}
+
+}
+
+if (command === 'queue') {
+
+  if (queue.length > 0) {
+
+      const queueE = new EmbedBuilder()
+      .setTitle('AGNARADIO')
+      .setDescription('Queue:')
+      .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+      .setColor('Green');
+    queue.forEach((element, i) => {
+      if (i !== 0) {
+      queueE.addFields({ name: `Number ${i}`, value: element },);
+    } else {
+      queueE.addFields({ name: `Now Playing`, value: element },);
+    }
+    });
+
+    message.channel.send({ embeds: [queueE] });
+} else {
+
+ message.channel.send('no queue') 
+}
+
+}
   
   if (command === 'help') {
-      const helpEmbed = new EmbedBuilder()
-	.setColor('Green')
-	.setTitle('Command List')
-	//.setURL('https://discord.js.org/')
-	.setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
-	//.setDescription('Some description here')
-	//.setThumbnail('https://i.imgur.com/AfFp7pu.png')
-	.addFields(
-		{ name: 'a.help', value: 'brings up this screen' },
-		{ name: 'a.lockdown', value: 'locks down agnabots responses in case of abuse' },
-		{ name: 'a.unlockdown', value: 'stops lockdown' },
-		{ name: 'a.invite', value: 'gives the invite link' },
-		{ name: 'a.setstatus', value: `sets status obv\nformatted as a.setstatus (status)` },
-		{ name: 'a.timer', value: `timer/reminder command, formatted as "a.timer hours minutes seconds" \n optionally you can add a reminder by typing in a one string phrase at the end starting with "-"` },
-		{ name: 'a.addcategory', value: `suggests something for the random selection of category names \n once a message reaches 5 thumbs ups it is added` },
-		{ name: 'a.say', value: `makes agnabot say whatever... \n formatted as a.say text` },
-		{ name: 'a.toggleautoreact', value: `toggles agnabot reacting to your messages when someone else reacts to it` },
-		{ name: 'a.sb/a.speechbubble', value: `gets a random speechbubble from agnabs collection (why does he have so many)` },
-		{ name: 'a.autoresponses/a.ar', value: `gives a list of agnabot's automatic responses` },
-		{ name: 'a.forcecategory', value: 'forces a possible category name \n formatted as a.forcecategory (category name)' },
-		{ name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
-		{ name: 'a.deletecategory', value: `deletes a category from the list (admin only) \n formatted as a.deletecategory (category index)` },
-		{ name: 'a.mean', value: 'He will never be mean!' },
-	)
-	//.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-	//.setImage('https://i.imgur.com/AfFp7pu.png')
-	//.setTimestamp()
-	//.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
 
-	message.channel.send({ embeds: [helpEmbed] });
+    if (args[0] === null) {
+            const helpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.help', value: 'brings up this screen' },
+    { name: 'a.help fun', value: 'brings up the help menu for fun commands' },
+    { name: 'a.help utility', value: 'brings up the help menu for utilities' },
+    { name: 'a.help AGNARADIO', value: 'brings up the agnaradio help menu' },
+    { name: 'a.help admin', value: 'brings up the admin help menu (all the commands are admin only)' },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [helpEmbed] });
+
+} else if (args[0] === 'fun') {
+            const felpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.addcategory', value: `suggests something for the random selection of category names \n once a message reaches 5 thumbs ups it is added` },
+    { name: 'a.say', value: `makes agnabot say whatever... \n formatted as a.say text` },
+    { name: 'a.sb/a.speechbubble', value: `gets a random speechbubble from agnabs collection (why does he have so many)` },
+    { name: 'a.autoresponses/a.ar', value: `gives a list of agnabot's automatic responses` },
+    { name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
+    { name: 'a.mean', value: 'He will never be mean!' },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [felpEmbed] });
+} else if (args[0] === 'utility') {
+            const uelpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.invite', value: 'gives the invite link' },
+    { name: 'a.timer', value: `timer/reminder command, formatted as "a.timer hours minutes seconds" \n optionally you can add a reminder by typing in a one string phrase at the end starting with "-"` },
+    { name: 'a.toggleautoreact', value: `toggles agnabot reacting to your messages when someone else reacts to it` },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [uelpEmbed] });
+} else if (args[0] === 'agnaradio') {
+            const aelpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.play', value: 'plays a youtube or soundcloud link' },
+    { name: 'a.queue', value: 'shows the queue' },
+    { name: 'a.skip', value: 'skips a song' },
+    { name: 'a.stop', value: 'stops the music and resets the queue' },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [aelpEmbed] });
+} else if (args[0] === 'admin') {
+            const delpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.lockdown', value: 'locks down agnabots responses in case of abuse' },
+    { name: 'a.unlockdown', value: 'stops lockdown' },
+    { name: 'a.setstatus', value: `sets status obv\nformatted as a.setstatus (status)` },
+    { name: 'a.forcecategory', value: 'forces a possible category name \n formatted as a.forcecategory (category name)' },
+    { name: 'a.deletecategory', value: `deletes a category from the list (admin only) \n formatted as a.deletecategory (category index)` },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [delpEmbed] });
+}
 	
  }
  
@@ -245,9 +504,7 @@ if (lockdown === 'false') {
 	message.channel.send({ embeds: [arembed] });
 	
 	}
-
-
-
+	
 
   if (command === 'timer') {
     const reminderFlagIndex = args.findIndex(arg => arg.startsWith('-'));
@@ -556,6 +813,7 @@ function updateCategoryName() {
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
+
 
 
 
