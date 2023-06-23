@@ -3,12 +3,13 @@ require("dotenv").config();
 const keepAlive = require('./server.js')
 const { ActivityType } = require("discord.js");
 const fs = require('fs');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, VoiceConnectionStatus, entersState, NoSubscriberBehavior } = require('@discordjs/voice');
 const voice = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const scdl = require('soundcloud-downloader').default;
+const { QuickDB } = require("quick.db");
+const db = new QuickDB(); // will make a json.sqlite in the root folder
 
-// Create a new Client instance
 const client = new Discord.Client({ intents: [
   Discord.GatewayIntentBits.Guilds,
   Discord.GatewayIntentBits.GuildMessages,
@@ -22,7 +23,9 @@ const client = new Discord.Client({ intents: [
   
 const token = process.env.TOKEN;
 
-const player = createAudioPlayer();
+const currentDateTime = new Date();
+
+const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Stop } });
 
     let curPlay = false;
 
@@ -45,6 +48,12 @@ const youtube = google.youtube({
 
 let lastVideoId = null;
 
+const cooldowns = new Map();
+
+const cooldowns2 = new Map();
+
+const mutes = new Map();
+
 const channelId = '1117068125586866218';
 const youtubeChannelId = process.env.YOUTUBECHANNELID;
 
@@ -52,11 +61,44 @@ const prefix = `a.`;
 
 let noFirst = 'true';
 
-let categoryNames = ['judgement', 'talk', 'talkity talk', 'talking talk', 'the talkest', 'talkity talkity', 'talkity talkity talkity talk', 'talk talkity', 'oh gabriel'];
+let categoryNames = ["hi","what the freak","poopoo","hallo","chattery","shake my pants","loud","sillies","very cool","telling","text","Uÿ=","but they didnt gave me my banana 👿","Pop Bob Smellex","dog pouder 🐶 consumers gang","FEETLOVERS","i love feet","the elder variable 😤","the adult constant 😒","the baby function 🤑","the child equation ☺️","📍","⌂","👾","Wild","ˢᵘʳʳᵉᵃˡ - Bambi Fantrack (LOUD, blue's outerspacial abominations 1/8)","bambi","OLMA! Olimar. 🥕","🫏💨","noxy we need to cook","i HATE dave and Bambi…. Grrrrrrrrrrrr","person in charge for a couple 👫 👫 and 8⃣ 8⃣ 8⃣ 8⃣ in a position 🖥️ 🖥️ 🖥️ 🖥️ I have a 600 😟 😟","why is the category saying hi to me bro","'♥Щ@мIi╞амн !K 8↑╕","https://media.discordapp.net/attachments/1109957407636987984/1118010322108813332/Bre.gif%22%22AGNABOB%22%22/%22the mwaganzanists","https://media.discordapp.net/attachments/967405625665540156/1031932494435586078/agony.gif%22,%22tat 🗽 tat 🗽 tat 🗽 tat 🗽","pro tip: interestingshallot13 will get a suprise after his vacation 🤫","🥺🥺🥺haiii :3 hewwo","འȺԱ↻ටԱϚ Manbi","untouchable grass","https://cdn.discordapp.com/attachments/1092557930349477960/1118344310291693688/image.png%22,%22Agnab Boyclit ❌","penit butt e:Cryingaboutit: :Cryingaboutit: :Cryingaboutit:"]
 
 let users = [];
 
 let queue = [];
+
+const cuss = ['FUCK','SHIT','BITCH']
+
+async function saveSqlite() {
+
+    const fileName = 'json.sqlite';
+
+      client.channels.cache.get('1118953993662644256').send({
+        files: [fileName]
+      });
+
+    console.log('saved sqlite')
+
+}
+
+async function loadSqlite() {
+
+    const messages = await client.channels.cache.get('1118953993662644256').messages.fetch({ limit: 1 }); // Fetch the last sent message
+
+    const lastMessage = messages.first();
+    if (lastMessage.attachments.size > 0) {
+      const attachment = lastMessage.attachments.first();
+      const fileName = attachment.name;
+
+      if (fileName.endsWith('.sqlite')) {
+        const file = await fetchAttachment(attachment.url);
+        fs.writeFileSync(fileName, file);
+        console.log(`SQLite file ${fileName} downloaded successfully.`);
+      }
+    }
+
+}
+
 
 async function loadCategoryNames() {
   const channelId = '1117068125586866218';
@@ -110,12 +152,9 @@ client.on('ready', async () => {
     
     console.log(`Logged in as ${client.user.tag}!`);
     client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
-  client.user.setPresence({
-			process: process.pid,
-			status: 'idle'
-		});
       client.user.setActivity(/* change what is inside of the `` quotes to change the status suffix */`you...`, { type: ActivityType./* you can change this to be the prefix of the status*/Listening });
 //      client.user.
+  loadSqlite();
   loadCategoryNames();
   loadStopUsers();
   updateCategoryName(); 
@@ -162,8 +201,66 @@ client.on('ready', async () => {
 });
 
 
+async function updateCount(id, member) {
+
+count = await db.get(id + '.time')
+
+console.log(count)
+
+await db.set(id + '.time', count - 1);
+
+  if (count >= 0) {
+    setTimeout(() => {
+      updateCount(id, member);
+    }, 1000);
+  }
+}
 
 client.on('messageCreate', async (message) => {
+
+if (!(await db.get(message.author.id))) {
+  await db.set(message.author.id, 100);
+  saveSqlite();
+}
+
+if (await db.get(message.author.id + '.time') >= 0) {
+
+  updateCount(message.author.id, message.author)
+
+} else if (await db.get(message.author.id + '.time') === -2) {
+
+
+var role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+
+if (message.member.roles.cache.has(role.id)) {
+message.member.roles.remove(role);
+console.log('look at this guy lol')
+await db.set(message.author.id + '.time', -5);
+}
+
+}
+
+
+if (await db.get('reminder_' + message.author.id)) {
+const timeWaitingFor = await db.get('reminder_' + message.author.id);
+const now = Date.now();
+
+if (timeWaitingFor <= now) {
+
+var role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+
+if (message.member.roles.cache.has(role.id)) {
+message.member.roles.remove(role);
+console.log('look at this guy lol')
+await db.set(message.author.id + '.time', -5);
+}
+
+    await db.delete('reminder_' + message.author.id);
+    await saveSqlite();
+  }
+}
+
+
 if (lockdown === 'false') {
 
 
@@ -183,11 +280,19 @@ if (lockdown === 'false') {
     }
     }
 
-    if (message.content.toLowerCase().includes('sus') && !(message.content.toLowerCase().includes('jesus'))) {
+    if (message.content.toLowerCase().includes(' sus ') || message.content.toLowerCase().includes(' sussy ') && !(message.content.toLowerCase().includes('jesus'))) {
         message.channel.send('lol you are So funny LOL lol lol i am lmfao i am');
     }
+
+    if (message.content.includes('Wild') && message.author.id !== '1107764918293372989') {
+        message.reply('Wild');
+    }
+
+    if (message.content.includes('<@1107764918293372989>') && cuss.some(word => message.content.includes(word))) { 
+      message.reply(cuss[getRandomInt(cuss.length)])
+   }
     
-    if (message.content.toLowerCase().includes('ayo') || message.content.toLowerCase().includes('🤨')) {
+    if (message.content.toLowerCase().includes(' ayo ') || message.content.toLowerCase().includes('🤨')) {
         message.channel.send('you are 9 years old');
     }
         
@@ -206,6 +311,7 @@ if (lockdown === 'false') {
     message.author.send(`say that one more time again and you'll be sorry.`);
     }
     
+
     
  //actual commands
  if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -213,7 +319,20 @@ if (lockdown === 'false') {
   const args = message.content.slice(prefix.length).trim().split(' ');
   const command = args.shift().toLowerCase();
 
-  if (command === "play") {
+  if (command === 'cool') {
+
+    const moonLanding = new Date('July 20, 69 20:17:40 GMT+00:00');
+
+// Milliseconds since Jan 1, 1970, 00:00:00.000 GMT
+console.log(moonLanding.getTime());
+// Expected output: -14182940000
+  }
+
+  if (command === 'agnaradio') {
+
+  const command2 = args[0]
+
+  if (command2 === "play") {
 
 
     // Check if the message author is in a voice channel
@@ -237,8 +356,8 @@ if (lockdown === 'false') {
       quality: 'highestaudio',
     };
 
-    const streamUrl = args.join(' ');
-    queue.push(streamUrl);
+    const streamUrl = args[1];
+
 
 let regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
 
@@ -249,28 +368,22 @@ player.addListener("stateChange", async (oldOne, newOne) => {
       queue.shift();
       console.log(queue);
       curPlay = false
+      
+      if (!curPlay && type !== 'none' && queue.length > 0) {
 
-let regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
-
-const regex2 = /^(?:https?:\/\/)?(?:www\.)?youtu\.be(?:\S+)?$/;
-
-if (regex.test(queue[0]) || regex2.test(queue[0])) {
+if (type === 'youtube') {
 
     const stream = ytdl(queue[0], { filter: 'audioonly', ...streamOptions });
 
     // Create an audio player and play the audio stream
     const resource = createAudioResource(stream);
     player.play(resource);
-    connection.subscribe(player);
+    subscription = connection.subscribe(player);
 
     message.channel.send(`now playing ${queue[0]}`);
-
-  } else {
-
-  regex = /^(?:https?:\/\/)?(?:www\.)?soundcloud\.com(?:\S+)?$/;
-
-  if (regex.test(queue[0])) {
-try {
+    
+  } else if (type === 'soundcloud') {
+	try {
 
         const trackInfo = await scdl.getInfo(queue[0]);
         const stream = await scdl.download(queue[0], process.env.SOUNDCLOUDID);
@@ -279,16 +392,18 @@ try {
         connection.subscribe(player);
         player.play(resource);
 
-        message.reply(`now playing ${queue[0]}`);
+    message.channel.send(`now playing ${queue[0]}`);
 
           } catch (error) {
       console.error('Error fetching SoundCloud track:', error);
       message.reply('An error occurred while playing the SoundCloud track.');
     }
 
-  }
+} else { message.channel.send(`added that to the queue`); }
 
 }
+
+
     }
 });
 
@@ -298,12 +413,36 @@ player.addListener(AudioPlayerStatus.Playing, () => {
 
 regex = /^(?:https?:\/\/)?(?:www\.)?youtube\.com(?:\S+)?$/;
 
+      const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+      const soundcloudRegex = /^(https?:\/\/)?(www\.)?soundcloud\.com\/.+$/;
+      
+      let type = 'none';
+
+      if (youtubeRegex.test(streamUrl)) {
+type = 'youtube';
+      } else if (soundcloudRegex.test(streamUrl)) {
+type = 'soundcloud';
+      } else {
+        message.reply('invalid link');
+type = 'none';
+      }
+    
+    if (type !== 'none') {
+    queue.push(streamUrl);
+    }
+    
+      if (youtubeRegex.test(queue[0])) {
+type = 'youtube';
+      } else if (soundcloudRegex.test(queue[0])) {
+type = 'soundcloud';
+      } else {
+type = 'none';
+      }
 
 
+if (!curPlay && type !== 'none') {
 
-if (!curPlay) {
-
-if (regex.test(queue[0]) || regex2.test(queue[0])) {
+if (type === 'youtube') {
 
     const stream = ytdl(queue[0], { filter: 'audioonly', ...streamOptions });
 
@@ -314,12 +453,8 @@ if (regex.test(queue[0]) || regex2.test(queue[0])) {
 
     message.channel.send(`now playing ${queue[0]}`);
 
-  } else {
-
-  regex = /^(?:https?:\/\/)?(?:www\.)?soundcloud\.com(?:\S+)?$/;
-
-  if (regex.test(queue[0])) {
-try {
+  } else if (type === 'soundcloud') {
+	try {
 
         const trackInfo = await scdl.getInfo(queue[0]);
         const stream = await scdl.download(queue[0], process.env.SOUNDCLOUDID);
@@ -335,23 +470,23 @@ try {
       message.reply('An error occurred while playing the SoundCloud track.');
     }
 
-  }
+} else { message.channel.send(`added that to the queue`); }
 
 }
 
-} else { message.channel.send(`added that to the queue`); }
-
 };
 
-if (command === 'stop') {
+if (command2 === 'stop') {
   try {
   const gid = message.guild.id
+  player.stop();
   voice.getVoiceConnection(gid).disconnect();
+  getVoiceConnection(gid).destroy();
   queue = [];
   } catch (error) { console.error('bro', error); }
   }
 
-if (command === 'skip') {
+if (command2 === 'skip') {
 
 if (queue.length > 0) {
   player.stop();
@@ -359,7 +494,7 @@ if (queue.length > 0) {
 
 }
 
-if (command === 'queue') {
+if (command2 === 'queue') {
 
   if (queue.length > 0) {
 
@@ -383,39 +518,366 @@ if (command === 'queue') {
 }
 
 }
+
+}
+
+if (command === 'work') {
+    const playerID = message.author.id;
+
+    if (cooldowns.has(playerID)) {
+      const expirationTime = cooldowns.get(playerID);
+      const remainingTime = (expirationTime - Date.now()) / 1000;
+      message.reply(`cooldown bro..... you got ${remainingTime.toFixed(1)} seconds left`);
+    } else {
+
+    let curbal = await db.get(playerID);
+
+    await db.set(playerID, parseInt(curbal) + getRandomInt(50) + 50);
+    saveSqlite();
+
+    curbal = await db.get(playerID);
+      
+      message.reply(`great uhhh job working your money is now ${curbal}`);
+      const cooldownDuration = 60000;
+      const expirationTime = Date.now() + cooldownDuration;
+      cooldowns.set(playerID, expirationTime);
+
+      setTimeout(() => {
+        cooldowns.delete(playerID);
+      }, cooldownDuration);
+    }
+  }
+
+  if (command === 'setmoney' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+
+    const targetUser = message.mentions.users.first();
+
+    if (targetUser) {
+
+    const userId = targetUser.id;
+
+    const variableValue = args[1];
+
+    if (isNumeric(variableValue)) {
+    await db.set(userId, variableValue);
+    saveSqlite();
+    message.channel.send('saved');
+  } else {
+        message.channel.send('not a number');
+  }
+
+  } else {
+    message.channel.send('gotta mention someone dude')
+  }
+  }
+
+  if (command === 'balance' || command === 'bal') {
+
+    await loadSqlite();
+
+    let targetUser = message.mentions.users.first();
+
+    if (targetUser) {
+    const userId = targetUser.id;
+    const variableValue = await db.get(userId);
+
+    if (!variableValue) {
+  const userId = targetUser.id;
+  await db.set(userId, 100);
+  saveSqlite();
+  const variableValue = await db.get(userId);
+  message.reply(`their money is ${variableValue} agnabucks`);
+
+    } else { 
+    message.reply(`their money is ${variableValue} agnabucks`);
+  }
+
+  } else {
+    message.channel.send('gotta mention someone to see their balance')
+  }
+
+
+  }
+
+
+
+      if (command === 'don' || command === 'doubleornothing') {
+
+      const curbal = await db.get(message.author.id);
+
+      const chanceBought = await db.get(`chance_` + message.author.id);
+
+      let chance = 0.5;
+
+      if (chanceBought) {
+       chance = 0.6;
+      }
+
+
+
+      if (isNumeric(args[0])) {
+
+      if (parseInt(args[0]) > 100) {
+        return message.reply('canot gamble over 100');
+      }
+
+      if (parseInt(args[0]) < parseInt(curbal) && parseInt(args[0]) > 0) {
+
+      coinFlip = Math.random();
+
+      if (coinFlip < chance) {
+      await db.set(message.author.id, parseInt(curbal) + parseInt(args[0]));
+      saveSqlite()
+      const newBal = await db.get(message.author.id);
+      message.reply(`heads CONGTRATS you win \n your new balance is ${newBal}`);
+      } else if (coinFlip > chance) {
+      await db.set(message.author.id, curbal - args[0]);
+      saveSqlite()
+      const newBal = await db.get(message.author.id);
+      message.reply(`tails you loSE L L L L L L \n your new balance is ${newBal}`) 
+      } else {
+      message.channel.send('ermmm wtf something went wrong');
+      }
+
+    } else {
+      message.reply('STOP BEING POOR you donot have aneough money');
+    }
+
+      } else {
+        message.reply('cant gamble nothing bro')
+      }
+
+  }
+
+  if (command === 'donate') {
+
+  await loadSqlite();
+
+  const curbal = await db.get(message.author.id);
+
+  const targetUser = message.mentions.users.first();
+
+  if (targetUser && curbal) {
+  const userId = targetUser.id;
+  const otherGuy = await db.get(userId);
+
+  if (!args[1] || !isNumeric(args[1]) || args[1] < 1) {
+    return message.channel.send('come on bro...... cant do that')
+  }
+
+  if (userId === message.author.id) {
+    return message.channel.send('LOL')
+  }
+
+
+  if (curbal > parseInt(args[1])) {
+    const otherValue = await db.set(message.author.id, parseInt(parseInt(curbal) - parseInt(args[1])) );
+    const variableValue = await db.set(userId, parseInt(parseInt(otherGuy) + parseInt(args[1])));
+
+    message.channel.send(`their money is now ${variableValue} agnabucks`);
+    message.channel.send(`your money is now ${otherValue} agnabucks`);
+
+    await saveSqlite();
+
+  } else {
+    message.channel.send('stop being Poor');
+  }
+
+  } else {
+
+    message.channel.send('gotta mention someone to donate to, and yknow, how much you wanna donate')
+  }
+
+
+  }
+
+  if (command === 'shop') {
+  const shop = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Shop')
+  .setAuthor({ name: 'AGNASHOP', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  .addFields(
+    { name: '1. Cocaina', value: `10,000 AGNABUCKS (high for one day)` },
+    { name: '2. Methamphetamin', value: `1,000 AGNABUCKS (high for one hour)` },
+    { name: '3. Alcohol', value: `100 AGNABUCKS (high for one minuto)` },
+    { name: '4. AGNAB premium', value: `10,000 AGNABUCKS (access to secret chat + cool role lol)` },
+    { name: '5. Themonuclear bomb', value: `1,000 AGNABUCKS (mention someone and they get muted for a minute)` },
+    { name: '6. Weed sample', value: '30 AGNABUCKS (high for 3 minutes, one time buy)'},
+    { name: '7. Rigged slot machine', value: `5,000 AGNABUCKS (increases the chance of you winning in double or nothing to 60%)` },
+  )
+  message.channel.send({ embeds: [shop] });
+  }
+
+  if (command === 'redeem') {
+
+    const playerID = message.author.id;
+
+    if (cooldowns2.has(playerID)) {
+      const expirationTime = cooldowns2.get(playerID);
+      const remainingTime = (expirationTime - Date.now()) / 1000;
+      return message.reply(`cooldown bro..... you got ${remainingTime.toFixed(1)} seconds left`);
+    }
+
+    const member = message.member;
+
+    let curbal = await db.get(playerID);
+
+    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnabian royalty (level 50)').id)) {
+      message.channel.send(`congrat you get 100 agnabucks\nyou now have ${parseInt(curbal) + 20} agnabuck WOW`);
+    await db.set(playerID, parseInt(curbal) + 100);
+    saveSqlite();
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'master agnabian (level 35)').id)) {
+      message.channel.send(`congrat you get 75 agnabuck\nyou now have ${parseInt(curbal) + 75} agnabuck WOW`);
+    await db.set(playerID, parseInt(curbal) + 75);
+    saveSqlite();
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'true agnabian (level 25)').id)) {
+      message.channel.send(`congrat you get 50 agnabacuks\nyou now have ${parseInt(curbal) + 50} agnabuck WOW`);
+    await db.set(playerID, parseInt(curbal) + 50);
+    saveSqlite();
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab master (level 15)').id)) {
+      message.channel.send(`congrate you get 30 agnabuck\nyou now have ${parseInt(curbal) + 30} agnabuck WOW`);
+    await db.set(playerID, parseInt(curbal) + 30);
+    saveSqlite();
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab enthusiast (level 10)').id)) {
+      message.channel.send(`congrate you get 20 agnabucks \nyou now have ${parseInt(curbal) + 20} agnabuck WOW`);
+    await db.set(playerID, parseInt(curbal) + 20);
+    saveSqlite();
+    } else {
+      message.channel.send('sorry youre not a high enough level to use this yet');
+    }
+
+      const cooldownDuration = 600000;
+      const expirationTime = Date.now() + cooldownDuration;
+      cooldowns2.set(playerID, expirationTime);
+
+      setTimeout(() => {
+        cooldowns2.delete(playerID);
+      }, cooldownDuration);
+
+  }
+
+  if (command === 'buy') {
+    const curbal = await db.get(message.author.id);
+
+      if (parseInt(args[0]) === 1 || args[0].toLowerCase() === 'cocaine') {
+    if (curbal > 10000) {
+    message.channel.send('https://cdn.discordapp.com/attachments/831714424658198532/1119014960127811655/Martin_Cabello_-_Cocaina_No_Flour_Original_video_online-video-cutter.com.mp4')
+    const reminderTime = Date.now() + 60 * 24 * 60 * 1000; 
+    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
+    await saveSqlite();
+    const role= message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+    message.member.roles.add(role);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 10000));
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+          if (parseInt(args[0]) === 2 || args[0].toLowerCase() === 'meth') {
+    if (curbal > 1000) {
+    message.channel.send('high as shit brah')
+    const reminderTime = Date.now() + 60 * 60 * 1000; 
+    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
+    await saveSqlite();
+    const role= message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+    message.member.roles.add(role);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 1000));
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+    if (parseInt(args[0]) === 3 || args[0].toLowerCase() === 'alcohol') {
+    if (curbal > 100) {
+    message.channel.send('i too am also a crippling alcoholic')
+    const reminderTime = Date.now() + 1 * 60 * 1000; 
+    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
+    await saveSqlite();
+    const role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+    message.member.roles.add(role);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 100));
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+          if (parseInt(args[0]) === 4 || args[0].toLowerCase() === 'premium') {
+    if (curbal > 10000) {
+    message.channel.send('you are so premium broski')
+    const role = message.member.guild.roles.cache.find(role => role.name === "AGNAB Premium");
+    message.member.roles.add(role);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 10000));
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+    if (parseInt(args[0]) === 5 || args[0].toLowerCase() === 'bomb') {
+    if (curbal > 1000) {
+    const muteGuy = message.mentions.members.first();
+    if (muteGuy) {
+      const cooldownDuration = 60000;
+      const expirationTime = Date.now() + cooldownDuration;
+    const role = message.member.guild.roles.cache.find(role => role.name === "Muted");
+    muteGuy.roles.add(role);
+
+    message.channel.send(`<@${muteGuy.id}> you just got MUTED! what a nerd.........................`)
+
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 1000));
+
+      setTimeout(() => {
+        message.channel.send(`<@${muteGuy.id}> your mute is over`);
+        muteGuy.roles.remove(role);
+      }, cooldownDuration);
+
+  } else {
+    message.channel.send('gotta mention someone bro')
+  }
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+    if (parseInt(args[0]) === 6 || args[0].toLowerCase() === 'packet') {
+    const exists = await db.get(`packet_` + message.author.id)
+    if (!exists) {
+    if (curbal > 30) {
+    message.channel.send('https://cdn.discordapp.com/attachments/966879955445248050/1121562281742970951/three.mp4')
+    const reminderTime = Date.now() + 3 * 60 * 1000; 
+    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
+    await db.set(`packet_` + message.author.id , true);
+    await saveSqlite();
+    const role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
+    message.member.roles.add(role);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 30));
+      } else {
+    message.channel.send('no money Bitch')
+    }
+  } else {
+    message.channel.send('you already bought it dude')
+    }
+  }
+
+      if (parseInt(args[0]) === 7 || args[0].toLowerCase() === 'rigged') {
+    if (curbal > 5000) {
+    message.channel.send('lol you Cheat')
+    await db.set(`chance_` + message.author.id , true);
+    await db.set(message.author.id, parseInt(parseInt(curbal) - 5000));
+    await saveSqlite();
+      } else {
+    message.channel.send('no money Bitch')
+    }
+    }
+
+}
   
   if (command === 'help') {
 
-    if (args[0] === null) {
-            const helpEmbed = new EmbedBuilder()
-  .setColor('Green')
-  .setTitle('Command List')
-  //.setURL('https://discord.js.org/')
-  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
-  //.setDescription('Some description here')
-  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
-  .addFields(
-    { name: 'a.help', value: 'brings up this screen' },
-    { name: 'a.help fun', value: 'brings up the help menu for fun commands' },
-    { name: 'a.help utility', value: 'brings up the help menu for utilities' },
-    { name: 'a.help AGNARADIO', value: 'brings up the agnaradio help menu' },
-    { name: 'a.help admin', value: 'brings up the admin help menu (all the commands are admin only)' },
-  )
-  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-  //.setImage('https://i.imgur.com/AfFp7pu.png')
-  //.setTimestamp()
-  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
-
-  message.channel.send({ embeds: [helpEmbed] });
-
-} else if (args[0] === 'fun') {
+if (args[0] === 'fun') {
             const felpEmbed = new EmbedBuilder()
   .setColor('Green')
   .setTitle('Command List')
-  //.setURL('https://discord.js.org/')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
-  //.setDescription('Some description here')
-  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
   .addFields(
     { name: 'a.addcategory', value: `suggests something for the random selection of category names \n once a message reaches 5 thumbs ups it is added` },
     { name: 'a.say', value: `makes agnabot say whatever... \n formatted as a.say text` },
@@ -424,10 +886,6 @@ if (command === 'queue') {
     { name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
     { name: 'a.mean', value: 'He will never be mean!' },
   )
-  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
-  //.setImage('https://i.imgur.com/AfFp7pu.png')
-  //.setTimestamp()
-  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
 
   message.channel.send({ embeds: [felpEmbed] });
 } else if (args[0] === 'utility') {
@@ -449,6 +907,29 @@ if (command === 'queue') {
   //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
 
   message.channel.send({ embeds: [uelpEmbed] });
+} else if (args[0] === 'agnabank') {
+            const belpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.bal/a.balance', value: 'gives the balance of whoever you ping\nformatted as a.bal @(user)' },
+    { name: 'a.work', value: `gives you some money! (can only be done once every minute, between 50 and 100 agnabucks)` },
+    { name: 'a.redeem', value: `gives you money based off your level roles starting at level 10\nlvl 10 is 20, level 15 is 30, level 25 is 50, level 35 is 75, and level 50 is 100` },
+    { name: 'a.don/a.doubleornothing', value: `either doubles or takes your money\nformatted as a.don (amount of money to wager)` },
+    { name: 'a.shop', value: `brings up the shop menu` },
+    { name: 'a.buy', value: `buys something from the shop\nformatted as a.buy (item index OR first word of the item)` },
+    { name: 'a.donate', value: `donates money to someone\nformatted as a.donate @(user)` },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [belpEmbed] });
 } else if (args[0] === 'agnaradio') {
             const aelpEmbed = new EmbedBuilder()
   .setColor('Green')
@@ -458,10 +939,10 @@ if (command === 'queue') {
   //.setDescription('Some description here')
   //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
   .addFields(
-    { name: 'a.play', value: 'plays a youtube or soundcloud link' },
-    { name: 'a.queue', value: 'shows the queue' },
-    { name: 'a.skip', value: 'skips a song' },
-    { name: 'a.stop', value: 'stops the music and resets the queue' },
+    { name: 'a.agnaradio play', value: 'plays a youtube or soundcloud link' },
+    { name: 'a.agnaradio queue', value: 'shows the queue' },
+    { name: 'a.agnaraio skip', value: 'skips a song' },
+    { name: 'a.agnaradio stop', value: 'stops the music and resets the queue' },
   )
   //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
   //.setImage('https://i.imgur.com/AfFp7pu.png')
@@ -483,6 +964,7 @@ if (command === 'queue') {
     { name: 'a.setstatus', value: `sets status obv\nformatted as a.setstatus (status)` },
     { name: 'a.forcecategory', value: 'forces a possible category name \n formatted as a.forcecategory (category name)' },
     { name: 'a.deletecategory', value: `deletes a category from the list (admin only) \n formatted as a.deletecategory (category index)` },
+    { name: 'a.setmoney', value: `sets a persons money\nformatted as a.setmoney @(user)` },
   )
   //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
   //.setImage('https://i.imgur.com/AfFp7pu.png')
@@ -490,6 +972,28 @@ if (command === 'queue') {
   //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
 
   message.channel.send({ embeds: [delpEmbed] });
+} else {
+            const helpEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('Command List')
+  //.setURL('https://discord.js.org/')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  //.setDescription('Some description here')
+  //.setThumbnail('https://i.imgur.com/AfFp7pu.png')
+  .addFields(
+    { name: 'a.help', value: 'brings up this screen' },
+    { name: 'a.help fun', value: 'brings up the help menu for fun commands' },
+    { name: 'a.help utility', value: 'brings up the help menu for utilities' },
+    { name: 'a.help AGNARADIO', value: 'brings up the agnaradio help menu' },
+    { name: 'a.help AGNABANK', value: 'brings up the money thinggggggsssssssss' },
+    { name: 'a.help admin', value: 'brings up the admin help menu (all the commands are admin only)' },
+  )
+  //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
+  //.setImage('https://i.imgur.com/AfFp7pu.png')
+  //.setTimestamp()
+  //.setFooter({ text: 'Some footer text here', iconURL: 'https://i.imgur.com/AfFp7pu.png' });
+
+  message.channel.send({ embeds: [helpEmbed] });
 }
 	
  }
@@ -504,6 +1008,7 @@ if (command === 'queue') {
 		{ name: 'sus', value: 'lol you are So funny LOL lol lol i am lmfao i am' },
 		{ name: 'Ayo/🤨', value: 'you are 9 years old' },
 		{ name: 'cybergrind', value: 'hehe weezer' },
+    { name: 'Extras:', value: 'mentioning agnabot saying FUCK, SHIT, or BITCH will prompt him to cuss back at you' },
 	)
 	message.channel.send({ embeds: [arembed] });
 	
@@ -563,38 +1068,35 @@ if (command === 'queue') {
      }
      
 if (command === 'addcategory') {
-    // Check if any category name was provided after the command
     if (args.length === 0) {
       message.channel.send('Please provide a category name.');
       return;
     }
+
+    try {
     
     message.delete();
 
-    // Join the arguments into a single string
+  } catch (error) {
+    console.log(error);
+  }
+
     const categoryName = args.join(' ');
 
-    // Send the message and add thumbs up reaction
     const sentMessage = await message.channel.send(categoryName);
     await sentMessage.react('👍');
 
-    // Create a filter to check for 5 thumbs up reactions
     const filter = (reaction, user) => reaction.emoji.name === '👍' && !user.bot;
     const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
 
-    // Event listener for collecting reactions
     collector.on('collect', (reaction) => {
       if (reaction.count === 5) {
-        // Add the category name to the array
         categoryNames.push(categoryName);
 
-        // Save the array data to the file
         saveCategoryNames();
 
-        // Send a confirmation message
         message.channel.send(`Category "${categoryName}" has been added.`);
 
-        // Stop the collector
         collector.stop();
       }
     });
@@ -609,7 +1111,7 @@ if (command === 'addcategory') {
     });
   }
   
-  if (command === 'forceaddcategory') {
+  if (command === 'forcecategory' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     // Check if any category name was provided after the command
     if (args.length === 0) {
       message.channel.send('Please provide a category name.');
@@ -646,8 +1148,28 @@ if (command === 'addcategory') {
       message.channel.send('i cant just say nothing bro');
       return;
     }
+
+    if (message.reference) {
+
+    const repliedMessage = message.reference;
+
+    const repliedMessageFull = await message.channel.messages.fetch(repliedMessage.messageId);
+
+    if (repliedMessage) {
+
+    repliedMessageFull.reply(args.join(' '));
+
+    } 
+    } else {
+
     message.channel.send(args.join(' '));
+
+    }
+    try {
     message.delete()
+  } catch (error) {
+    console.log(error);
+  }
   }
 
   
@@ -657,16 +1179,6 @@ if (command === 'addcategory') {
       return;
     }
     const categoriesMessage = categoryNames.map((category, index) => `${index + 1}. ${category}`).join('\n');
-
-    message.channel.send(`current possible category names:\n${categoriesMessage}`);
-  }
-    
-      if (command === 'showusers') {
-    if (users.length === 0) {
-      message.channel.send('its blank bro');
-      return;
-    }
-    const categoriesMessage = users.map((category, index) => `${index + 1}. ${category}`).join('\n');
 
     message.channel.send(`current possible category names:\n${categoriesMessage}`);
   }
@@ -790,7 +1302,7 @@ reaction.message.react('yeah:1106953116311625768');
   const messageContent = reactedMessage.content;
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const embeddedUrls = messageContent.match(urlRegex);
-  if (embeddedUrls && embeddedUrls.length > 0) {
+  if (embeddedUrls && embeddedUrls.length > 0 && user.id === '765581160755363840') {
     console.log('Embedded URL(s) detected in the reacted message!');
     embeddedUrls.forEach(url => {
       reaction.message.channel.send('added whatever that was to the speechbubble pool')
@@ -818,8 +1330,48 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
+async function fetchAttachment(url) {
+  const res = await fetch(url);
+  const arrayBuffer = await res.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  return buffer;
+}
 
+function isNumeric(str) {
+  if (typeof str != "string") return false 
+  return !isNaN(str) && 
+         !isNaN(parseFloat(str)) 
+}
 
+async function stopNull(guy) {
+
+if (!(await db.get(guy))) {
+  db.set(guy, 100)
+}
+
+}
+
+process.on('SIGINT', () => {
+  // Call the async shutdown function and handle any errors
+  shutdown().catch(err => {
+    console.error('Error during shutdown:', err);
+    process.exit(1); // Exit with a non-zero status code to indicate an error
+  });
+});
+
+process.on('SIGTERM', () => {
+  // Call the async shutdown function and handle any errors
+  shutdown().catch(err => {
+    console.error('Error during shutdown:', err);
+    process.exit(1); // Exit with a non-zero status code to indicate an error
+  });
+});
+
+async function shutdown() {
+  console.log('Bot is shutting down...');
+  await saveSqlite();
+  process.exit(0);
+}
 
 client.login(token);
 keepAlive();
