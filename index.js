@@ -243,6 +243,10 @@ if (lockdown === 'false') {
 
 
 //dumb shit
+  if(message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
+    message.reply('dafuq you want from pirate?')
+  }
+  
 	if(message.author.id === '907055124503994398') {
 		message.react('🤓');
 	}
