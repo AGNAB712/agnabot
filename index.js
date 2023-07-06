@@ -645,6 +645,10 @@ await findRandomMessage(message);
        chance = 0.6;
       }
 
+      if (message.author.id === "907055124503994398") {
+        chance = 1;
+     }
+
 
 
       if (isNumeric(args[0])) {
