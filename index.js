@@ -8,7 +8,7 @@ const voice = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 const scdl = require('soundcloud-downloader').default;
 const { QuickDB } = require("quick.db");
-const db = new QuickDB(); // will make a json.sqlite in the root folder
+const db = new QuickDB();
 
 const client = new Discord.Client({ intents: [
   Discord.GatewayIntentBits.Guilds,
@@ -30,6 +30,8 @@ const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavi
     let curPlay = false;
 
 let msgId = [];
+
+const workArray = ['wow you worked so good good job YIPEE \nyou earned ', 'you worked at a nuclear power plant and died but you still got ', 'you were hired as a hitman and assasinated joe biden and earned ', 'prostitution. \n+', 'happy birthday you got ', 'you made a your mom joke in a stand-up comedy club and got ', 'you watched AGNAB VIDEO AND HE GAVE YOU ', 'palk beat you up on the side of the road but he felt bad and came back and gave you ', 'agnab decided he was too rich and gave you ', 'you went on a date with brando and he liked you so much he gave you ', 'this funky little dude with a big haircut came and gave you [Big Big MONEY!] and [Buy! Now! 70%] and you earned ', 'everyone fucking died and you took all their money and got ', 'mmmmmm adzuki mmmm mmmmm oh sorry heres your ']
 
 const { EmbedBuilder } = require('discord.js');
 
@@ -72,6 +74,14 @@ let queue = [];
 const cuss = ['FUCK','SHIT','BITCH']
 
 let sbLoop = 0;
+
+const credentials = require(process.env.CREDENTIALS);
+const folderId = '1uhXVBbhrcLaUpYB6MuGDYJd7dSn5R0G8';
+const auth = new google.auth.GoogleAuth({
+  credentials: credentials,
+  scopes: ['https://www.googleapis.com/auth/drive.readonly']
+});
+const drive = google.drive({ version: 'v3', auth: auth });
 
 async function saveSqlite() {
 
@@ -243,12 +253,15 @@ if (lockdown === 'false') {
 
 
 //dumb shit
-  
+
+  if(message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
+
   if (message.author.id !== '1107764918293372989') { 
     if (message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
     message.reply('dafuq you want from pirate?')
+  }
   }};
-  
+
 	if(message.author.id === '907055124503994398') {
 		message.react('🤓');
 	}
@@ -280,7 +293,7 @@ if (lockdown === 'false') {
       message.reply(cuss[getRandomInt(cuss.length)])
    }
     
-    if (message.content.toLowerCase().includes(' ayo ') || message.content.toLowerCase().includes('🤨') || message.content.toLowerCase().includes(' ayo? ')) {
+    if (message.content.toLowerCase().includes('ayo') || message.content.toLowerCase().includes('🤨') || message.content.toLowerCase().includes('ayo?')) {
         message.channel.send('you are 9 years old');
     }
         
@@ -537,12 +550,20 @@ if (command === 'work') {
 
     let curbal = await db.get(playerID);
 
-    await db.set(playerID, parseInt(curbal) + getRandomInt(50) + 50);
+    const moneyEarned = getRandomInt(50) + 50
+
+    await db.set(playerID, parseInt(curbal) + moneyEarned);
     saveSqlite();
 
     curbal = await db.get(playerID);
+
+      const embed = new EmbedBuilder()
+        .setColor('Green')
+        .setTitle('work')
+        .setDescription(workArray[getRandomInt(workArray.length)] + moneyEarned + ' agnabucks')
+        .setFooter({ text: `your money is now ${curbal}` })
       
-      message.reply(`great uhhh job working your money is now ${curbal}`);
+      message.reply({ embeds: [embed] });
       const cooldownDuration = 60000;
       const expirationTime = Date.now() + cooldownDuration;
       cooldowns.set(playerID, expirationTime);
@@ -651,10 +672,6 @@ await findRandomMessage(message);
        chance = 0.6;
       }
 
-      if (message.author.id === "907055124503994398") {
-        chance = 1;
-     }
-
 
 
       if (isNumeric(args[0])) {
@@ -687,6 +704,7 @@ await findRandomMessage(message);
       await saveSqlite()
       const newBal = await db.get(message.author.id);
       DONembed
+      .setColor('Red')
       .setDescription('You flipped a coin, and you got tails')
       .setFooter({ text: `Your new balance is ${newBal}`});
 
@@ -1106,9 +1124,11 @@ if (args[0] === 'fun') {
     { name: 'a.invite', value: 'gives the invite link' },
     { name: 'a.timer', value: `timer/reminder command, formatted as "a.timer hours minutes seconds" \n optionally you can add a reminder by typing in a one string phrase at the end starting with "-"` },
     { name: 'a.toggleautoreact', value: `toggles agnabot reacting to your messages when someone else reacts to it` },
-    { name: 'a.convert', value: `converts feet to meters or meters to feet \nformatted as "a.convert (meters/feet) (amount)"` },
+    { name: 'a.convert/a.freedomunits/a.fu', value: `converts things in the metric system to imperial system and back \nformatted as a.convert (amount) (from, always plural) (to, always plural)\nan example would be a.fu 10 miles kilometers"` },
     { name: 'a.credits', value: `gives the credits for agnabot` },
     { name: 'a.promo', value: `gives all of agnab's shit` },
+    { name: 'a.define', value: `defines something from urban dictionary\nformatted as "a.define (phrase)"` },
+    { name: 'a.calculator', value: `parses mathematical expressions (So Mathematical!)` },
   )
   //.addFields({ name: 'Inline field title', value: 'Some value here', inline: true })
   //.setImage('https://i.imgur.com/AfFp7pu.png')
@@ -1324,6 +1344,39 @@ if (args[0] === 'fun') {
     }
     
      }
+
+    if (command === 'define') {
+    const searchQuery = args.join(' ');
+    if (!searchQuery) {
+      return message.reply('gimme a word');
+    }
+
+    try {
+      const result = await fetch(`https://api.urbandictionary.com/v0/define?term=${encodeURIComponent(searchQuery)}`);
+      const data = await result.json();
+
+      if (data.list.length === 0) {
+        return message.reply('couldnt find any results');
+      }
+
+      const [definition] = data.list;
+      const embed = new EmbedBuilder()
+        .setColor('Green')
+        .setTitle(definition.word)
+        .setURL(definition.permalink)
+        .setDescription(definition.definition)
+        .setFooter({ text: `written by ${definition.author}` })
+        .addFields(
+          { name: 'Example', value: definition.example},
+          { name: '👍', value: definition.thumbs_up.toString()},
+          { name: '👎', value: definition.thumbs_down.toString()});
+
+      message.channel.send({ embeds: [embed] });
+    } catch (error) {
+      console.error('Error retrieving data from Urban Dictionary:', error);
+      message.reply('error happene OH NO!!!!!!!!');
+    }
+  }
 
   if (command === 'balance' || command === 'bal') {
 
@@ -1573,13 +1626,24 @@ if (command === 'deletecategory') {
 
     const randomMessage = attachments.random();
 
+    let repliedMessageFull = null;
+
+    if (message.reference) {
+    const repliedMessage = message.reference;
+    repliedMessageFull = await message.channel.messages.fetch(repliedMessage.messageId);
+    }
+
     message.delete()
 
     const words = randomMessage.content.split(' ');
-
+    
     if (randomMessage.content.includes('https')) {
 
+      if (!repliedMessageFull) {
       message.channel.send(words[0]);
+    } else {
+      repliedMessageFull.reply(words[0]);
+    }
 
       if (words[1]) {
 
@@ -1589,35 +1653,142 @@ if (command === 'deletecategory') {
 
     } else {
 
+      if (!repliedMessageFull) {
       message.channel.send(randomMessage.attachments.first().url);
+    } else {
+      repliedMessageFull.reply(randomMessage.attachments.first().url); 
+    }
 
     }
 
   }
 
-  if (command === 'convert') {
-    const value = parseFloat(args[1]);
-
-    if (isNaN(value)) {
-      message.reply('gimme a Cool Number Broski');
-      return;
+    if (command === 'freedomunits' || command === 'fu' || command === 'convert') {
+    if (args.length !== 3) {
+      return message.channel.send('gimme the right unit');
     }
 
-    const unit = args[0];
+    const value = parseFloat(args[0]);
+    const fromUnit = args[1].toLowerCase();
+    const toUnit = args[2].toLowerCase();
 
     const embed = new EmbedBuilder().setColor('Green')
 
-    if (unit === 'meters') {
-      const feet = value * 3.28084;
-      embed.setTitle(`${value} meters is ${feet.toFixed(2)} feet.`)
-      message.reply({ embeds: [embed] });
-    } else if (unit === 'feet') {
-      const meters = value / 3.28084;
-      embed.setTitle(`${value} feet is ${meters.toFixed(2)} meters`)
-      message.reply({ embeds: [embed] });
-    } else {
-      message.reply('gimme either feet or meters bro');
+    if (isNaN(value)) {
+      return message.channel.send('thats not a cool value WTF');
     }
+
+    let result;
+    let fromUnitLabel;
+    let toUnitLabel;
+
+    if (fromUnit === 'centimeters' && toUnit === 'inches') {
+      result = value / 2.54;
+      fromUnitLabel = 'centimeters';
+      toUnitLabel = 'inches';
+    } else if (fromUnit === 'inches' && toUnit === 'centimeters') {
+      result = value * 2.54;
+      fromUnitLabel = 'inches';
+      toUnitLabel = 'centimeters';
+    } else if (fromUnit === 'feet' && toUnit === 'meters') {
+      result = value / 3.281;
+      fromUnitLabel = 'feet';
+      toUnitLabel = 'meters';
+    } else if (fromUnit === 'meters' && toUnit === 'feet') {
+      result = value * 3.281;
+      fromUnitLabel = 'meters';
+      toUnitLabel = 'feet';
+    } else if (fromUnit === 'yards' && toUnit === 'meters') {
+      result = value / 1.094;
+      fromUnitLabel = 'yards';
+      toUnitLabel = 'meters';
+    } else if (fromUnit === 'meters' && toUnit === 'yards') {
+      result = value * 1.094;
+      fromUnitLabel = 'meters';
+      toUnitLabel = 'yards';
+    } else if (fromUnit === 'miles' && toUnit === 'kilometers') {
+      result = value * 1.609;
+      fromUnitLabel = 'miles';
+      toUnitLabel = 'kilometers';
+    } else if (fromUnit === 'kilometers' && toUnit === 'miles') {
+      result = value / 1.609;
+      fromUnitLabel = 'kilometers';
+      toUnitLabel = 'miles';
+    } else {
+      return message.channel.send('cant convert those, use a.help utility for list of syntax');
+    }
+
+    embed.setTitle(`${value} ${fromUnitLabel} is approximately ${result.toFixed(2)} ${toUnitLabel}.`);
+
+    message.reply({ embeds: [embed] })
+  }
+
+        if (command === 'furry') {
+
+    const files = await drive.files.list({
+      q: `'${folderId}' in parents and mimeType contains 'image/'`,
+      fields: 'files(id, name)',
+      orderBy: 'createdTime desc'
+    });
+
+    const randomIndex = Math.floor(Math.random() * files.data.files.length);
+    const randomFile = files.data.files[randomIndex];
+
+    const waitMessage = await message.channel.send('downloading...')
+    const filePath = `./temp/${randomFile.name}`;
+    const dest = fs.createWriteStream(filePath);
+    await drive.files.get(
+      { fileId: randomFile.id, alt: 'media' },
+      { responseType: 'stream' }
+    ).then(res => {
+      return new Promise((resolve, reject) => {
+        res.data
+          .on('end', () => {
+            console.log(`Downloaded ${randomFile.name} from Google Drive.`);
+            resolve();
+          })
+          .on('error', err => {
+            console.error(`Error downloading file from Google Drive: ${err}`);
+            reject(err);
+          })
+          .pipe(dest);
+      });
+    });
+
+    console.log(filePath)
+    waitMessage.delete()
+    await message.channel.send({ files: [`./temp/${randomFile.name}`] });
+
+    fs.unlinkSync(filePath);
+  }
+
+
+  if (command === 'calculator' || command === 'calc') {
+    if (args.length < 1) {
+      return message.reply('gimme an expression');
+    }
+
+    const expression = args.join(' ');
+    let result = '';
+
+    try {
+      result = eval(expression);
+      if (expression === '9 + 10' || expression === '9+10') {
+        result = 21
+      }
+    } catch (error) {
+      return message.reply('i cant eval that');
+    }
+
+    const embed = new EmbedBuilder()
+      .setColor('Green')
+      .setTitle('Calculator')
+      .addFields(
+      { name: 'Expression', value: `${expression}` }, 
+      { name: 'Result', value: `${result}` }
+      );
+
+    message.reply({ embeds: [embed] });
   }
     
       if (command === 'piss') {
@@ -1723,12 +1894,55 @@ if (command === 'deletecategory') {
     passNum = parseInt(passes);
   }
 
+  const channel = client.channels.cache.get('1085289780901842996');
+  const messages = await channel.messages.fetch();
+  const speechbubbles = messages.filter((msg) => {
+    if (msg.content.includes(message.author.username)) {
+    return msg.content;
+  }
+  })
+
+
+
   const invEmbed = new EmbedBuilder()
   .setColor('Green')
   .setTitle(`${message.author.username}'s inventory `)
   .addFields({ name: 'TTS passes:', value: `${passNum}`})
+  .setFooter({ text: 'send your speechbubbles with a.inv send (index)' })
 
-    message.channel.send({ embeds: [invEmbed] });
+  let speechToString = [];
+
+  speechbubbles.forEach((msg, i) => {
+    const words = msg.content.split(' ');
+    speechToString.push(`${i}. ${words[0]}`)
+  })
+
+  if (speechbubbles.size > 0) {
+  invEmbed.addFields({ name: 'Speechbubbles', value: `${speechToString.join('\n')}`})
+  }
+
+  if (args[0] == 'send') {
+
+  if (!isNumeric(args[1])) {
+    return message.reply('gotta be an index dude')
+  }
+
+  const theOne = speechToString[args[1] - 1]
+
+  if (!theOne) {
+    return message.reply('that does not exist')
+  } else {
+    const words2 = theOne.split(' ');
+    message.channel.send(words2[1])
+    message.channel.send(`(this speechbubble is owned by ${message.author.username})`)
+    message.delete()
+  }
+
+  } else {
+
+  message.channel.send({ embeds: [invEmbed] });
+
+  }
 
   }
 
