@@ -11,7 +11,6 @@
     { name: 'a.autoresponses/a.ar', value: `gives a list of agnabot's automatic responses` },
     { name: 'a.showcategories', value: `shows the possible category names from agnabot to pick from` },
     { name: 'a.mean', value: 'He will never be mean!' },
-    { name: 'a.inv/a.inventory', value: `views your inventory` },
     { name: 'a.tts', value: `sends a tts message using agnabot (requires a tts pass which you can buy)` },
     { name: 'a.fart', value: `farts in vc STINKY` },
     { name: 'a.furry', value: `gets a random furry image` },
@@ -33,7 +32,12 @@ const utilityEmbed = new EmbedBuilder()
     { name: 'a.credits', value: `gives the credits for agnabot` },
     { name: 'a.define', value: `defines something from urban dictionary\nformatted as "a.define (phrase)"` },
     { name: 'a.calculator', value: `parses mathematical expressions (So Mathematical!)` },
+    { name: 'a.stats', value: 'views your agnabot stats'}
   )
+
+let statEmbed = new EmbedBuilder()
+  .setColor('Green')
+  .setTitle('AGNABOT STATS')
 
 const bankEmbed = new EmbedBuilder()
   .setColor('Green')
@@ -100,5 +104,6 @@ module.exports = {
   adminEmbed,
   hotelEmbed,
   petEmbed,
+  statEmbed
 };
 

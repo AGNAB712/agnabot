@@ -16,7 +16,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const { readFile } = require('fs/promises');
 const { Image } = require('@napi-rs/canvas');
-const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, } = require('./embeds.js')
+const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./embeds.js')
 const { google } = require('googleapis');
 const { ChatGpt } = require('chatgpt-scraper');
 const { promises } = require('fs')
@@ -178,8 +178,8 @@ async function doChildLabor() {
   const toWork = allUserData.filter(data => data.id.startsWith('children_'))
   await toWork.forEach(async (value, index) => {
     const userId = value.id.slice(9)
-    const curbal = await db.get(userId)
-    await db.set(userId, parseInt(parseInt(curbal) + value.value));
+    const curbal = await db.get(userId+'.a')
+    await db.set(userId+'.a', parseInt(parseInt(curbal) + value.value));
     if (index = toWork.length) {
       saveSqlite();
     } 
@@ -226,9 +226,9 @@ async function payPets() {
   await toUpdate.forEach(async (value, index) => {
     const userId = value.id.slice(4)
     const myPet = await db.get('pet_' + userId)
-    const curbal = await db.get(userId)
+    const curbal = await db.get(userId+'.a')
 
-    await db.set(userId, curbal + myPet.health + myPet.affection + myPet.hunger)
+    await db.set(userId+'.a', curbal + myPet.health + myPet.affection + myPet.hunger)
 
     if (index = toUpdate.length) {
       saveSqlite();
@@ -381,7 +381,6 @@ await db.set(message.author.id + '_time', -5);
 if (lockdown === 'false') {
 
 
-
 //dumb shit
 
   if(message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
@@ -458,6 +457,8 @@ if (lockdown === 'false') {
  //actual commands
  if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
+ if (message.guild.id === '969752864585035777') {return message.channel.send('hi dont use me rn')}
+
 
  if (command === 'leaderboard' || command === 'lb') {
     const allUserData = await db.all()
@@ -494,7 +495,7 @@ if (lockdown === 'false') {
 
   const myPet = await db.get(`pet_${message.author.id}`)
   const command2 = args[0]
-  const curbal = await db.get(message.author.id)
+  const curbal = await db.get(message.author.id+'.a')
 
   //console.log(myPet)
 
@@ -532,7 +533,7 @@ const row = new ActionRowBuilder()
   if (curbal > 1000) {
   await db.set(`pet_${message.author.id}`, defaultPet)
   return message.reply('pet bought! \nin order to get started with your pet, please use a.pet name (your pets name) and a.pet image (your image) \nwithout this your pet will not accrue agnabucks')
-  await db.set(message.author.id, parseInt(curbal) - 1000) 
+  await db.set(message.author.id+'.a', parseInt(curbal) - 1000) 
   await saveSqlite();
   }
   }
@@ -591,7 +592,7 @@ const row = new ActionRowBuilder()
 
   if (command2 === "buy") {
 
-  curbal = await db.get(message.author.id)
+  curbal = await db.get(message.author.id+'.a')
 
   if (!myHotel || myHotel === 'undefined') {
 
@@ -613,7 +614,7 @@ const row = new ActionRowBuilder()
 
   await db.set(`hotel_${message.author.id}`, channel.id)
 
-  await db.set(message.author.id, parseInt(parseInt(curbal) - 5000))
+  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000))
 
   saveSqlite();
 
@@ -796,6 +797,11 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 
 }
 
+if (command === 'inventory' || command === 'inv') {
+await db.set(message.author.id+'.a', 100)
+console.log(await db.get(message.author.id))
+}
+
 if (command === 'seed') {
   const pageNum = getRandomInt(300) + 1;
   const seedData = await axios.get(`https://minecraft-seeds.net/?p=${pageNum}`)
@@ -824,7 +830,7 @@ if (command === 'work') {
       message.reply(`cooldown bro..... you got ${remainingTime.toFixed(1)} seconds left`);
     } else {
 
-    let curbal = await db.get(playerID);
+    let curbal = await db.get(playerID+'.a');
 
     let moneyEarned = getRandomInt(50) + 50
 
@@ -832,10 +838,14 @@ if (command === 'work') {
       moneyEarned += 100
     }
 
-    await db.set(playerID, parseInt(curbal) + moneyEarned);
+    if (message.member.roles.cache.some(role => role.name === 'AGNAB premium')) {
+      moneyEarned = math.floor(moneyEarned * 1.25)
+    }
+
+    await db.set(playerID+'.a', parseInt(curbal) + moneyEarned);
     saveSqlite();
 
-    curbal = await db.get(playerID);
+    curbal = await db.get(playerID+'.a');
 
       const embed = new EmbedBuilder()
         .setColor('Green')
@@ -856,7 +866,6 @@ if (command === 'work') {
 
 if (command === 'rng') {
 
-const curbal = await db.get(message.author.id)
 
 if (!isNumeric(args[0]) || parseInt(args[0]) > 5 || parseInt(args[0]) < 1) {
   return message.reply('use a Cool number Beeyatch');
@@ -865,12 +874,13 @@ if (!isNumeric(args[0]) || parseInt(args[0]) > 5 || parseInt(args[0]) < 1) {
 const toGuess = getRandomInt(5) + 1;
 
 if (toGuess === parseInt(args[0])) {
+const curbal = await db.get(message.author.id+'.a')
   winEmbed = new EmbedBuilder()
   .setColor('Green')
   .setTitle('you win!')
   .setDescription('you gained 30 ꬰ')
   .setFooter({ text: `your balance is now ${curbal + 30}`})
-  await db.set(message.author.id, parseInt(parseInt(curbal) + 30));
+  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) + 30));
   message.reply({ embeds: [winEmbed] });
 } else {
   loseEmbed = new EmbedBuilder()
@@ -894,7 +904,7 @@ if (toGuess === parseInt(args[0])) {
     const variableValue = args[1];
 
     if (isNumeric(variableValue)) {
-    await db.set(userId, variableValue);
+    await db.set(userId+'.a', variableValue);
     await saveSqlite();
     message.channel.send('saved');
   } else {
@@ -910,7 +920,7 @@ if (toGuess === parseInt(args[0])) {
 
       if (command === 'don' || command === 'doubleornothing') {
 
-      const curbal = await db.get(message.author.id);
+      const curbal = await db.get(message.author.id+'.a');
 
       const chanceBought = await db.get(`chance_` + message.author.id);
 
@@ -938,9 +948,9 @@ if (toGuess === parseInt(args[0])) {
       coinFlip = Math.random();
 
       if (coinFlip < chance) {
-      await db.set(message.author.id, parseInt(curbal) + parseInt(args[0]));
+      await db.set(message.author.id+'.a', parseInt(curbal) + parseInt(args[0]));
       await saveSqlite()
-      const newBal = await db.get(message.author.id);
+      const newBal = await db.get(message.author.id+'.a');
       DONembed
       .setDescription('You flipped a coin, and you got heads!')
       .setFooter({ text: `Your new balance is ${newBal}`});
@@ -948,9 +958,9 @@ if (toGuess === parseInt(args[0])) {
       message.reply({ embeds: [DONembed] })
 
       } else if (coinFlip > chance) {
-      await db.set(message.author.id, curbal - args[0]);
+      await db.set(message.author.id+'.a', curbal - args[0]);
       await saveSqlite()
-      const newBal = await db.get(message.author.id);
+      const newBal = await db.get(message.author.id+'.a');
       DONembed
       .setColor('Red')
       .setDescription('You flipped a coin, and you got tails')
@@ -973,13 +983,13 @@ if (toGuess === parseInt(args[0])) {
 
   if (command === 'donate') {
 
-  const curbal = await db.get(message.author.id);
+  const curbal = await db.get(message.author.id+'.a');
 
   const targetUser = message.mentions.users.first();
 
   if (targetUser && curbal) {
   const userId = targetUser.id;
-  const otherGuy = await db.get(userId);
+  const otherGuy = await db.get(userId+'.a');
 
   if (!args[1] || !isNumeric(args[1]) || args[1] < 1) {
     return message.channel.send('come on bro...... cant do that')
@@ -991,8 +1001,8 @@ if (toGuess === parseInt(args[0])) {
 
 
   if (curbal > parseInt(args[1])) {
-    const otherValue = await db.set(message.author.id, parseInt(parseInt(curbal) - parseInt(args[1])) );
-    const variableValue = await db.set(userId, parseInt(parseInt(otherGuy) + parseInt(args[1])));
+    const otherValue = await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - parseInt(args[1])) );
+    const variableValue = await db.set(userId+'.a', parseInt(parseInt(otherGuy) + parseInt(args[1])));
 
     message.channel.send(`their money is now ${variableValue} agnabucks`);
     message.channel.send(`your money is now ${otherValue} agnabucks`);
@@ -1023,27 +1033,27 @@ if (toGuess === parseInt(args[0])) {
 
     const member = message.member;
 
-    let curbal = await db.get(playerID);
+    let curbal = await db.get(playerID+'.a');
 
     if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnabian royalty (level 50)').id)) {
       message.channel.send(`congrat you get 100 agnabucks\nyou now have ${parseInt(curbal) + 100} agnabuck WOW`);
-    await db.set(playerID, parseInt(curbal) + 100);
+    await db.set(playerID+'.a', parseInt(curbal) + 100);
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'master agnabian (level 35)').id)) {
       message.channel.send(`congrat you get 75 agnabuck\nyou now have ${parseInt(curbal) + 75} agnabuck WOW`);
-    await db.set(playerID, parseInt(curbal) + 75);
+    await db.set(playerID+'.a', parseInt(curbal) + 75);
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'true agnabian (level 25)').id)) {
       message.channel.send(`congrat you get 50 agnabacuks\nyou now have ${parseInt(curbal) + 50} agnabuck WOW`);
-    await db.set(playerID, parseInt(curbal) + 50);
+    await db.set(playerID+'.a', parseInt(curbal) + 50);
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab master (level 15)').id)) {
       message.channel.send(`congrate you get 30 agnabuck\nyou now have ${parseInt(curbal) + 30} agnabuck WOW`);
-    await db.set(playerID, parseInt(curbal) + 30);
+    await db.set(playerID+'.a', parseInt(curbal) + 30);
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab enthusiast (level 10)').id)) {
       message.channel.send(`congrate you get 20 agnabucks \nyou now have ${parseInt(curbal) + 20} agnabuck WOW`);
-    await db.set(playerID, parseInt(curbal) + 20);
+    await db.set(playerID+'.a', parseInt(curbal) + 20);
     saveSqlite();
     } else {
       message.channel.send('sorry youre not a high enough level to use this yet');
@@ -1107,26 +1117,6 @@ if (toGuess === parseInt(args[0])) {
   
   }
 
-if (command === 'gpt') {
-message.channel.sendTyping()
-const gptMessage = `Hello ChatGPT. Today you will respond as AGNABOT. AGNABOT is a pretty cool dude, he never uses emojis EVER, he is a custom discord bot for AGNAB's amassing, he's a little bit passive agressive, he insults back if someone insults him, he speaks in all lowercase, loves furries (he uses :3 a lot), keeps things concise, and does not use any periods. Now, a person in the server has just sent a message, and I want you to reply to that message as agnabot. This is the message sent by ${message.author.username}: ${args.join(' ')}`
-let response = await ChatGpt(gptMessage)
-if (response.length > 2000) {
-return console.log('sho')
-}
-message.reply(response.response).catch(error => console.error(error))
-}
-
-if (command === 'lolcat') {
-message.channel.sendTyping()
-const gptMessage = `Hello ChatGPT. Today you will respond as AGNABOT. AGNABOT is a pretty cool dude, he speaks in lolcat, and only uppercase. Now, someone in the server has just sent a message, and I want you to reply to that message as agnabot. This is the message sent by ${message.author.username}: ${args.join(' ')}`
-let response = await ChatGpt(gptMessage)
-if (response.length > 2000) {
-return console.log('sho')
-}
-message.reply(response.response).catch(error => console.error(error))
-}
-
 
   if (command === 'impersonate') {
 let webhookCollection = await message.channel.fetchWebhooks();
@@ -1189,7 +1179,7 @@ message.delete()
   }
 
 
-    const curbal = await db.get(message.author.id);
+    const curbal = await db.get(message.author.id+'.a');
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('starter')
@@ -1217,7 +1207,7 @@ message.delete()
           .setValue('alcohol'),
         new StringSelectMenuOptionBuilder()
           .setLabel('AGNAB premium')
-          .setDescription('10,000 AGNABUCKS (access to secret chat + cool role lol)')
+          .setDescription('10,000 AGNABUCKS (access to secret chat + 25% boost to a.work)')
           .setValue('premium'),
         new StringSelectMenuOptionBuilder()
           .setLabel('Thermonuclear bomb')
@@ -1273,7 +1263,7 @@ message.reply('dude use a.hotel buy :   (')
   
 if (confirmation.values[0] === 'cocaine') {
 if (curbal > 10000) {
-await db.set(message.author.id, parseInt(parseInt(curbal) - 10000));
+await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 10000));
 message.channel.send('https://cdn.discordapp.com/attachments/831714424658198532/1119014960127811655/Martin_Cabello_-_Cocaina_No_Flour_Original_video_online-video-cutter.com.mp4')
 const reminderTime = Date.now() + 60 * 24 * 60 * 1000; 
 await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
@@ -1287,7 +1277,7 @@ message.channel.send('no money Bitch')
 
 if (confirmation.values[0] === 'meth') {
     if (curbal > 1000) {
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 1000));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 1000));
     message.channel.send('high as shit brah')
     const reminderTime = Date.now() + 60 * 60 * 1000; 
     await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
@@ -1301,7 +1291,7 @@ if (confirmation.values[0] === 'meth') {
 
 if (confirmation.values[0] === 'alcohol') {
     if (curbal > 100) {
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 100));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100));
     message.channel.send('i too am also a crippling alcoholic')
     const reminderTime = Date.now() + 1 * 60 * 1000; 
     await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
@@ -1315,7 +1305,7 @@ if (confirmation.values[0] === 'alcohol') {
 
 if (confirmation.values[0] === 'premium') {
     if (curbal > 10000) {
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 10000));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 10000));
     message.channel.send('you are so premium broski')
     const role = message.member.guild.roles.cache.find(role => role.name === "AGNAB Premium");
     message.member.roles.add(role);
@@ -1326,7 +1316,7 @@ if (confirmation.values[0] === 'premium') {
 
 if (confirmation.values[0] === 'bomb') {
     if (curbal > 1000) {
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 1000));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 1000));
     const muteGuy = message.mentions.members.first();
     if (muteGuy) {
       const cooldownDuration = 60000;
@@ -1354,7 +1344,7 @@ if (confirmation.values[0] === 'packet') {
     const exists = await db.get(`packet_` + message.author.id)
     if (!exists) {
     if (curbal > 30) {
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 30));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 30));
     message.channel.send('https://cdn.discordapp.com/attachments/966879955445248050/1121562281742970951/three.mp4')
     const reminderTime = Date.now() + 3 * 60 * 1000; 
     await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
@@ -1374,7 +1364,7 @@ if (confirmation.values[0] === 'rigged') {
     if (curbal > 5000) {
     message.channel.send('lol you Cheat')
     await db.set(`chance_` + message.author.id , true);
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 5000));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000));
     await saveSqlite();
       } else {
     message.channel.send('no money Bitch')
@@ -1384,9 +1374,8 @@ if (confirmation.values[0] === 'rigged') {
 if (confirmation.values[0] === 'tts') {
     if (curbal > 100) {
 
-    await db.set(message.author.id, parseInt(parseInt(curbal) - 100));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100));
     const passes = await db.get(message.author.id + '_passes');
-    console.log(passes)
 
     if (passes === undefined) {
     await db.set(message.author.id + '_passes', 1);
@@ -1438,7 +1427,7 @@ if (confirmation.values[0] === 'speechbubble') {
       randomMessage.edit(`${randomMessage.attachments.first().url} ${message.author.username}`)
     }
     }
-  await db.set(message.author.id, parseInt(parseInt(curbal) - 200));
+  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 200));
   await saveSqlite();
   } else {
     message.channel.send('no money Bitch')
@@ -1457,9 +1446,9 @@ if (confirmation.values[0] === 'child') {
       newChildren = children + 1
       await db.set('children_'+message.author.id, children + 1);
     }
-    await db.set(message.author.id, parseInt(parseInt(curbal) - childrenPrice));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - childrenPrice));
 
-    message.channel.send(`wowie zowie thats crazy now you have ${newChildren} agnabucks per minute`)
+    message.channel.send(`wowie zowie thats crazy now you have ${newChildren} agnabucks per 5 minute`)
 
     await saveSqlite();
 
@@ -1671,7 +1660,7 @@ if (command === 'fight') {
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('starter')
-      .setPlaceholder('Click here to choose what to buy')
+      .setPlaceholder('Click here to choose the help menu')
       .addOptions(
         new StringSelectMenuOptionBuilder()
           .setLabel('Cancel')
@@ -1797,6 +1786,33 @@ if (args[0] === 'fun') {
 message.reply('i just set your balance to 0 you fucking filthy criminal')
   }
 
+  if (command === 'test') {
+    const allUserData = await db.all()
+
+    const filtertop = allUserData.filter(data => !isNaN(data.id) && !isNaN(data.value.a))
+    //console.log(filtertop)
+
+    let messageSend = ''
+    await filtertop.forEach((i) => messageSend = messageSend + `\n<@${i.id}>`)
+
+    message.channel.send(messageSend)
+
+  }
+
+  if (command === 'a') {
+    const allUserData = await db.all()
+
+    const filtertop = allUserData.filter(data => !isNaN(data.id) && !isNaN(data.value))
+    console.log(filtertop)
+
+    await filtertop.forEach(async (i) => {
+    await db.set(i.id+'.a', i.value)
+    console.log(i.id)
+    })
+    saveSqlite();
+
+  }
+
   if (command === 'timer') {
     const reminderFlagIndex = args.findIndex(arg => arg.startsWith('-'));
 
@@ -1908,23 +1924,23 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
 
   if (command === 'balance' || command === 'bal') {
 
-
+  console.log(await db.get(message.author.id))
     let targetUser = message.mentions.users.first();
 
     if (targetUser) {
     const userId = targetUser.id;
-    const variableValue = await db.get(userId);
+    const variableValue = await db.get(userId+'.a');
 
     if (!variableValue) {
   const userId = targetUser.id;
-  await db.set(userId, 100);
+  await db.set(userId+'.a', 100);
   saveSqlite();
-  const variableValue = await db.get(userId);
+  const variableValue = await db.get(userId+'.a');
   //message.reply(`their money is ${variableValue} agnabucks`);
 
     } else { 
   const attachment = await balance(targetUser) 
-  const curbal = await db.get(targetUser.id)
+  const curbal = await db.get(targetUser.id+'.a')
   balEmbed.setFooter({ text: `${curbal}` })
   balEmbed.setTitle(`${targetUser.username}'s balance:`)
   message.reply({ embeds: [balEmbed], files: [attachment] })
@@ -1936,18 +1952,18 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
 
     if (targetUser) {
     const userId = targetUser.id;
-    const variableValue = await db.get(userId);
+    const variableValue = await db.get(userId+'.a');
 
     if (!variableValue) {
   const userId = targetUser.id;
-  await db.set(userId, 100);
+  await db.set(userId+'.a', 100);
   saveSqlite();
-  const variableValue = await db.get(userId);
+  const variableValue = await db.get(userId+'.a');
   //message.reply(`your money is ${variableValue} agnabucks`);
 
     } else { 
   const attachment = await balance(targetUser) 
-  const curbal = await db.get(targetUser.id)
+  const curbal = await db.get(targetUser.id+'.a')
   balEmbed.setFooter({ text: `${curbal}` })
   balEmbed.setTitle(`${targetUser.username}'s balance:`)
   message.reply({ embeds: [balEmbed], files: [attachment] })
@@ -2518,68 +2534,46 @@ const banMessage = await message.channel.send(`*attempting to ban ${targetUser.u
     }
   }
 
-  if (command === 'inventory' || command === 'inv') {
+  if (command === 'stats') {
 
+let hasBonus = '❌ \n*(get this with agnab premium, adds a +25% bonus to a.work)*'
+if (message.member.roles.cache.some(role => role.name === 'AGNAB Premium')) {
+hasBonus = '✅'
+}
+let hasChance = '❌ \n*(get this with rigged slot machine, increases a.don chance to 60%)*'
+if (await db.get(`chance_` + message.author.id)) {
+hasChance = '✅'
+}
+let petText = 'you dont have a pet'
+let myPet = await db.get('pet_' + message.author.id)
+if (myPet && myPet !== 'null') {
+var now = new Date();
+petText = 
+`**Pet Hunger:** \`${myPet.hunger}\`
+**Pet Affection:** \`${myPet.affection}\`
+**Pet Health:** \`${myPet.health}\`
 
-  const passes = await db.get(message.author.id + '_passes');
+*next pet payout in ${60 - now.getMinutes()} minutes*
+`
+}
 
-  let passNum = 0;
+statEmbed.setDescription(`
+**AGNABUCKS:** ${await db.get(message.author.id+'.a')}
+*~------------------------------SHOP-ITEMS-----------------------------------~*
+**Children:** ${await db.get('children_' + message.author.id)} 
+*(${await db.get('children_' + message.author.id)} agnabucks every 5 minutes)*
+**TTS Passes:** ${await db.get(message.author.id + '_passes')}
+**Premium bonus:** ${hasBonus}
+**Rigged slot machine bonus:** ${hasChance}
+*~---------------------------------PET-----------------------------------------~*
+${petText}
+`)
 
-  if (passes) {
-    passNum = parseInt(passes);
-  }
-
-  const channel = client.channels.cache.get('1085289780901842996');
-  const messages = await channel.messages.fetch();
-  const speechbubbles = messages.filter((msg) => {
-    if (msg.content.includes(message.author.username)) {
-    return msg.content;
-  }
-  })
-
-
-
-  const invEmbed = new EmbedBuilder()
-  .setColor('Green')
-  .setTitle(`${message.author.username}'s inventory `)
-  .addFields({ name: 'TTS passes:', value: `${passNum}`})
-  .setFooter({ text: 'send your speechbubbles with a.inv send (index)' })
-
-  let speechToString = [];
-
-  speechbubbles.forEach((msg, i) => {
-    const words = msg.content.split(' ');
-    speechToString.push(`${i}. ${words[0]}`)
-  })
-
-  if (speechbubbles.size > 0) {
-  invEmbed.addFields({ name: 'Speechbubbles', value: `${speechToString.join('\n')}`})
-  }
-
-  if (args[0] == 'send') {
-
-  if (!isNumeric(args[1])) {
-    return message.reply('gotta be an index dude')
-  }
-
-  const theOne = speechToString[args[1] - 1]
-
-  if (!theOne) {
-    return message.reply('that does not exist')
-  } else {
-    const words2 = theOne.split(' ');
-    message.channel.send(words2[1])
-    message.channel.send(`(this speechbubble is owned by ${message.author.username})`)
-    message.delete()
-  }
-
-  } else {
-
-  message.channel.send({ embeds: [invEmbed] });
+message.reply({ embeds: [statEmbed] })
 
   }
 
-  }
+
 
   if (command === 'tts') {
 
@@ -3063,7 +3057,7 @@ async function balance(mention) {
   context.strokeText(`${mention.username}'s balance:`, canvas.width / 2.7, canvas.height / 2.4);
   context.fillText(`${mention.username}'s balance:`, canvas.width / 2.7, canvas.height / 2.4)
 
-  const curbal = simplifyInteger(parseInt(await db.get(mention.id)));
+  const curbal = simplifyInteger(parseInt(await db.get(mention.id+'.a')));
 
   context.font = applyText(canvas, `${mention.username}'s balance:`, 100)
   context.fillStyle = '#ffffff';
@@ -3360,7 +3354,7 @@ client.on('interactionCreate', async (interaction) => {
 
   const { customId } = interaction;
   if (!(customId === 'feed' || customId === 'play' || customId === 'heal' ) || !interaction.message.mentions.users.first().id) {return}
-  console.log(interaction.message.mentions.users.first().id)
+  //console.log(interaction.message.mentions.users.first().id)
   const id = interaction.user.id
   if (interaction.message.mentions.users.first().id !== id) {
   return await interaction.reply({
@@ -3370,7 +3364,7 @@ client.on('interactionCreate', async (interaction) => {
 
 }
 
-  const curbal = await db.get(id)
+  const curbal = await db.get(id+'.a')
 
   const myPet = await db.get(`pet_${id}`)
   if (!myPet || myPet === 'null') {return interaction.message.channel.send('you dont have a pet')}
@@ -3381,7 +3375,7 @@ client.on('interactionCreate', async (interaction) => {
   } else {
   await db.set(`pet_${id}.hunger`, myPet.hunger + 20) 
   }
-  await db.set(id, parseInt(curbal) - 10) 
+  await db.set(id+'.a', parseInt(curbal) - 10) 
   await interaction.reply({
   content: `you fed ${myPet.name} CONGRATS!`,
   ephemeral: true
@@ -3406,7 +3400,7 @@ client.on('interactionCreate', async (interaction) => {
   content: `you healed ${myPet.name} CONGRATS!`,
   ephemeral: true
   });
-  await db.set(id, parseInt(curbal) - 10) 
+  await db.set(id+'.a', parseInt(curbal) - 50) 
   }
 
   await saveSqlite();
@@ -3414,12 +3408,14 @@ client.on('interactionCreate', async (interaction) => {
   const attachment = await petImage(await db.get(`pet_${id}`))
   await interaction.message.edit({ files: [attachment] });
 
-} catch (e) {}
-console.log(error)
+} catch (e) {
+console.log(e)
 await interaction.reply({
   content: 'sorry some Eror occured my bad',
   ephemeral: true
 });
+}
+
 
 })
 
