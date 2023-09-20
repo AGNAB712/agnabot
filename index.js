@@ -16,7 +16,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const { readFile } = require('fs/promises');
 const { Image } = require('@napi-rs/canvas');
-const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./embeds.js')
+const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./info/embeds.js')
+const { workArray } = require('./info/agnabot_work_texts.js')
 const { google } = require('googleapis');
 const { ChatGpt } = require('chatgpt-scraper');
 const { promises } = require('fs')
@@ -44,7 +45,6 @@ const token = process.env.TOKEN;
 const currentDateTime = new Date();
 let curPlay = false;
 let msgId = [];
-const workArray = ['wow you worked so good good job YIPEE \nyou earned ', 'you worked at a nuclear power plant and died but you still got ', 'you were hired as a hitman and assasinated joe biden and earned ', 'prostitution. \n+', 'happy birthday you got ', 'you made a your mom joke in a stand-up comedy club and got ', 'you watched AGNAB VIDEO AND HE GAVE YOU ', 'palk beat you up on the side of the road but he felt bad and came back and gave you ', 'agnab decided he was too rich and gave you ', 'you went on a date with brando and he liked you so much he gave you ', 'this funky little dude with a big haircut came and gave you [Big Big MONEY!] and [Buy! Now! 70%] and you earned ', 'everyone fucking died and you took all their money and got ', 'mmmmmm adzuki mmmm mmmmm oh sorry heres your ',  'you got elected as president and your annual salary was']
 let lockdown = 'false';
 const fightTimeout = 10000;
 const playersInFight = new Set();
@@ -87,6 +87,7 @@ const cuss = ['FUCK','SHIT','BITCH']
 //maps
 const cooldowns = new Map();
 const cooldowns2 = new Map();
+const isFishing = new Map();
 const mutes = new Map();
 const defaultPet = {
   name: null,
@@ -457,14 +458,13 @@ if (lockdown === 'false') {
  //actual commands
  if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
- if (message.guild.id === '969752864585035777') {return message.channel.send('hi dont use me rn')}
 
 
  if (command === 'leaderboard' || command === 'lb') {
     const allUserData = await db.all()
 
     const filtertop = allUserData.filter(data => !isNaN(data.id))
-    await filtertop.sort((a, b) => b.value - a.value);
+    await filtertop.sort((a, b) => b.value.a - a.value.a);
 
     const topUsers = filtertop.slice(0, 10);
 
@@ -473,7 +473,7 @@ if (lockdown === 'false') {
 
   for (let i = 0; i !== 10; i++) {
   const user = await client.users.fetch(topUsers[i].id)
-  descText = descText + `${i + 1}. ${user.username} - ${topUsers[i].value} agnabucks\n`
+  descText = descText + `${i + 1}. ${user.username} - ${topUsers[i].value.a} agnabucks\n`
   }
 
   const leaderboadEmbed = new EmbedBuilder()
@@ -798,8 +798,21 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 }
 
 if (command === 'inventory' || command === 'inv') {
-await db.set(message.author.id+'.a', 100)
-console.log(await db.get(message.author.id))
+const inventory = await db.get(message.author.id+'.inv')
+console.log(inventory)
+
+}
+
+if (command === 'test') {
+const allUserData = await db.all()
+const toDelete = allUserData.filter(data => data.id.endsWith('_passes'))
+console.log(toDelete)
+toDelete.forEach(async (i) => {
+await db.set(`${i.value}`, null)
+})
+const newData = await db.all()
+const newFilterData = newData.filter(data => data.id.endsWith('_passes'))
+console.log(newFilterData)
 }
 
 if (command === 'seed') {
@@ -827,7 +840,7 @@ if (command === 'work') {
     if (cooldowns.has(playerID)) {
       const expirationTime = cooldowns.get(playerID);
       const remainingTime = (expirationTime - Date.now()) / 1000;
-      message.reply(`cooldown bro..... you got ${remainingTime.toFixed(1)} seconds left`);
+      message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
     } else {
 
     let curbal = await db.get(playerID+'.a');
@@ -846,11 +859,13 @@ if (command === 'work') {
     saveSqlite();
 
     curbal = await db.get(playerID+'.a');
+    const coolAssDescription = workArray[getRandomInt(workArray.length)].replace(/\[money\]/g, `${moneyEarned}`)
 
       const embed = new EmbedBuilder()
-        .setColor('Green')
-        .setTitle('work')
-        .setDescription(workArray[getRandomInt(workArray.length)] + moneyEarned + ' agnabucks')
+        .setColor('#235218')
+        .setTitle('>---=**WORK**=---<')
+        .setDescription(`
+        **<:AgnabotCheck:1153525610665214094> + ${moneyEarned} ||** ${coolAssDescription}`)
         .setFooter({ text: `your money is now ${curbal}` })
       
       message.reply({ embeds: [embed] });
@@ -916,13 +931,52 @@ const curbal = await db.get(message.author.id+'.a')
   }
   }
 
+  if (command === 'fish') {
 
+  if (isFishing.has(message.author.id)) {return message.reply(`youre already fishing bro`)}
+  let fishButton = new ButtonBuilder()
+      .setCustomId('fish')
+      .setLabel('aaaaaaaa this is a button')
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(true);
+
+const row = new ActionRowBuilder()
+      .addComponents(fishButton);
+
+  const randomTime = (getRandomInt(5) * 1000)
+  const response = await message.reply({ content: 'What a nice time', components: [row] })
+  isFishing.set(message.author.id, true)
+
+  const collectorFilter = i => i.user.id === response.mentions.users.first().id
+
+  await setTimeout(async () => {
+
+  fishButton.setDisabled(false);
+  await response.edit({ content: 'you can fish now', components: [row] })
+
+try {
+  const collected = await response.awaitMessageComponent({ filter: collectorFilter, time: 3000 });
+  response.delete();
+  message.channel.send('you fished CONGRATS!')
+  isFishing.delete(message.author.id)
+
+
+
+} catch (e) {
+await response.edit({ content: 'you did not fish in time', components: [] })
+isFishing.delete(message.author.id)
+}
+
+  }, randomTime + 5000)
+
+
+  }
 
       if (command === 'don' || command === 'doubleornothing') {
 
       const curbal = await db.get(message.author.id+'.a');
 
-      const chanceBought = await db.get(`chance_` + message.author.id);
+      const chanceBought = await db.get(message.author.id+'.slotMachine');
 
       let chance = 0.5;
 
@@ -984,6 +1038,7 @@ const curbal = await db.get(message.author.id+'.a')
   if (command === 'donate') {
 
   const curbal = await db.get(message.author.id+'.a');
+  console.log(curbal)
 
   const targetUser = message.mentions.users.first();
 
@@ -1001,11 +1056,11 @@ const curbal = await db.get(message.author.id+'.a')
 
 
   if (curbal > parseInt(args[1])) {
-    const otherValue = await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - parseInt(args[1])) );
-    const variableValue = await db.set(userId+'.a', parseInt(parseInt(otherGuy) + parseInt(args[1])));
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - parseInt(args[1])) );
+    await db.set(userId+'.a', parseInt(parseInt(otherGuy) + parseInt(args[1])));
 
-    message.channel.send(`their money is now ${variableValue} agnabucks`);
-    message.channel.send(`your money is now ${otherValue} agnabucks`);
+    message.channel.send(`their money is now ${await db.get(userId+'.a')} agnabucks`);
+    message.channel.send(`your money is now ${await db.get(message.author.id+'.a')} agnabucks`);
 
     await saveSqlite();
 
@@ -1028,38 +1083,47 @@ const curbal = await db.get(message.author.id+'.a')
     if (cooldowns2.has(playerID)) {
       const expirationTime = cooldowns2.get(playerID);
       const remainingTime = (expirationTime - Date.now()) / 1000;
-      return message.reply(`cooldown bro..... you got ${remainingTime.toFixed(1)} seconds left`);
+      return message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
     }
+
 
     const member = message.member;
 
     let curbal = await db.get(playerID+'.a');
 
+    let bonus = 0
+
     if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnabian royalty (level 50)').id)) {
-      message.channel.send(`congrat you get 100 agnabucks\nyou now have ${parseInt(curbal) + 100} agnabuck WOW`);
-    await db.set(playerID+'.a', parseInt(curbal) + 100);
+    bonus = 100
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'master agnabian (level 35)').id)) {
-      message.channel.send(`congrat you get 75 agnabuck\nyou now have ${parseInt(curbal) + 75} agnabuck WOW`);
-    await db.set(playerID+'.a', parseInt(curbal) + 75);
+    bonus = 75
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'true agnabian (level 25)').id)) {
-      message.channel.send(`congrat you get 50 agnabacuks\nyou now have ${parseInt(curbal) + 50} agnabuck WOW`);
-    await db.set(playerID+'.a', parseInt(curbal) + 50);
+    bonus = 50
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab master (level 15)').id)) {
-      message.channel.send(`congrate you get 30 agnabuck\nyou now have ${parseInt(curbal) + 30} agnabuck WOW`);
-    await db.set(playerID+'.a', parseInt(curbal) + 30);
+    bonus = 30
     saveSqlite();
     } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab enthusiast (level 10)').id)) {
-      message.channel.send(`congrate you get 20 agnabucks \nyou now have ${parseInt(curbal) + 20} agnabuck WOW`);
-    await db.set(playerID+'.a', parseInt(curbal) + 20);
+    bonus = 20
     saveSqlite();
     } else {
-      message.channel.send('sorry youre not a high enough level to use this yet');
+      return message.channel.send('sorry youre not a high enough level to use this yet');
     }
 
-      const cooldownDuration = 600000;
+    await db.set(playerID+'.a', parseInt(curbal) + bonus);
+
+    const embed = new EmbedBuilder()
+      .setColor('#235218')
+      .setTitle('>---=**REDEEM**=---<')
+      .setDescription(`
+      **<:AgnabotCheck:1153525610665214094> +${bonus} ||** thanks for supporting the server :     )`)
+      .setFooter({ text: `your money is now ${await db.get(playerID+'.a')}`})
+
+      message.reply({ embeds: [embed] })
+
+      const cooldownDuration = 300000;
       const expirationTime = Date.now() + cooldownDuration;
       cooldowns2.set(playerID, expirationTime);
 
@@ -1180,9 +1244,10 @@ message.delete()
 
 
     const curbal = await db.get(message.author.id+'.a');
+    const curBoughts = await db.get(message.author.id)
 
       const select = new StringSelectMenuBuilder()
-      .setCustomId('starter')
+      .setCustomId('buy')
       .setPlaceholder('Click here to choose what to buy')
       .addOptions(
         new StringSelectMenuOptionBuilder()
@@ -1214,13 +1279,9 @@ message.delete()
           .setDescription('1,000 AGNABUCKS (mention someone and they get muted for a minute)')
           .setValue('bomb'),
         new StringSelectMenuOptionBuilder()
-          .setLabel('Weed sample')
-          .setDescription('30 AGNABUCKS (high for 3 minutes, one time buy)')
-          .setValue('sample'),
-        new StringSelectMenuOptionBuilder()
           .setLabel('Rigged slot machine')
           .setDescription('5,000 AGNABUCKS (increases the chance of you winning in double or nothing to 60%)')
-          .setValue('squirtle'),
+          .setValue('rigged'),
         new StringSelectMenuOptionBuilder()
           .setLabel('TTS pass')
           .setDescription('100 AGNABUCKS (one time a.tts usage)')
@@ -1233,8 +1294,21 @@ message.delete()
           .setLabel('Child labor')
           .setDescription(`${childrenPrice} AGNABUCKS (one agnabuck every 5 minuto per level)`)
           .setValue('child'),
+        new StringSelectMenuOptionBuilder()
+          .setLabel('Wedding ring')
+          .setDescription(`10,000 AGNABUCKS (you can propose to someone Yipee)`)
+          .setValue('ring'),
       );
 
+    const selectArray = select.options
+    if (await db.get('hotel_'+message.author.id)) {selectArray.splice(1, 1)}
+    if (message.member.guild.roles.cache.find(role => role.name === "AGNAB Premium")) {selectArray.splice(4, 1)}
+    if (message.member.guild.roles.cache.find(role => role.name === "high as shit brah")) {
+    selectArray.splice(1, 1);
+    selectArray.splice(1, 1);
+    selectArray.splice(1, 1);
+    }
+    if (await db.get(message.author.id+'.slotMachine')) {selectArray.splice(2, 1)}
     const row = new ActionRowBuilder()
       .addComponents(select);
 
@@ -1340,30 +1414,10 @@ if (confirmation.values[0] === 'bomb') {
     }
     }
 
-if (confirmation.values[0] === 'packet') {
-    const exists = await db.get(`packet_` + message.author.id)
-    if (!exists) {
-    if (curbal > 30) {
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 30));
-    message.channel.send('https://cdn.discordapp.com/attachments/966879955445248050/1121562281742970951/three.mp4')
-    const reminderTime = Date.now() + 3 * 60 * 1000; 
-    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
-    await db.set(`packet_` + message.author.id , true);
-    await saveSqlite();
-    const role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
-    message.member.roles.add(role);
-      } else {
-    message.channel.send('no money Bitch')
-    }
-  } else {
-    message.channel.send('you already bought it dude')
-    }
-  }
-
 if (confirmation.values[0] === 'rigged') {
     if (curbal > 5000) {
     message.channel.send('lol you Cheat')
-    await db.set(`chance_` + message.author.id , true);
+    await db.set(message.author.id+'.slotMachine', true);
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000));
     await saveSqlite();
       } else {
@@ -1375,15 +1429,12 @@ if (confirmation.values[0] === 'tts') {
     if (curbal > 100) {
 
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100));
-    const passes = await db.get(message.author.id + '_passes');
+    const passes = await db.get(message.author.id+'.inv.ttspasses');
 
-    if (passes === undefined) {
-    await db.set(message.author.id + '_passes', 1);
-    } else {
-    await db.set(message.author.id + '_passes', passes + 1 );
-    }
+    await db.set(message.author.id+'.inv.ttspasses', passes + 1);
+    if (!passes) {await db.set(message.author.id+'.inv.ttspasses', 1);}
 
-    message.channel.send(`wow im sure this wont get annoying\nyou have ${await db.get(message.author.id + '_passes')} passes`)
+    message.channel.send(`wow this will certainly not get annoying\nyou have ${await db.get(message.author.id+'.inv.ttspasses')} tts passes`)
 
     await saveSqlite();
 
@@ -1451,6 +1502,25 @@ if (confirmation.values[0] === 'child') {
     message.channel.send(`wowie zowie thats crazy now you have ${newChildren} agnabucks per 5 minute`)
 
     await saveSqlite();
+
+      } else {
+    message.channel.send('no money Bitch')
+    }
+  }
+
+if (confirmation.values[0] === 'ring') {
+    if (curbal > 10000) {
+
+    let rings = await db.get(message.author.id+'.inv.rings')
+    console.log(!rings)
+
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 10000));
+    await db.set(message.author.id+'.inv.rings', rings + 1);
+    if (!rings) {await db.set(message.author.id+'.inv.rings', 1)}
+
+    saveSqlite();
+
+  message.channel.send('congrats Yipee')
 
       } else {
     message.channel.send('no money Bitch')
@@ -1786,32 +1856,6 @@ if (args[0] === 'fun') {
 message.reply('i just set your balance to 0 you fucking filthy criminal')
   }
 
-  if (command === 'test') {
-    const allUserData = await db.all()
-
-    const filtertop = allUserData.filter(data => !isNaN(data.id) && !isNaN(data.value.a))
-    //console.log(filtertop)
-
-    let messageSend = ''
-    await filtertop.forEach((i) => messageSend = messageSend + `\n<@${i.id}>`)
-
-    message.channel.send(messageSend)
-
-  }
-
-  if (command === 'a') {
-    const allUserData = await db.all()
-
-    const filtertop = allUserData.filter(data => !isNaN(data.id) && !isNaN(data.value))
-    console.log(filtertop)
-
-    await filtertop.forEach(async (i) => {
-    await db.set(i.id+'.a', i.value)
-    console.log(i.id)
-    })
-    saveSqlite();
-
-  }
 
   if (command === 'timer') {
     const reminderFlagIndex = args.findIndex(arg => arg.startsWith('-'));
@@ -2138,8 +2182,10 @@ says.push(message.author.id);
       return;
     }
     const categoriesMessage = categoryNames.map((category, index) => `${index + 1}. ${category}`).join('\n');
-
-    message.channel.send(`current possible category names:\n${categoriesMessage}`);
+    const filename = `${Date.now()}_text.txt`
+    fs.writeFileSync(filename, categoriesMessage);
+    await message.reply({ files: [filename] });
+    fs.unlinkSync(filename);
   }
 
   
@@ -2510,7 +2556,7 @@ const banMessage = await message.channel.send(`*attempting to ban ${targetUser.u
     }
 
     setTimeout(async () => {
-    const resource = await createAudioResource('./peak.mp3');
+    const resource = await createAudioResource('./audio/peak.mp3');
     subscription = await connection.subscribe(player);
     const dispatcher = player.play(resource);
     }, 1000);
@@ -2541,7 +2587,7 @@ if (message.member.roles.cache.some(role => role.name === 'AGNAB Premium')) {
 hasBonus = '✅'
 }
 let hasChance = '❌ \n*(get this with rigged slot machine, increases a.don chance to 60%)*'
-if (await db.get(`chance_` + message.author.id)) {
+if (await db.get(message.author.id+'.slotMachine')) {
 hasChance = '✅'
 }
 let petText = 'you dont have a pet'
@@ -2562,7 +2608,6 @@ statEmbed.setDescription(`
 *~------------------------------SHOP-ITEMS-----------------------------------~*
 **Children:** ${await db.get('children_' + message.author.id)} 
 *(${await db.get('children_' + message.author.id)} agnabucks every 5 minutes)*
-**TTS Passes:** ${await db.get(message.author.id + '_passes')}
 **Premium bonus:** ${hasBonus}
 **Rigged slot machine bonus:** ${hasChance}
 *~---------------------------------PET-----------------------------------------~*
@@ -2577,25 +2622,25 @@ message.reply({ embeds: [statEmbed] })
 
   if (command === 'tts') {
 
-  const passes = await db.get(message.author.id + '_passes');
-
+  const passes = await db.get(message.author.id+'.inv.ttspasses');
   if (!passes || passes === 0) {
   return message.reply('dont got no PASSES!')
   }
-
   const text = args.join(' ')
 
   if (text) {
-
   await message.channel.send({content: `${text}`, tts: true});
-
-  await db.set(message.author.id + '_passes', passes - 1);
-
+  await db.set(message.author.id+'.inv.ttspasses', passes - 1);
   await saveSqlite();
-
   } else {
     message.reply('cant say nothing dude')
   }
+
+  }
+
+  if (command === 'marry') {
+
+  message.reply('wip')
 
   }
     
@@ -3173,8 +3218,10 @@ async function petImage(pet) {
   emotionImage = await Canvas.loadImage('./images/emotions/happy.png');
   } else if (totalScore > 100) {
   emotionImage = await Canvas.loadImage('./images/emotions/ok.png');
-  } else {
+  } else if (totalScore !== 0) {
   emotionImage = await Canvas.loadImage('./images/emotions/sad.png');
+  } else {
+  emotionImage = await Canvas.loadImage('./images/emotions/dead.png');
   }
   const Image = await Canvas.loadImage(pet.image);
   context.drawImage(emotionImage, 400, 30 / 2.2, 138, 120);
@@ -3410,9 +3457,8 @@ client.on('interactionCreate', async (interaction) => {
 
 } catch (e) {
 console.log(e)
-await interaction.reply({
+await interaction.message.reply({
   content: 'sorry some Eror occured my bad',
-  ephemeral: true
 });
 }
 
