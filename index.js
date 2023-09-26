@@ -115,17 +115,18 @@ let seedEmbed = new EmbedBuilder()
 async function saveSqlite() {
 if (lockdown !== 'false') {return}
     const fileName = 'json.sqlite';
-      sqliteChannel.send({
-        content: replitText, 
-        files: [fileName]
-      });
+await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
+      msg.edit({
+        content: `**${replitText}** || *${Date.now()}*`, 
+        files: ['./json.sqlite']
+      })
+    )
     console.log('saved sqlite')
 }
 
 //load sqlite function
 async function loadSqlite() {
-    const messages = await client.channels.cache.get('1118953993662644256').messages.fetch({ limit: 1 }); // Fetch the last sent message
-    const lastMessage = messages.first();
+await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then(async (lastMessage) => {
     if (lastMessage.attachments.size > 0) {
       const attachment = lastMessage.attachments.first();
       const fileName = attachment.name;
@@ -135,6 +136,8 @@ async function loadSqlite() {
         console.log(`sqlite loaded`);
       }
     }
+}
+  )
 }
 
 //category names load function
@@ -294,6 +297,10 @@ client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am 
 
 sqliteChannel = await client.channels.cache.get('1118953993662644256')
 
+const newSqliteChannel = await client.channels.cache.get('1156302752218091530')
+sqliteMessage = newSqliteChannel.messages.fetch('1156302916873900032')
+
+
 //this gets google credentials without dot env
 credentialsChannel = await client.channels.cache.get('1129208531036422205')
 credentialsMessage = await credentialsChannel.messages.fetch("1137436047890976889")
@@ -346,12 +353,12 @@ client.on('messageCreate', async (message) => {
 if (message.channel.type === 1) {return}
 
 //duo blocked agnabot :           (
-//if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
-//const user = await client.users.fetch("335800596424818690").catch(() => null);
-//user.send(message.content)
-//message.reply('sent')
-//console.log(`${message.author.username} sent`, message.content)
-//}
+/*if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
+const user = await client.users.fetch("335800596424818690").catch(() => null);
+user.send(message.content)
+message.reply('sent')
+console.log(`${message.author.username} sent`, message.content)
+}*/
 
 if (await db.get('reminder_' + message.author.id)) {
 const timeWaitingFor = await db.get('reminder_' + message.author.id);
@@ -1674,6 +1681,8 @@ if (command === 'fight') {
   const repliedMessage = await message.channel.messages.fetch(message.reference.messageId)
   if (!repliedMessage.content) {return message.reply('that message does NOT have text!')}
 
+      const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+
     const canvas = Canvas.createCanvas(500, 250);
     const context = canvas.getContext('2d');
 
@@ -1726,7 +1735,7 @@ if (command === 'fight') {
   .write('./images/quote.png');
 
   const attachment = new AttachmentBuilder('./images/quote.png', { name: 'quote.png' });
-
+  loadingMessage.delete()
   message.reply({ files: [attachment] });
     } catch (err) {
       console.error('Error occurred:', err);
