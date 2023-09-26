@@ -115,17 +115,18 @@ let seedEmbed = new EmbedBuilder()
 async function saveSqlite() {
 if (lockdown !== 'false') {return}
     const fileName = 'json.sqlite';
-      sqliteChannel.send({
-        content: replitText, 
-        files: [fileName]
-      });
+await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
+      msg.edit({
+        content: `**${replitText}** || *${Date.now()}*`, 
+        files: ['./json.sqlite']
+      })
+    )
     console.log('saved sqlite')
 }
 
 //load sqlite function
 async function loadSqlite() {
-    const messages = await client.channels.cache.get('1118953993662644256').messages.fetch({ limit: 1 }); // Fetch the last sent message
-    const lastMessage = messages.first();
+await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then(async (lastMessage) => {
     if (lastMessage.attachments.size > 0) {
       const attachment = lastMessage.attachments.first();
       const fileName = attachment.name;
@@ -135,6 +136,8 @@ async function loadSqlite() {
         console.log(`sqlite loaded`);
       }
     }
+}
+  )
 }
 
 //category names load function
@@ -294,6 +297,10 @@ client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am 
 
 sqliteChannel = await client.channels.cache.get('1118953993662644256')
 
+const newSqliteChannel = await client.channels.cache.get('1156302752218091530')
+sqliteMessage = newSqliteChannel.messages.fetch('1156302916873900032')
+
+
 //this gets google credentials without dot env
 credentialsChannel = await client.channels.cache.get('1129208531036422205')
 credentialsMessage = await credentialsChannel.messages.fetch("1137436047890976889")
@@ -346,12 +353,12 @@ client.on('messageCreate', async (message) => {
 if (message.channel.type === 1) {return}
 
 //duo blocked agnabot :           (
-//if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
-//const user = await client.users.fetch("335800596424818690").catch(() => null);
-//user.send(message.content)
-//message.reply('sent')
-//console.log(`${message.author.username} sent`, message.content)
-//}
+/*if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
+const user = await client.users.fetch("335800596424818690").catch(() => null);
+user.send(message.content)
+message.reply('sent')
+console.log(`${message.author.username} sent`, message.content)
+}*/
 
 if (await db.get('reminder_' + message.author.id)) {
 const timeWaitingFor = await db.get('reminder_' + message.author.id);
@@ -524,16 +531,25 @@ const heal = new ButtonBuilder()
 
 row.addComponents(feed, play, heal);
 } else {
-  const feed = new ButtonBuilder()
+  const revive = new ButtonBuilder()
       .setCustomId('revive')
       .setLabel('Revive your pet. You monster. (1,000 AGNABUCKS)')
       .setStyle(ButtonStyle.Danger);
-}
 
+row.addComponents(revive);
+
+}
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
   const attachment = await petImage(myPet)
   if (attachment === 'image') {return message.reply('you need to set an image for the pet first (a.pet image)')}
   if (attachment === 'name') {return message.reply('you need to set an name for the pet first (a.pet name)')}
+loadingMessage.delete()
+try {
   const response = await message.reply({ files: [attachment], components: [row] })
+} catch (e) {
+  message.reply('some sorta error occured')
+  console.error(e)
+}
 
   }
 
@@ -1257,6 +1273,7 @@ message.delete()
     const hotelBought = await db.get(`hotel_${message.author.id}`) 
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
+    const avacadoBought = await db.get(`${message.author.id}.avacado`)
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
@@ -1268,6 +1285,7 @@ message.delete()
     if (me.value === 'hotel' && hotelBought) {return}
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
+    if (me.value === 'avacado' && avacadoBought) {return}
     select.addOptions(
       new StringSelectMenuOptionBuilder()
         .setLabel(me.label)
@@ -1510,10 +1528,21 @@ case 'fish':
     }
 break;
 
+case 'avacado':
+    if (curbal > 100000) {
+    message.reply({ content: '**<:AgnabotCheck:1153525610665214094> ||** congrats here is your avacado', files: [ './images/avacado.png' ] })
+    await db.set(message.author.id+'.avacado', true);
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100000));
+    await saveSqlite();
+      } else {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
+    }
+break;
+
 }
 
 } catch (e) {
-  await response.edit({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
+  await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** Confirmation not received within 1 minute, cancelling', components: [] });
 }
 
 
@@ -1652,6 +1681,8 @@ if (command === 'fight') {
   const repliedMessage = await message.channel.messages.fetch(message.reference.messageId)
   if (!repliedMessage.content) {return message.reply('that message does NOT have text!')}
 
+      const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+
     const canvas = Canvas.createCanvas(500, 250);
     const context = canvas.getContext('2d');
 
@@ -1704,7 +1735,7 @@ if (command === 'fight') {
   .write('./images/quote.png');
 
   const attachment = new AttachmentBuilder('./images/quote.png', { name: 'quote.png' });
-
+  loadingMessage.delete()
   message.reply({ files: [attachment] });
     } catch (err) {
       console.error('Error occurred:', err);
@@ -3394,7 +3425,7 @@ client.on('interactionCreate', async (interaction) => {
   try {
 
   const { customId } = interaction;
-  if (!(customId === 'feed' || customId === 'play' || customId === 'heal' ) || !interaction.message.mentions.users.first().id) {return}
+  if (!(customId === 'feed' || customId === 'play' || customId === 'heal' || customId === 'revive') || !interaction.message.mentions.users.first().id) {return}
   //console.log(interaction.message.mentions.users.first().id)
   const id = interaction.user.id
   if (interaction.message.mentions.users.first().id !== id) {
@@ -3443,7 +3474,6 @@ client.on('interactionCreate', async (interaction) => {
   });
   await db.set(id+'.a', parseInt(curbal) - 50) 
   }
-
   if (customId === 'revive') {
   await db.set(`pet_${id}.health`, 25) 
   await db.set(`pet_${id}.hunger`, 25) 
