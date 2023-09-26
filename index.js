@@ -3388,6 +3388,7 @@ async function fishingLoot(message) {
 } 
 
 client.on('interactionCreate', async (interaction) => {
+  console.log(interaction)
   if (!interaction.isButton() || lockdown !== 'false') return;
 
   try {
