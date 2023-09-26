@@ -524,16 +524,25 @@ const heal = new ButtonBuilder()
 
 row.addComponents(feed, play, heal);
 } else {
-  const feed = new ButtonBuilder()
+  const revive = new ButtonBuilder()
       .setCustomId('revive')
       .setLabel('Revive your pet. You monster. (1,000 AGNABUCKS)')
       .setStyle(ButtonStyle.Danger);
-}
 
+row.addComponents(revive);
+
+}
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
   const attachment = await petImage(myPet)
   if (attachment === 'image') {return message.reply('you need to set an image for the pet first (a.pet image)')}
   if (attachment === 'name') {return message.reply('you need to set an name for the pet first (a.pet name)')}
+loadingMessage.delete()
+try {
   const response = await message.reply({ files: [attachment], components: [row] })
+} catch (e) {
+  message.reply('some sorta error occured')
+  console.error(e)
+}
 
   }
 
@@ -1257,6 +1266,7 @@ message.delete()
     const hotelBought = await db.get(`hotel_${message.author.id}`) 
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
+    const avacadoBought = await db.get(`${message.author.id}.avacado`)
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
@@ -1268,6 +1278,7 @@ message.delete()
     if (me.value === 'hotel' && hotelBought) {return}
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
+    if (me.value === 'avacado' && avacadoBought) {return}
     select.addOptions(
       new StringSelectMenuOptionBuilder()
         .setLabel(me.label)
@@ -1510,10 +1521,21 @@ case 'fish':
     }
 break;
 
+case 'avacado':
+    if (curbal > 100000) {
+    message.reply({ content: '**<:AgnabotCheck:1153525610665214094> ||** congrats here is your avacado', files: [ './images/avacado.png' ] })
+    await db.set(message.author.id+'.avacado', true);
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100000));
+    await saveSqlite();
+      } else {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
+    }
+break;
+
 }
 
 } catch (e) {
-  await response.edit({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
+  await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** Confirmation not received within 1 minute, cancelling', components: [] });
 }
 
 
@@ -3393,7 +3415,7 @@ client.on('interactionCreate', async (interaction) => {
   try {
 
   const { customId } = interaction;
-  if (!(customId === 'feed' || customId === 'play' || customId === 'heal' ) || !interaction.message.mentions.users.first().id) {return}
+  if (!(customId === 'feed' || customId === 'play' || customId === 'heal' || customId === 'revive') || !interaction.message.mentions.users.first().id) {return}
   //console.log(interaction.message.mentions.users.first().id)
   const id = interaction.user.id
   if (interaction.message.mentions.users.first().id !== id) {
@@ -3442,7 +3464,6 @@ client.on('interactionCreate', async (interaction) => {
   });
   await db.set(id+'.a', parseInt(curbal) - 50) 
   }
-
   if (customId === 'revive') {
   await db.set(`pet_${id}.health`, 25) 
   await db.set(`pet_${id}.hunger`, 25) 
