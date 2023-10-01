@@ -1,7 +1,7 @@
   const { EmbedBuilder } = require('discord.js');
 
   const funEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(
@@ -21,7 +21,7 @@
   )
 
 const utilityEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(
@@ -36,11 +36,11 @@ const utilityEmbed = new EmbedBuilder()
   )
 
 let statEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('AGNABOT STATS')
 
 const bankEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(
@@ -55,7 +55,7 @@ const bankEmbed = new EmbedBuilder()
   )
 
 const adminEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(
@@ -69,7 +69,7 @@ const adminEmbed = new EmbedBuilder()
   )
 
 const hotelEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(
@@ -85,7 +85,7 @@ const hotelEmbed = new EmbedBuilder()
   )
 
 const petEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Command List')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .addFields(

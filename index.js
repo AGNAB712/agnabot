@@ -20,7 +20,6 @@ const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, sta
 const { buyArray } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
 const { google } = require('googleapis');
-const { ChatGpt } = require('chatgpt-scraper');
 const { promises } = require('fs')
 const { join } = require('path')
 const Jimp = require('jimp')
@@ -103,13 +102,13 @@ const defaultPet = {
 let testEmbed = new EmbedBuilder()
 .setTitle('fight results:')
 .setImage('attachment://podium.png')
-.setColor('Green')
+.setColor('#235218')
 let balEmbed = new EmbedBuilder()
 .setImage('attachment://balance.png')
-.setColor('Green')
+.setColor('#235218')
 .setTitle('Your balance')
 let seedEmbed = new EmbedBuilder()
-.setColor('Green')
+.setColor('#235218')
 
 //saving sqlite function
 async function saveSqlite() {
@@ -277,7 +276,7 @@ if (replit) {
 } else {
     console.log("no replit time");
 }
-client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
+//client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
 
   await loadSqlite();
   loadCategoryNames();
@@ -485,7 +484,7 @@ if (lockdown === 'false') {
   }
 
   const leaderboadEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Leaderboard')
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .setDescription(descText)
@@ -829,15 +828,7 @@ console.log(inventory)
 }
 
 if (command === 'test') {
-const allUserData = await db.all()
-const toDelete = allUserData.filter(data => data.id.endsWith('_passes'))
-console.log(toDelete)
-toDelete.forEach(async (i) => {
-await db.set(`${i.value}`, null)
-})
-const newData = await db.all()
-const newFilterData = newData.filter(data => data.id.endsWith('_passes'))
-console.log(newFilterData)
+
 }
 
 
@@ -917,7 +908,7 @@ const toGuess = getRandomInt(5) + 1;
 if (toGuess === parseInt(args[0])) {
 const curbal = await db.get(message.author.id+'.a')
   winEmbed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('you win!')
   .setDescription('you gained 30 ꬰ')
   .setFooter({ text: `your balance is now ${curbal + 30}`})
@@ -959,6 +950,7 @@ const curbal = await db.get(message.author.id+'.a')
 
   if (command === 'fish') {
 
+  //if ()
   if (isFishing.has(message.author.id)) {return message.reply(`youre already fishing bro`)}
   let fishButton = new ButtonBuilder()
       .setCustomId('fish')
@@ -1019,7 +1011,7 @@ isFishing.delete(message.author.id)
       }
 
       const DONembed = new EmbedBuilder()
-        .setColor('00ff2f')
+        .setColor('#235218')
         .setTitle('Double or Nothing');
 
 
@@ -1029,8 +1021,7 @@ isFishing.delete(message.author.id)
 
       if (coinFlip < chance) {
       await db.set(message.author.id+'.a', parseInt(curbal) + parseInt(args[0]));
-      await saveSqlite()
-      const newBal = await db.get(message.author.id+'.a');
+      const newBal = parseInt(curbal) + parseInt(args[0])
       DONembed
       .setDescription('You flipped a coin, and you got heads!')
       .setFooter({ text: `Your new balance is ${newBal}`});
@@ -1039,8 +1030,7 @@ isFishing.delete(message.author.id)
 
       } else if (coinFlip > chance) {
       await db.set(message.author.id+'.a', curbal - args[0]);
-      await saveSqlite()
-      const newBal = await db.get(message.author.id+'.a');
+      const newBal = parseInt(curbal) + parseInt(args[0])
       DONembed
       .setColor('Red')
       .setDescription('You flipped a coin, and you got tails')
@@ -1856,7 +1846,7 @@ if (args[0] === 'fun') {
   
   if (command === 'credits') {
   const arembed = new EmbedBuilder()
-  .setColor('Green')
+  .setColor('#235218')
   .setTitle('Credits')
   .addFields(
     { name: 'AGNAB', value: 'most commands and p much everything' },
@@ -1961,7 +1951,7 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
 
       const [definition] = data.list;
       const embed = new EmbedBuilder()
-        .setColor('Green')
+        .setColor('#235218')
         .setTitle(definition.word)
         .setURL(definition.permalink)
         .setDescription(definition.definition)
@@ -2002,7 +1992,7 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
   const attachment = await balance(targetUser) 
   const curbal = await db.get(targetUser.id+'.a')
   balEmbed.setFooter({ text: `${curbal}` })
-  balEmbed.setTitle(`${targetUser.username}'s balance:`)
+  balEmbed.setTitle(`>---=${targetUser.username}'s balance=---<`)
   message.reply({ embeds: [balEmbed], files: [attachment] })
   }
 
@@ -2025,7 +2015,7 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
   const attachment = await balance(targetUser) 
   const curbal = await db.get(targetUser.id+'.a')
   balEmbed.setFooter({ text: `${curbal}` })
-  balEmbed.setTitle(`${targetUser.username}'s balance:`)
+  balEmbed.setTitle(`>---=<  ${targetUser.username}'s balance  >=---<`)
   message.reply({ embeds: [balEmbed], files: [attachment] })
   }
 
@@ -2182,7 +2172,7 @@ says.push(message.author.id);
 
 
         const revealEmbed = new EmbedBuilder()
-      .setColor('#FFFF00')
+      .setColor('#235218')
       .setTitle(`${userName.username}`)
       .setDescription(`${userName.username} sent "${repliedMessageFull.content}"`)
       .setImage(userName.displayAvatarURL({ format: 'png', dynamic: true }));
@@ -2348,7 +2338,7 @@ if (command === 'deletecategory') {
     const fromUnit = args[1].toLowerCase();
     const toUnit = args[2].toLowerCase();
 
-    const embed = new EmbedBuilder().setColor('Green')
+    const embed = new EmbedBuilder().setColor('#235218')
 
     if (isNaN(value)) {
       return message.channel.send('thats not a cool value WTF');
@@ -2487,7 +2477,7 @@ if (command === 'deletecategory') {
     }
 
     const embed = new EmbedBuilder()
-      .setColor('Green')
+      .setColor('#235218')
       .setTitle('Calculator')
       .addFields(
       { name: 'Expression', value: `${expression}` }, 
@@ -2738,7 +2728,7 @@ function updateCategoryName() {
   const channel = client.channels.cache.get('1092554907883683961');
 
   const randomName = categoryNames[getRandomInt(categoryNames.length)];
-  client.channels.cache.get('1108491109258244156').send(randomName);
+  //client.channels.cache.get('1108491109258244156').send(randomName);
   
   channel.setName(randomName)
     .then(updatedChannel => console.log(`Updated category name to ${randomName}`))
@@ -2821,7 +2811,7 @@ async function findRandomMessage(message) {
       let embed = new Discord.EmbedBuilder()
         .setTitle(randomMessage.content)
         .setFooter({ text: `- ${formattedDate}`})
-        .setColor('00ff2f')
+        .setColor('#235218')
         .setAuthor({ name: randomMessage.author.username, iconURL: randomMessage.author.displayAvatarURL()})
         .setDescription(`[jump](${jumpLink})`);
 
@@ -2872,7 +2862,7 @@ async function startFight(player1, player2, channel) {
     }
 
   const fightEmbed = new EmbedBuilder()
-    .setColor('Green')
+    .setColor('#235218')
     .setTitle(`Fight between ${player1.username} and ${player2.username}`)
     .setDescription(`${player1} Attacked: ${player1Move[0]}, and defended: ${player1Move[1]} \n ${player2} Attacked: ${player2Move[0]}, and defended: ${player2Move[1]}`)
 
@@ -3126,6 +3116,9 @@ async function balance(mention) {
   context.strokeText(`${curbal} agnabucks`, canvas.width / 2.7, canvas.height / 1.3);
   context.fillText(`${curbal} agnabucks`, canvas.width / 2.7, canvas.height / 1.3)
 
+
+  context.strokeRect(25, 25, 200, 200);
+
   const { body } = await request(mention.displayAvatarURL({ extension: 'png' }));
   const avatar = await Canvas.loadImage(await body.arrayBuffer());
   context.drawImage(avatar, 25, 25, 200, 200);
@@ -3182,7 +3175,7 @@ async function petImage(pet) {
   context.fillText(`Hunger (${pet.hunger}%)`, 35, 175)
 
   //hunger bar fill
-  context.fillStyle = 'green';
+  context.fillStyle = '#235218';
   context.lineWidth = 10;
   context.fillRect(35, 190, (pet.hunger / 100) * 150, 20);
 
@@ -3200,7 +3193,7 @@ async function petImage(pet) {
   context.fillText(`Affection (${pet.affection}%)`, 35, 240)
 
   //affection bar fill
-  context.fillStyle = 'green';
+  context.fillStyle = '#235218';
   context.lineWidth = 10;
   context.fillRect(35, 255, (pet.affection / 100) * 150, 20);
 
@@ -3218,7 +3211,7 @@ async function petImage(pet) {
   context.fillText(`Health (${pet.health}%)`, 35, 305)
 
   //health bar fill
-  context.fillStyle = 'green';
+  context.fillStyle = '#235218';
   context.lineWidth = 10;
   context.fillRect(35, 315, (pet.health / 100) * 150, 20);
 
@@ -3228,23 +3221,8 @@ async function petImage(pet) {
   context.strokeRect(35, 315, 150, 20);
 
   //pet emotion
-  const totalScore = pet.health + pet.affection + pet.hunger
-  let emotionImage = await Canvas.loadImage(pet.image);
-  if (totalScore > 200) {
-  emotionImage = await Canvas.loadImage('./images/emotions/happy.png');
-  } else if (totalScore > 100) {
-  emotionImage = await Canvas.loadImage('./images/emotions/ok.png');
-  } else if (totalScore !== 0) {
-  emotionImage = await Canvas.loadImage('./images/emotions/sad.png');
-  } else {
-  if (getRandomInt(99) >= 15) {
-  emotionImage = await Canvas.loadImage('./images/emotions/dead.png');
-  } else {
-  emotionImage = await Canvas.loadImage('./images/emotions/dead2.png');
-  }
-  }
   const Image = await Canvas.loadImage(pet.image);
-  context.drawImage(emotionImage, 400, 30 / 2.2, 138, 120);
+  context.drawImage(await calculateEmotions(pet), 400, 30 / 2.2, 138, 120);
 
   //outline
   context.strokeStyle = 'white';
@@ -3418,8 +3396,41 @@ async function fishingLoot(message) {
 
 } 
 
+async function calculateEmotions(pet) {
+
+  const totalScore = pet.health + pet.affection + pet.hunger
+  let emotionImage = await Canvas.loadImage(pet.image);
+
+  if (pet.hunger <= 20 && pet.affection <= 20 && pet.health <= 20) {return await Canvas.loadImage('./images/emotions/suffering.png')}
+  if (pet.hunger <= 20) {return await Canvas.loadImage('./images/emotions/famished.png')}
+  if (pet.affection <= 20) {return await Canvas.loadImage('./images/emotions/neglected.png')}
+  if (pet.health <= 20) {return await Canvas.loadImage('./images/emotions/wounded.png')}
+
+  if (totalScore > 279) {
+  if (getRandomInt(99) >= 15) {
+  return await Canvas.loadImage('./images/emotions/amazing.png');
+  } else {
+  return await Canvas.loadImage('./images/emotions/amazing2.png');
+  }
+  }
+
+  if (totalScore > 200) {return await Canvas.loadImage('./images/emotions/happy.png');}
+  if (totalScore > 100) {return await Canvas.loadImage('./images/emotions/ok.png');}
+  if (totalScore < 100) {return await Canvas.loadImage('./images/emotions/sad.png');}
+
+  //if dead
+  if (getRandomInt(99) >= 15) {
+  return await Canvas.loadImage('./images/emotions/dead.png');
+  } else {
+  return await Canvas.loadImage('./images/emotions/dead2.png');
+  }
+
+  return Canvas.loadImage(pet.image)
+
+}
+
 client.on('interactionCreate', async (interaction) => {
-  console.log(interaction)
+  //console.log(interaction)
   if (!interaction.isButton() || lockdown !== 'false') return;
 
   try {
@@ -3474,6 +3485,7 @@ client.on('interactionCreate', async (interaction) => {
   });
   await db.set(id+'.a', parseInt(curbal) - 50) 
   }
+
   if (customId === 'revive') {
   await db.set(`pet_${id}.health`, 25) 
   await db.set(`pet_${id}.hunger`, 25) 
@@ -3515,6 +3527,8 @@ trello.addCard(newMessage.content, `suggested by ${newMessage.author.username}`,
   });
   }
 });
+
+
 
 process.on('SIGINT', () => {
   // Call the async shutdown function and handle any errors
