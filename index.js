@@ -22,6 +22,7 @@ const { workArray } = require('./info/agnabot_work_texts.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
+const os = require('os');
 const Jimp = require('jimp')
 const Trello = require('trello');
 
@@ -66,12 +67,12 @@ let player2Health = 0
 let sbLoop = 0;
 let replit = true;
 let replitText = 'error';
-if (process.env.REPLIT_DB_URL) {
+if (!(os.hostname() === 'agnabs-computer')) {
 replit = true;
-replitText = 'replit sent this'
+replitText = 'strats sent this'
 } else {
 replit = false
-replitText = 'local sent this'
+replitText = 'agnab sent this'
 }
 const trello = new Trello(process.env.TRELLOKEY, process.env.TRELLOTOKEN);
 
@@ -270,11 +271,15 @@ const lastMessage = await client.channels.cache.get(channelId).messages.lastMess
 //ready stuff
 client.on('ready', async () => {
 
+console.log(os.hostname(), os.platform(), os.arch())
+
+
+
 console.log(`logged in as ${client.user.tag}`);
 if (replit) {
-    console.log("replit time");
+    console.log("hi strats");
 } else {
-    console.log("no replit time");
+    console.log("hi agnab");
 }
 //client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
 
@@ -294,10 +299,7 @@ if (replit) {
   }
   }, 60000);
 
-sqliteChannel = await client.channels.cache.get('1118953993662644256')
-
 const newSqliteChannel = await client.channels.cache.get('1156302752218091530')
-sqliteMessage = newSqliteChannel.messages.fetch('1156302916873900032')
 
 
 //this gets google credentials without dot env
@@ -493,9 +495,18 @@ if (lockdown === 'false') {
 
  }
 
-   if (command === 'ping') {
-    const pingMessage = `API Latency: ${client.ws.ping}ms\nClient Latency: ${Date.now() - message.createdTimestamp}ms`
-    message.reply(`${pingMessage}`)
+  if (command === 'ping') {
+  const pingMessage = `API Latency: ${client.ws.ping}ms\nClient Latency: ${Date.now() - message.createdTimestamp}ms`
+  message.reply(`${pingMessage}`)
+  }
+
+  if (command === 'instance') {
+  await message.reply(`${os.hostname()}`)
+  }
+
+  if (command === 'crash' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+  await message.reply('cya')
+  process.exit(0);
   }
 
   if (command === 'pet') {
@@ -824,10 +835,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 if (command === 'inventory' || command === 'inv') {
 const inventory = await db.get(message.author.id+'.inv')
 console.log(inventory)
-
-}
-
-if (command === 'test') {
 
 }
 
@@ -1852,6 +1859,7 @@ if (args[0] === 'fun') {
     { name: 'AGNAB', value: 'most commands and p much everything' },
     { name: 'pirate_zip', value: '24/7 server and replit (things agnab is too dumb to figure out)' },
     { name: 'aether & granderutai', value: 'agnabot documentation' },
+    { name: 'strats', value: 'hosting a bot on his old laptop' },
   )
   .setFooter({ text: 'want to be added here? contact me!' });
   message.channel.send({ embeds: [arembed] });
@@ -3527,7 +3535,6 @@ trello.addCard(newMessage.content, `suggested by ${newMessage.author.username}`,
   });
   }
 });
-
 
 
 process.on('SIGINT', () => {
