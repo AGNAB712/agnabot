@@ -19,12 +19,15 @@ const { Image } = require('@napi-rs/canvas');
 const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./info/embeds.js')
 const { buyArray } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
+const { level0, level5 } = require('./info/fishingMap.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
 const os = require('os');
 const Jimp = require('jimp')
 const Trello = require('trello');
+const mineflayer = require('mineflayer');
+const mcs = require('node-mcstatus');
 
 //client intents and partials
 const client = new Discord.Client({ intents: [
@@ -39,7 +42,13 @@ const client = new Discord.Client({ intents: [
   ],
   partials: [Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction],
   })
-  
+
+const botArgs = {
+  host: 'built-grocery.gl.joinmc.link',
+  port: 25565, 
+  username: 'AGNABOT',
+}
+
 //consts and global variables
 const prefix = `a.`;
 const token = process.env.TOKEN;
@@ -75,7 +84,6 @@ replit = false
 replitText = 'agnab sent this'
 }
 const trello = new Trello(process.env.TRELLOKEY, process.env.TRELLOTOKEN);
-
 
 //arrays
 const says = [];
@@ -268,11 +276,30 @@ const lastMessage = await client.channels.cache.get(channelId).messages.lastMess
     await channel.send(JSON.stringify(users));
 }
 
+async function checkMinecraftServer() {
+  console.log('checking if minecraft server is online...')
+  if (await isMinecraftOnline()) {
+  console.log('is online!')
+  try {
+  const testIfOnline = bot.health
+} catch (e) {
+  console.log('is online but bot is not online')
+  await createMinecraftBot()
+}
+} else {
+  console.log('isnt online')
+}
+}
+
 //ready stuff
 client.on('ready', async () => {
 
 console.log(os.hostname(), os.platform(), os.arch())
+minecraftchat = await client.channels.cache.get('1159549882848252015')
 
+if (await isMinecraftOnline()) {
+  createMinecraftBot();
+}
 
 
 console.log(`logged in as ${client.user.tag}`);
@@ -291,6 +318,7 @@ if (replit) {
   setInterval(updateCategoryName, 600000); 
   setInterval(doChildLabor, 300000);
   setInterval(updatePets, 300000);
+  setInterval(checkMinecraftServer, 300000)
   setInterval(function() {
   var now = new Date();
   var minutes = now.getMinutes();
@@ -313,38 +341,6 @@ auth = new google.auth.GoogleAuth({
 });
 drive = google.drive({ version: 'v3', auth: auth });
 
-
-//this is for youtube things
-  try {
-    const channelData = await youtube.channels.list({
-      part: 'contentDetails',
-      id: youtubeChannelId
-    });
-    const uploadsPlaylistId = channelData.data.items[0].contentDetails.relatedPlaylists.uploads;
-    setInterval(async () => {
-      const playlistItems = await youtube.playlistItems.list({
-        part: 'snippet',
-        playlistId: uploadsPlaylistId,
-        maxResults: 1
-      });
-      const videoId = playlistItems.data.items[0].snippet.resourceId.videoId;
-      const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-      if (videoId !== lastVideoId) {
-        lastVideoId = videoId;
-        const channel = await client.channels.fetch(channelId);
-        if (channel && channel instanceof Discord.TextChannel) {
-        if (noFirst === 'true') {
-        noFirst = 'false';
-        }
-        else {
-          channel.send(`<@&969759643880554496> wow new video check it out.............\n${videoUrl}`);
-        }
-        }
-      }
-    }, 60000); // Check every 1 minute
-  } catch (error) {
-    console.error('Error:', error);
-  }
  
 });
 
@@ -352,6 +348,23 @@ drive = google.drive({ version: 'v3', auth: auth });
 client.on('messageCreate', async (message) => {
 
 if (message.channel.type === 1) {return}
+
+if (message.channel.id === minecraftchat.id && !message.author.bot) {
+  if (await isMinecraftOnline()) {
+  if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
+  try {
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)
+} catch (e) {
+  //this means that the server is online, but agnabot isn't on the server
+  const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
+  await createMinecraftBot()
+  waitMessage.delete()
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)
+}
+} else {
+  message.reply('server off Broski')
+}
+}
 
 //duo blocked agnabot :           (
 /*if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
@@ -467,7 +480,42 @@ if (lockdown === 'false') {
  //actual commands
  if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
+  if (command === 'login') {
+    checkMinecraftServer()
+  }
 
+  if (command === 'minecraft') {
+    if (isMinecraftOnline()) {
+  try {
+    const playersOnline = Object.keys(bot.players)
+    let playerText = `${playersOnline.length - 1} players:`
+    playersOnline.forEach((name, i) => {
+    if (name == 'AGNABOT') return
+    playerText = `${playerText}\n${i}. ${name}`
+  })
+    playerText += '\n'
+
+    const serverEmbed = new EmbedBuilder()
+  .setColor('#235218')
+  .setTitle('>=- Minecraft server -=<')
+  .setDescription(`
+    ===--- Online Players ---===
+    ${playerText}===---                ---===
+    `)
+    message.channel.send({ embeds: [serverEmbed] });
+  } catch (e) {
+
+  //this means that the server is online, but agnabot isn't on the server
+  const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
+  await createMinecraftBot()
+  waitMessage.delete()
+
+
+  }
+  } else {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** server offline')
+  }
+  }
 
  if (command === 'leaderboard' || command === 'lb') {
     const allUserData = await db.all()
@@ -953,6 +1001,10 @@ const curbal = await db.get(message.author.id+'.a')
   } else {
     message.channel.send('gotta mention someone dude')
   }
+  }
+
+  if (command === 'test') {
+
   }
 
   if (command === 'fish') {
@@ -2669,6 +2721,40 @@ message.reply({ embeds: [statEmbed] })
     }
 });
 
+async function isMinecraftOnline() {
+let testServer = false
+await mcs.statusJava('built-grocery.gl.joinmc.link')    
+.then((result) => {
+testServer = result.online
+    })
+    .catch((error) => {
+testServer = false
+console.error(error)
+    })
+return testServer
+}
+
+async function createMinecraftBot() {
+bot = mineflayer.createBot(botArgs);
+
+bot.on('login', () => {
+  console.log('minecraft bot is ready');
+  minecraftOnline = true;
+  minecraftchat.send('BOT JOINED SERVER')
+});
+
+bot.on('end', () => {
+  bot = null
+  minecraftchat.send('BOT LEFT SERVER')
+});
+
+bot.on('chat', (username, message) => {
+  if (username === bot.username) return
+  minecraftchat.send(`**${username}** || ${message}`)
+})
+
+}
+
 // Helper function to parse the duration arguments
 function parseDuration(args) {
   if (args.length === 3) {
@@ -3400,7 +3486,16 @@ function extractDataInsideQuotationMarks(inputString) {
   return resultText;
 }
 
+function percentify(array) {
+const sum = array.reduce((acc, number) => acc + number, 0);
+const percentages = array.map(number => (number / sum) * 100);
+}
+
 async function fishingLoot(message) {
+const me = await db.get(message.author.id)
+
+if (me.fish.level < 5) {} else if (me.fish.level) {}
+
 
 } 
 
