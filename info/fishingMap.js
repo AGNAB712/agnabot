@@ -1,15 +1,11 @@
 //key is [chance, value, exp gained]
 
-const level0 = {
-trash = [70, 5, 1]
-common = [20, 50, 5]
-rare = [9, 250, 50]
-legendary = [1, 1000, 100]
-}
 
-const level5 = {
-trash = [70, 5, 1]
-common = [20, 50, 5]
-rare = [9, 250, 50]
-legendary = [1, 1000, 100]
+
+const level0 = [30, 10, 4, 1, 0]
+
+const level5 = [30, 12, 6, 2, 1]
+
+module.exports = {
+level0, level5,
 }
