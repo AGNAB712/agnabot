@@ -295,7 +295,7 @@ async function checkMinecraftServer() {
 client.on('ready', async () => {
 
 console.log(os.hostname(), os.platform(), os.arch())
-minecraftchat = await client.channels.cache.get('1159549882848252015')
+minecraftchat = await client.channels.cache.get('1159952276882997309')
 
 if (await isMinecraftOnline()) {
   await createMinecraftBot();
