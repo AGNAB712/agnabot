@@ -298,7 +298,7 @@ console.log(os.hostname(), os.platform(), os.arch())
 minecraftchat = await client.channels.cache.get('1159549882848252015')
 
 if (await isMinecraftOnline()) {
-  createMinecraftBot();
+  await createMinecraftBot();
 }
 
 
@@ -484,8 +484,16 @@ if (lockdown === 'false') {
     checkMinecraftServer()
   }
 
+  if (command === 'status') {
+    if (await isMinecraftOnline()) {
+      message.reply('online')
+    } else {
+      message.reply('offline')
+    }
+  }
+
   if (command === 'minecraft') {
-    if (isMinecraftOnline()) {
+    if (await isMinecraftOnline()) {
   try {
     const playersOnline = Object.keys(bot.players)
     let playerText = `${playersOnline.length - 1} players:`
@@ -2725,6 +2733,7 @@ async function isMinecraftOnline() {
 let testServer = false
 await mcs.statusJava('bay-logan.gl.joinmc.link')    
 .then((result) => {
+console.log(result.online)
 testServer = result.online
     })
     .catch((error) => {
@@ -2735,11 +2744,12 @@ return testServer
 }
 
 async function createMinecraftBot() {
-bot = mineflayer.createBot(botArgs);
+console.log('checkpoint 1')
+bot = await mineflayer.createBot(botArgs);
+console.log('checkpoint 2')
 
 bot.on('login', () => {
   console.log('minecraft bot is ready');
-  minecraftOnline = true;
   minecraftchat.send('BOT JOINED SERVER')
 });
 
