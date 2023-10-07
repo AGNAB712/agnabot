@@ -44,7 +44,7 @@ const client = new Discord.Client({ intents: [
   })
 
 const botArgs = {
-  host: 'built-grocery.gl.joinmc.link',
+  host: 'bay-logan.gl.joinmc.link',
   port: 25565, 
   username: 'AGNABOT',
 }
@@ -2723,7 +2723,7 @@ message.reply({ embeds: [statEmbed] })
 
 async function isMinecraftOnline() {
 let testServer = false
-await mcs.statusJava('built-grocery.gl.joinmc.link')    
+await mcs.statusJava('bay-logan.gl.joinmc.link')    
 .then((result) => {
 testServer = result.online
     })
