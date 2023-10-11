@@ -44,7 +44,7 @@ const client = new Discord.Client({ intents: [
   })
 
 const botArgs = {
-  host: 'bay-logan.gl.joinmc.link',
+  host: 'localhost',
   port: 25565, 
   username: 'AGNABOT',
 }
@@ -97,6 +97,7 @@ const cuss = ['FUCK','SHIT','BITCH']
 const cooldowns = new Map();
 const cooldowns2 = new Map();
 const isFishing = new Map();
+const verifyMap = new Map();
 const mutes = new Map();
 const defaultPet = {
   name: null,
@@ -280,9 +281,7 @@ async function checkMinecraftServer() {
   console.log('checking if minecraft server is online...')
   if (await isMinecraftOnline()) {
   console.log('is online!')
-  try {
-  const testIfOnline = bot.health
-} catch (e) {
+  if (!bot.health) {
   console.log('is online but bot is not online')
   await createMinecraftBot()
 }
@@ -352,6 +351,7 @@ if (message.channel.type === 1) {return}
 if (message.channel.id === minecraftchat.id && !message.author.bot) {
   if (await isMinecraftOnline()) {
   if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
+  if (message.content.includes('\n')) {return message.reply('cant have a message with a linebreak')}
   try {
   bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)
 } catch (e) {
@@ -480,6 +480,10 @@ if (lockdown === 'false') {
  //actual commands
  if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
+  if (command === 'mcsudo' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    bot.chat(args.join(' '))
+  }
+
   if (command === 'login') {
     checkMinecraftServer()
   }
@@ -490,6 +494,69 @@ if (lockdown === 'false') {
     } else {
       message.reply('offline')
     }
+  }
+
+  if (command === 'verify') {
+
+    const playersOnline = Object.keys(bot.players)
+
+
+    let select = new StringSelectMenuBuilder()
+      .setCustomId('verify')
+      .setPlaceholder('Choose your username')
+      .addOptions(    
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`Cancel`)
+      .setValue(`cancel`)
+    )
+
+    playersOnline.forEach((name, i) => {
+    select.addOptions(    
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`${name}`)
+      .setValue(`${name}`)
+    )
+    })
+
+    const row = new ActionRowBuilder()
+      .addComponents(select);
+
+    const myMessage = await message.reply({
+      content: 'a reminder, you have to be on the server to use this command',
+      components: [row],
+    });
+
+    const collectorFilter = i => i.user.id === message.author.id;
+
+try {
+  const confirmation = await myMessage.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  console.log(confirmation.values[0])
+  if (confirmation.values[0] === 'cancel') {return await confirmation.update({ content: '**<:AgnabotX:1153460434691698719> ||** oook bai :3', components: [] })}
+  await confirmation.update({ content: `**<:AgnabotCheck:1153525610665214094> ||** chose username: ${confirmation.values[0]}
+  a message will now be whispered to your player in game, please send the code given in chat
+  if this was a mistake, just send "cancel"`, components: [] });
+  
+  const code = Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)
+  console.log(code)
+
+  bot.chat(`/w ${confirmation.values[0]} your code is: ${code}`)
+
+  const msg_filter = (m) => m.author.id === message.author.id;
+  const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
+  
+  if (collected.first().content == code) {
+  myMessage.edit('`**<:AgnabotCheck:1153525610665214094> ||** congrats your minecraft account is now linked')
+  await db.set(message.author.id+'.mc', confirmation.values[0])
+  saveSqlite();
+  } else {
+  return myMessage.edit('**<:AgnabotX:1153460434691698719> ||** wrong code')
+  }
+
+} catch (e) {
+  console.log(e)
+  await myMessage.edit({ content: '**<:AgnabotX:1153460434691698719> ||** confirmation not received within 1 minute, cancelling', components: [] });
+}
+
   }
 
   if (command === 'minecraft') {
@@ -1013,6 +1080,21 @@ const curbal = await db.get(message.author.id+'.a')
 
   if (command === 'test') {
 
+  if (await isMinecraftOnline()) {
+  if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
+  try {
+  bot.chat(`Hello guys this is a test`)
+} catch (e) {
+  //this means that the server is online, but agnabot isn't on the server
+  const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
+  await createMinecraftBot()
+  waitMessage.delete()
+  bot.chat(`Hello guys this is a test`)
+}
+} else {
+  message.reply('server off Broski')
+}
+
   }
 
   if (command === 'fish') {
@@ -1343,6 +1425,7 @@ message.delete()
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
     if (me.value === 'avacado' && avacadoBought) {return}
+    if (me.value === 'name' && !message.member.guild.roles.cache.find(role => role.name === "minecraft participant")) {return}
     select.addOptions(
       new StringSelectMenuOptionBuilder()
         .setLabel(me.label)
@@ -1594,6 +1677,31 @@ case 'avacado':
       } else {
     message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
     }
+break;
+
+case 'name':
+if (curbal > 50000) {
+const mcUsername = await db.get(message.author.id+'.mc')
+if (!await isMinecraftOnline()) return message.reply('**<:AgnabotX:1153460434691698719> ||** server offline, sorry')
+if (!mcUsername) return message.reply('**<:AgnabotX:1153460434691698719> ||** link your account first with a.verify')
+const playersOnline = Object.keys(bot.players)
+if (!playersOnline.includes(mcUsername)) return message.reply('**<:AgnabotX:1153460434691698719> ||** get on the server first')
+message.reply('**<:AgnabotCheck:1153525610665214094> ||** cool, now say the hex code')
+const msg_filter = (m) => m.author.id === message.author.id;
+const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
+  
+if (isvalidhexcode(collected.first().content)) {
+message.reply('**<:AgnabotCheck:1153525610665214094> ||** CONGRATS it worked')
+bot.chat(`wow ${mcUsername} just set their color to something else CONGRATS`)
+bot.chat(`/chatformathex ${mcUsername} ${collected.first().content}`)
+await saveSqlite();
+} else {
+  return message.reply('**<:AgnabotX:1153460434691698719> ||** not a valid hex code')
+}
+
+} else {
+message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
+}
 break;
 
 }
@@ -3641,6 +3749,10 @@ trello.addCard(newMessage.content, `suggested by ${newMessage.author.username}`,
   }
 });
 
+function isvalidhexcode(input) {
+  const hexRegex = /^[0-9a-fA-F]+$/;
+  return hexRegex.test(input);
+}
 
 process.on('SIGINT', () => {
   // Call the async shutdown function and handle any errors
