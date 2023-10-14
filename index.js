@@ -27,6 +27,7 @@ const os = require('os');
 const Jimp = require('jimp')
 const Trello = require('trello');
 const mineflayer = require('mineflayer');
+const deathEvent = require("mineflayer-death-event")
 const mcs = require('node-mcstatus');
 
 //client intents and partials
@@ -91,6 +92,7 @@ let categoryNames = ["hi","what the freak","poopoo","hallo","chattery","shake my
 let users = [];
 let queue = [];
 let conversation = [];
+let minecraftPlayersCooldown = []
 const cuss = ['FUCK','SHIT','BITCH']
 
 //maps
@@ -352,14 +354,28 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   if (await isMinecraftOnline()) {
   if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
   if (message.content.includes('\n')) {return message.reply('cant have a message with a linebreak')}
+  let attachmentEmoji = ''
+  if (message.attachments.size > 0) {
+  attachmentEmoji = '🖼'
+  }
   try {
-  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)
+  if (message.reference) {
+  const repliedMessage = await message.channel.messages.fetch(message.reference.messageId)
+  if (repliedMessage.author.id == '1107764918293372989') {
+  const minecraftAuthor = getTextUntilDelimiter(repliedMessage.content, '||').replace(/\*/g, '').trim()
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${minecraftAuthor}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+  } else {
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+}
+  } else {
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+  }
 } catch (e) {
   //this means that the server is online, but agnabot isn't on the server
-  const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
+  /*const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
   await createMinecraftBot()
   waitMessage.delete()
-  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)
+  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)*/
 }
 } else {
   message.reply('server off Broski')
@@ -401,7 +417,16 @@ await db.set(message.author.id + '_time', -5);
   }
 
 
-if (lockdown === 'false') {
+if (lockdown === 'true') {
+if (message.content === 'a.unlock' || message.content === 'a.unlockdown' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+lockdown = 'false'
+message.reply('im free yipee')
+}
+if (message.content === 'a.lockstatus') {
+message.reply('locked')
+}
+return
+}
 
 
 //dumb shit
@@ -453,13 +478,6 @@ if (lockdown === 'false') {
     }
 
     }
-  
-    if (message.content.includes('a.lockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-    if (!replit) {return}
-    message.channel.send("y'all are dumb");
-    await saveSqlite();
-    lockdown = 'true';
-    }
     
     if (message.content.toLowerCase().includes('agnab') && message.content.toLowerCase().includes('bad')) {
     message.author.send(`say that one more time again and you'll be sorry.`).catch(error => console.log('cant send messages to that user'));
@@ -494,6 +512,17 @@ if (lockdown === 'false') {
     } else {
       message.reply('offline')
     }
+  }
+
+  if (command === 'lock' || command === 'lockdown' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+    //if (!replit) {return}
+    message.reply("y'all are dumb");
+    lockdown = 'true';
+    saveSqlite();
+  }
+
+  if (command === 'lockstatus') {
+    message.reply('open')
   }
 
   if (command === 'verify') {
@@ -559,7 +588,7 @@ try {
 
   }
 
-  if (command === 'minecraft') {
+  if (command === 'minecraft' || command === 'mc') {
     if (await isMinecraftOnline()) {
   try {
     const playersOnline = Object.keys(bot.players)
@@ -713,7 +742,7 @@ try {
     return message.reply('you need a valid image')
   }
   await db.set(('pet_' + message.author.id) + '.image', saveUrl)
-  await saveSqlite();
+  saveSqlite();
   message.reply('ok i did it :    )')
   }
 
@@ -723,7 +752,7 @@ try {
   if (!newName) {return message.reply('come on give me a name')}
   if (newName.length >= 15) {return message.reply('shorter name please :       )')}
   await db.set(('pet_' + message.author.id) + '.name', newName)
-  await saveSqlite();
+  saveSqlite();
   message.reply(`your pets new name is ${newName}`)
   }
 
@@ -1079,21 +1108,6 @@ const curbal = await db.get(message.author.id+'.a')
   }
 
   if (command === 'test') {
-
-  if (await isMinecraftOnline()) {
-  if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
-  try {
-  bot.chat(`Hello guys this is a test`)
-} catch (e) {
-  //this means that the server is online, but agnabot isn't on the server
-  const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
-  await createMinecraftBot()
-  waitMessage.delete()
-  bot.chat(`Hello guys this is a test`)
-}
-} else {
-  message.reply('server off Broski')
-}
 
   }
 
@@ -2773,7 +2787,7 @@ if (await db.get(message.author.id+'.slotMachine')) {
 hasChance = '✅'
 }
 let petText = 'you dont have a pet'
-let myPet = await db.get('pet_' + message.author.id)
+const myPet = await db.get('pet_' + message.author.id)
 if (myPet && myPet !== 'null') {
 var now = new Date();
 petText = 
@@ -2783,6 +2797,20 @@ petText =
 
 *next pet payout in ${60 - now.getMinutes()} minutes*
 `
+}
+let minecraftText = 'Linked account: ❌ \n(use a.verify to link your minecraft account)'
+const minecraftUser = await db.get(message.author.id+'.mc')
+if (minecraftUser) {
+minecraftText = 
+`
+Linked account: ✅
+Minecraft username: ${minecraftUser}
+Player head:
+`
+const mcUserId = await fetch(`https://api.mojang.com/users/profiles/minecraft/${minecraftUser}`)
+.then(data => data.json())
+.then(player => player.id)
+statEmbed.setImage(`https://minotar.net/helm/${mcUserId}.png`)
 }
 
 statEmbed.setDescription(`
@@ -2794,6 +2822,9 @@ statEmbed.setDescription(`
 **Rigged slot machine bonus:** ${hasChance}
 *~---------------------------------PET-----------------------------------------~*
 ${petText}
+*~----------------------------MINECRAFT-----------------------------------~*
+${minecraftText}
+
 `)
 
 message.reply({ embeds: [statEmbed] })
@@ -2825,17 +2856,17 @@ message.reply({ embeds: [statEmbed] })
   message.reply('wip')
 
   }
-    
 
-    
-    } else {
-    
-    if (message.content.includes('a.unlockdown') && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-    message.channel.send('im free yipee');
-    lockdown = 'false';
-    }
-    }
 });
+
+function getTextUntilDelimiter(text, delimiter) {
+  let index = text.indexOf(delimiter);
+  if (index !== -1) {
+    return text.substring(0, index);
+  } else {
+    return text;
+  }
+}
 
 async function isMinecraftOnline() {
 let testServer = false
@@ -2858,18 +2889,55 @@ console.log('checkpoint 2')
 
 bot.on('login', () => {
   console.log('minecraft bot is ready');
-  minecraftchat.send('BOT JOINED SERVER')
+  const playersOnline = Object.keys(bot.players)
+  playersOnline.forEach((name) => {
+  minecraftPlayersCooldown.push(name)
+  })
+
+  setTimeout(() => {
+  minecraftPlayersCooldown = []
+}, 5000)  
 });
+
+bot.loadPlugin(deathEvent)
 
 bot.on('end', () => {
   bot = null
-  minecraftchat.send('BOT LEFT SERVER')
+  console.log('minecraft bot left server')
+  //minecraftchat.send('BOT LEFT SERVER')
 });
 
 bot.on('chat', (username, message) => {
   if (username === bot.username) return
   minecraftchat.send(`**${username}** || ${message}`)
 })
+
+bot.on('playerJoined', (player) => {
+if (player.username === bot.username) return
+if (!minecraftPlayersCooldown.includes(player.username)) {
+minecraftPlayersCooldown.push(player.username)
+minecraftchat.send(`[+] **${player.username}**`)
+setTimeout(() => {
+minecraftPlayersCooldown.splice(minecraftPlayersCooldown.indexOf(player), 1)
+}, 5000)
+}
+})
+
+bot.on('playerLeft', (player) => {
+if (player.username === bot.username) return
+if (minecraftPlayersCooldown.includes(player.username)) return
+minecraftchat.send(`[-] **${player.username}**`)
+})
+
+bot.on("playerDeath", (data) => {
+    console.log(data);
+    if (data.victim) {
+        console.info('victim => ', data.victim.detail().username);
+    }
+    console.info('method => ', data.method);
+minecraftchat.send(`${data.victim.detail().username} died (${data.method})`)
+
+});
 
 }
 
@@ -3718,7 +3786,7 @@ client.on('interactionCreate', async (interaction) => {
   await db.set(id+'.a', parseInt(curbal) - 1000) 
   }
 
-  await saveSqlite();
+  saveSqlite();
 
   const attachment = await petImage(await db.get(`pet_${id}`))
   await interaction.message.edit({ files: [attachment] });
