@@ -1272,19 +1272,19 @@ isFishing.delete(message.author.id)
 
     let bonus = 0
 
-    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnabian royalty (level 50)').id)) {
+    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Agnabian Royalty (level 50)').id)) {
     bonus = 100
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'master agnabian (level 35)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Master Agnabian (level 35)').id)) {
     bonus = 75
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'true agnabian (level 25)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'True Agnabian (level 25)').id)) {
     bonus = 50
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab master (level 15)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Master (level 15)').id)) {
     bonus = 30
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'agnab enthusiast (level 10)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Enthusiast (level 10)').id)) {
     bonus = 20
     saveSqlite();
     } else {
