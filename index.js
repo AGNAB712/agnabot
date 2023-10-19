@@ -1,7 +1,6 @@
 //requirements
 const Discord = require('discord.js');
 require("dotenv").config();
-const keepAlive = require('./server.js')
 const { ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
 const fs = require('fs');
 const { joinVoiceChannel, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, VoiceConnectionStatus, entersState, NoSubscriberBehavior } = require('@discordjs/voice');
@@ -19,7 +18,7 @@ const { Image } = require('@napi-rs/canvas');
 const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./info/embeds.js')
 const { buyArray } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
-const { level0, level5 } = require('./info/fishingMap.js')
+const { fishingArray } = require('./info/fishingMap.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
@@ -88,7 +87,6 @@ const trello = new Trello(process.env.TRELLOKEY, process.env.TRELLOTOKEN);
 
 //arrays
 const says = [];
-let categoryNames = ["hi","what the freak","poopoo","hallo","chattery","shake my pants","loud","sillies","very cool","telling","text","Uÿ=","but they didnt gave me my banana 👿","Pop Bob Smellex","dog pouder 🐶 consumers gang","FEETLOVERS","i love feet","the elder variable 😤","the adult constant 😒","the baby function 🤑","the child equation ☺️","📍","⌂","👾","Wild","ˢᵘʳʳᵉᵃˡ - Bambi Fantrack (LOUD, blue's outerspacial abominations 1/8)","bambi","OLMA! Olimar. 🥕","🫏💨","noxy we need to cook","i HATE dave and Bambi…. Grrrrrrrrrrrr","person in charge for a couple 👫 👫 and 8⃣ 8⃣ 8⃣ 8⃣ in a position 🖥️ 🖥️ 🖥️ 🖥️ I have a 600 😟 😟","why is the category saying hi to me bro","'♥Щ@мIi╞амн !K 8↑╕","https://media.discordapp.net/attachments/1109957407636987984/1118010322108813332/Bre.gif%22%22AGNABOB%22%22/%22the mwaganzanists","https://media.discordapp.net/attachments/967405625665540156/1031932494435586078/agony.gif%22,%22tat 🗽 tat 🗽 tat 🗽 tat 🗽","pro tip: interestingshallot13 will get a suprise after his vacation 🤫","🥺🥺🥺haiii :3 hewwo","འȺԱ↻ටԱϚ Manbi","untouchable grass","https://cdn.discordapp.com/attachments/1092557930349477960/1118344310291693688/image.png%22,%22Agnab Boyclit ❌","penit butt e:Cryingaboutit: :Cryingaboutit: :Cryingaboutit:"]
 let users = [];
 let queue = [];
 let conversation = [];
@@ -149,19 +147,6 @@ await client.channels.cache.get('1156302752218091530').messages.fetch('115630291
     }
 }
   )
-}
-
-//category names load function
-async function loadCategoryNames() {
-  const channelId = '1117068125586866218';
-  const channel = client.channels.cache.get(channelId);
-  channel.messages.fetch({ limit: 1 })
-    .then(messages => {
-      const firstMessage = messages.first();
-    const data = firstMessage.content;
-    categoryNames = JSON.parse(data);
-    })
-    .catch(console.error);
 }
 
 //status load function
@@ -252,13 +237,6 @@ async function payPets() {
   })
 }
 
-//saves category names
-async function saveCategoryNames() {
-const channel = await client.channels.cache.get('1117068125586866218')
-const lastMessage = await client.channels.cache.get(channelId).messages.lastMessage;
-    await channel.send(JSON.stringify(categoryNames));
-  }
-
 //loads stopautoreact stuff
 async function loadStopUsers() {
   const channelId = '1117068093953409094';
@@ -283,10 +261,14 @@ async function checkMinecraftServer() {
   console.log('checking if minecraft server is online...')
   if (await isMinecraftOnline()) {
   console.log('is online!')
-  if (!bot.health) {
+  try {
+  if (bot.health) {
+  console.log('bot is online too')
+}
+  } catch (e) {
   console.log('is online but bot is not online')
   await createMinecraftBot()
-}
+  }
 } else {
   console.log('isnt online')
 }
@@ -311,11 +293,12 @@ if (replit) {
 }
 //client.channels.cache.get('1108491109258244156').send('hallo guys it is me i am online');
 
+
+
   await loadSqlite();
-  loadCategoryNames();
   loadStopUsers();
   loadCurrentStatus();
-  updateCategoryName(); 
+  await updateCategoryName(); 
   setInterval(updateCategoryName, 600000); 
   setInterval(doChildLabor, 300000);
   setInterval(updatePets, 300000);
@@ -1108,7 +1091,7 @@ const curbal = await db.get(message.author.id+'.a')
   }
 
   if (command === 'test') {
-
+    await db.set('category', `["AGNAB's Amassing bot-commands","THE PLANET IS COMING!🪐THE PLANET BY BTS!💜BTS IS COMING🎉","listen to quagmire on soundcloud NOW!","giggity giggity giggity giggity giggity giggity","noxy where's your models","DOnot say cybergrind","minnenosa immesota minnetosa nimmetosa minnesota","BUS COMING 🚌","💜⟭⟬༄ᴮᵀˢ✿𝐼 ℎ𝑎𝑣𝑒 𝑙𝑒𝑓𝑡 𝑡𝑜𝑒 𝑐𝑎𝑛𝑐𝑒𝑟⁷✿ΛŔɱ¥⟬⟭࿐💜",".o0×X×0o.   🎀  𝒷𝓉𝓈 𝒾𝓈 𝓁❀𝓋𝑒 𝒶𝓃𝒹 ❁𝒽 𝓂𝓎 𝑔🍪𝒹 𝒾𝓉𝓈 𝓌𝒽𝒶𝓉𝓉  🎀   .o0×X×0o.","violet aka theoretical yt wants to sex tia whilist being 12.5 🚌","the baby function 🤑","Silon 𓃑ing","6","invisiboe 👻","🐸♟  Ｉ Ｈⓐ𝐯έ ℝĮⓖ𝐇𝕋 t𝕖ştⓘℂㄥＥ ℕⓔ¢ⓇόşｉＳ  😺⛵","but they didnt gave me my banana 👿","i want liam to convert himself into my flash drive","i ate my pen for lunch 🖊️ it tasted like chicken 🐔","Send Pic","seihyp 🥳 super hype for my Epona 🎉","Japamoney🤑🤑🤑🤑 japanese ball\nJapanese bambi japan countryball bambu","i m japa 🇯🇵","The guys who is available Friday piur make a libe on my YouTube channel","Aethercord be like","SJUT UR[","🦶","hey louis! what? ͙̈́͝Ξ͂͟͜ͽ̬̘̖˾΅˪ˬ͜˫ˬ˽ˀ͡¥¤¶Ѿ͚͆͡ͱ̿ͮ͛ĝ(͡Ͳ͊͡","👏 clapper 👏 the 👏 rapper 👏","Revese Dripping 😂","THE DORP","The lobotomy corporation 📺","take me to your leader !","Super Sour Spray! Twist Off Ca\nAUU.. EUU H 🩰","Dhjddgdkdhxkchxxjdh 😊😊😊🎉🎉","Écouter Tutorial par 2:30 sur #SoundCloud","cumming I HATE AGNABS AMASSING YOU GUYS SUCK","HOLY SHIT IS HORTAS FUCKING BAMBI!?!?!\n\nALSO ANOTHER HOLY SHOT MICHEL IS FUCKING ANTHONY?!?!\n\nAND CRESSRATED IS FUCKING MORPHESE 😣😣 \n\nPROVIDENCE CONBI FUCKING DEMIURGE CONBI WITH THEARXY EXPUNGED ❤️ 😭 😭\n\nOMFG HORTAS FUCKING BAMBI WHILZ BAMBIS FUCKING DAVE 😭 😭 😭 😭","📬 If you have any questions аbout your winnings, you cаn usе the с","FUCK KINDA LORE","🥀🍐🥀🍐🍐🥀 \nCRAZY.   PEOPLE\n\n🍐🥀🍐🥀.  🍐🍐\nSTOCK    MARKET","El 😬 Cripta 💹 Glacial 🧊","may 👿 lyaif 🍂 may 😁 lyl's 😊 may 🤔 shtail 💃🏿 may 🇪🇺 atityy ⛰️","🦟mosquoat","the child equation ☺️","KRYL🦜🦜 LUK KU KU KU LUTA♉️♉️📭","REQUEST// Farting on @londoncarter9184 (GachaFartHeat) (PeriodBlood) (ButtCrush)","KRYL LUK KU KU KU LUTA♉️♉️","🤬 Thrtc*l B"]`)
   }
 
   if (command === 'fish') {
@@ -1427,14 +1410,16 @@ message.delete()
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
+    console.log('has premium =', message.member.roles.cache.has('1120808808655102035'))
+    console.log('has weed =', message.member.roles.cache.has('1120830175114973215'))
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
       .setPlaceholder('Click here to choose what to buy')
     
     buyArray.forEach((me, i) => {
-    if (me.value === 'premium' && message.member.guild.roles.cache.find(role => role.name === "AGNAB Premium")) {return}
-    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member.guild.roles.cache.find(role => role.name === "high as shit brah")) {return}
+    if (me.value === 'premium' && message.member.roles.cache.has('1120808808655102035')) {return}
+    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member.roles.cache.has('1120830175114973215')) {return}
     if (me.value === 'hotel' && hotelBought) {return}
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
@@ -1533,6 +1518,7 @@ case 'bomb':
     if (curbal > 1000) {
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 1000));
     const muteGuy = message.mentions.members.first();
+    if (muteGuy.id == '1107764918293372989') {return message.reply('noob')}
     if (muteGuy) {
       const cooldownDuration = 60000;
       const expirationTime = Date.now() + cooldownDuration;
@@ -2239,14 +2225,10 @@ if (command === 'addcategory') {
     const filter = (reaction, user) => reaction.emoji.name === '👍' && !user.bot;
     const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
 
-    collector.on('collect', (reaction) => {
+    collector.on('collect', async (reaction) => {
       if (reaction.count === 5) {
-        categoryNames.push(categoryName);
-
-        saveCategoryNames();
-
+        await db.push('category', categoryName);
         message.channel.send(`Category "${categoryName}" has been added.`);
-
         collector.stop();
       }
     });
@@ -2270,9 +2252,7 @@ if (command === 'addcategory') {
 
     // Join the arguments into a single string
     const categoryName = args.join(' ');
-
-        categoryNames.push(categoryName);
-        saveCategoryNames();
+        await db.push('category', categoryName);
         message.channel.send(`Category "${categoryName}" has been added.`);
   }
 
@@ -2373,6 +2353,7 @@ says.push(message.author.id);
 
   
   if (command === 'showcategories') {
+    const categoryNames = await db.get('category')
     if (categoryNames.length === 0) {
       message.channel.send('its blank bro');
       return;
@@ -2394,14 +2375,15 @@ if (command === 'deletecategory') {
 
     const index = parseInt(args[0], 10);
 
-    if (isNaN(index) || index < 1 || index > categoryNames.length) {
+    if (isNaN(index) || index < 1 || index > await db.get('category').length) {
       message.channel.send('cant delete that bro');
       return;
     }
 
-    const deletedCategory = categoryNames.splice(index - 1, 1)[0];
-    saveCategoryNames();
-    message.channel.send(`deleted "${deletedCategory}"`);
+    const categoryNames = await db.get('category')
+    const toPull = categoryNames[index - 1]
+    const deletedCategory = await db.pull('category', toPull);
+    message.channel.send(`deleted "${toPull}"`);
     
    } else {
     message.channel.send(`lol no perms`);
@@ -2872,7 +2854,7 @@ async function isMinecraftOnline() {
 let testServer = false
 await mcs.statusJava('bay-logan.gl.joinmc.link')    
 .then((result) => {
-console.log(result.online)
+//console.log(result.online)
 testServer = result.online
     })
     .catch((error) => {
@@ -3003,9 +2985,12 @@ reaction.message.react('yeah:1106953116311625768');
 
 
 
-function updateCategoryName() {
+async function updateCategoryName() {
         
   const channel = client.channels.cache.get('1092554907883683961');
+
+  const categoryNames = await db.get('category')
+  //console.log(categoryNames)
 
   const randomName = categoryNames[getRandomInt(categoryNames.length)];
   //client.channels.cache.get('1108491109258244156').send(randomName);
@@ -3675,13 +3660,26 @@ function extractDataInsideQuotationMarks(inputString) {
 function percentify(array) {
 const sum = array.reduce((acc, number) => acc + number, 0);
 const percentages = array.map(number => (number / sum) * 100);
+return percentages
 }
 
 async function fishingLoot(message) {
 const me = await db.get(message.author.id)
+const fishingLevelRounded = Math.ceil(me.fish.level / 5) * 5
+const percents = percentify(fishingArray[fishingLevelRounded])
+const randomNum = getRandomInt(99) + 1
 
-if (me.fish.level < 5) {} else if (me.fish.level) {}
+console.log(percents)
 
+for (let i = 0; i < percents.length; i++) {
+  total += percents[i];
+  console.log(i)
+  
+  if (randomNum <= total) {
+    console.log(`the thing is ` + i + 1)
+    break;
+  }
+}
 
 } 
 
@@ -3845,4 +3843,3 @@ async function shutdown() {
 }
 
 client.login(token);
-keepAlive();
