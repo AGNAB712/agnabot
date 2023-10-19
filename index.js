@@ -1410,14 +1410,16 @@ message.delete()
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
+    console.log('has premium =', message.member.roles.cache.has('1120808808655102035'))
+    console.log('has weed =', message.member.roles.cache.has('1120830175114973215'))
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
       .setPlaceholder('Click here to choose what to buy')
     
     buyArray.forEach((me, i) => {
-    if (me.value === 'premium' && message.member.guild.roles.cache.find(role => role.name === "AGNAB Premium")) {return}
-    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member.guild.roles.cache.find(role => role.name === "high as shit brah")) {return}
+    if (me.value === 'premium' && message.member.roles.cache.has('1120808808655102035')) {return}
+    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member.roles.cache.has('1120830175114973215')) {return}
     if (me.value === 'hotel' && hotelBought) {return}
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
