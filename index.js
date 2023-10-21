@@ -988,12 +988,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 
 }
 
-if (command === 'inventory' || command === 'inv') {
-const inventory = await db.get(message.author.id+'.inv')
-console.log(inventory)
-
-}
-
 if (command === 'work') {
     const playerID = message.author.id;
 
@@ -1095,8 +1089,9 @@ const curbal = await db.get(message.author.id+'.a')
     await db.set(message.author.id+'.inv', JSON.parse(args.join(' ')))
   }
 
-  if (command === 'test') {
+  if (command === 'inv' || command === 'inventory') {
   const me = await db.get(message.author.id)
+  if (!me.inv) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have an inventory')}
   console.log(me)
   const myCoolEmbed = objectPage(me.inv, 0)
   //const myCoolEmbed = objectPage(funnyObject, 0)
@@ -2929,16 +2924,43 @@ function objectPage(testmap, page) {
   const pages = Math.ceil(testmap.size / 3)
   const inventoryArray = Object.keys(testmap);
   let curPage = page
-  let description = ''
+  let description = 'Inventory:\n'
 
   for (let i = curPage * 3; i < (curPage * 3) + 3; i++) {
-    if (!inventoryArray[i]) {description += ''} else {description += inventoryArray[i] + ': ' + testmap[inventoryArray[i]] + '\n'}
+    if (!inventoryArray[i]) {description += ''} else {
+    switch (inventoryArray[i]) {
+
+    //replace this later with an object or something
+
+    case 'rings':
+      description += `\💍 \`Wedding rings:     ${testmap[inventoryArray[i]]}\` \n`
+    break;
+    case 'ttspasses':
+      description += `\🎟 \`TTS passes:     ${testmap[inventoryArray[i]]}\` \n`
+    break;
+    case 'trash':
+      description += `\<:trash:1165126468649615391> \`Fishing trash:     ${testmap[inventoryArray[i]]}\` \n`
+    break;
+    case 'common': 
+      description += `\<:common:1165126466258862171> \`Common fish:     ${testmap[inventoryArray[i]]}\` \n`
+    break;
+    case 'rare':
+      description += `\<:rare:1165126462622416937> \`Rare fish:     ${testmap[inventoryArray[i]]}\` \n`
+    break;
+    case 'legendary':
+      description += `\<:legendary:1165126464782487632> \`Legendary fish:     ${testmap[inventoryArray[i]]}\` \n`
+    break
+  default:
+    description += `\❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
+    }
+
+    }
   }
   console.log(description)
 
   testEmbed
   .setDescription(description)
-  .setTitle(`page ${curPage + 1}`)
+  .setTitle(`~=-Page ${curPage + 1}-=~`)
 
   return testEmbed
 }
@@ -3832,7 +3854,8 @@ client.on('interactionCreate', async (interaction) => {
     const repliedMessage = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId)
     const embeds = interaction.message.embeds
     const theGoodEmbed = embeds[0]
-    const myPage = theGoodEmbed.title.slice(4)
+    const myPage = theGoodEmbed.title[8]
+    console.log(myPage)
     const me = await db.get(repliedMessage.author.id)
 
     let nextButton = new ButtonBuilder()
@@ -3851,7 +3874,7 @@ client.on('interactionCreate', async (interaction) => {
     if (customId === 'next') {
     const totalpages = Math.floor(Object.keys(me.inv).length / 3)
     console.log(totalpages)
-    if (` ${totalpages}` === myPage) {
+    if (`${totalpages}` === myPage) {
       nextButton.setDisabled(true)
     }
     const newEmbed = objectPage(me.inv, parseInt(myPage))
@@ -3861,7 +3884,7 @@ client.on('interactionCreate', async (interaction) => {
     } else {
     const newEmbed = objectPage(me.inv, parseInt(myPage) - 2)
     console.log(myPage, myPage === 2)
-    if (myPage === ' 2') {
+    if (myPage === '2') {
       backButton.setDisabled(true)
     }
     interaction.update({ embeds: [newEmbed], components: [row] })
