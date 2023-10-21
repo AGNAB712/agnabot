@@ -50,7 +50,7 @@ const workArray = [
   "You crossed the street, and got [money] agnabucks. I wish it were that easy...",
   "Make sure to follow the #rules ! Heres [money] bucks for listening.",
   "Yo okay, they call me [money] I'm rob store and drink coke.",
-  "🧜‍♂️[money]🧜‍♀️"
+  "🧜‍♂️[money]🧜‍♀️",
 ];
 
 module.exports = { workArray }

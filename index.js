@@ -18,7 +18,7 @@ const { Image } = require('@napi-rs/canvas');
 const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./info/embeds.js')
 const { buyArray } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
-const { fishingArray } = require('./info/fishingMap.js')
+const { fishingArray, fishingLootMap } = require('./info/fishingMap.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
@@ -53,6 +53,7 @@ const botArgs = {
 const prefix = `a.`;
 const token = process.env.TOKEN;
 const currentDateTime = new Date();
+let saveCount = 0
 let curPlay = false;
 let msgId = [];
 let lockdown = 'false';
@@ -119,18 +120,38 @@ let balEmbed = new EmbedBuilder()
 .setTitle('Your balance')
 let seedEmbed = new EmbedBuilder()
 .setColor('#235218')
+let fishingEmbed = new EmbedBuilder()
+.setTitle('Fishing...')
+.setImage('attachment://fishing.png')
+.setColor('#235218')
 
 //saving sqlite function
 async function saveSqlite() {
 if (lockdown !== 'false') {return}
-    const fileName = 'json.sqlite';
-await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
+
+//guard to stop it always saving because it gets laggy often
+if (saveCount < 5) {
+saveCount++
+console.log(`will save sqlite in ${5 - saveCount} counts`)
+return
+}
+
+forceSaveSqlite()
+
+}
+
+async function forceSaveSqlite() {
+  saveCount = 0
+  const fileName = 'json.sqlite';
+  await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
       msg.edit({
         content: `**${replitText}** || *${Date.now()}*`, 
         files: ['./json.sqlite']
       })
     )
-    console.log('saved sqlite')
+    
+    console.log('saved sqlite', saveCount)
+    
 }
 
 //load sqlite function
@@ -973,26 +994,6 @@ console.log(inventory)
 
 }
 
-
-if (command === 'seed') {
-  const pageNum = getRandomInt(300) + 1;
-  const seedData = await axios.get(`https://minecraft-seeds.net/?p=${pageNum}`)
-  const seeds = extractAnchorElements(seedData.data)
-  const randomSeedUrl = seeds[getRandomInt(seeds.length - 1) + 1]
-  const randomSeedData = await axios.get(randomSeedUrl)
-  const dataBracket = extractDataInsideBrackets(randomSeedData.data);
-  const theJuice = dataBracket[3].split(',')
-  const seedNum = findWordAfterSeedCode(randomSeedData.data)
-
-  testEmbed.setTitle(extractDataInsideQuotationMarks(theJuice[2])[1])
-  testEmbed.setURL(randomSeedUrl)
-  testEmbed.setDescription(seedNum + ', ' + extractDataInsideQuotationMarks(theJuice[3])[1])
-  testEmbed.setImage(extractDataInsideQuotationMarks(theJuice[4])[1])
-  testEmbed.setFooter({ text: `found by: ${extractDataInsideQuotationMarks(theJuice[5])[1]}` })
-
-  message.reply({ embeds: [testEmbed] })
-}
-
 if (command === 'work') {
     const playerID = message.author.id;
 
@@ -1090,14 +1091,50 @@ const curbal = await db.get(message.author.id+'.a')
   }
   }
 
-  if (command === 'test') {
-    await db.set('category', `["AGNAB's Amassing bot-commands","THE PLANET IS COMING!🪐THE PLANET BY BTS!💜BTS IS COMING🎉","listen to quagmire on soundcloud NOW!","giggity giggity giggity giggity giggity giggity","noxy where's your models","DOnot say cybergrind","minnenosa immesota minnetosa nimmetosa minnesota","BUS COMING 🚌","💜⟭⟬༄ᴮᵀˢ✿𝐼 ℎ𝑎𝑣𝑒 𝑙𝑒𝑓𝑡 𝑡𝑜𝑒 𝑐𝑎𝑛𝑐𝑒𝑟⁷✿ΛŔɱ¥⟬⟭࿐💜",".o0×X×0o.   🎀  𝒷𝓉𝓈 𝒾𝓈 𝓁❀𝓋𝑒 𝒶𝓃𝒹 ❁𝒽 𝓂𝓎 𝑔🍪𝒹 𝒾𝓉𝓈 𝓌𝒽𝒶𝓉𝓉  🎀   .o0×X×0o.","violet aka theoretical yt wants to sex tia whilist being 12.5 🚌","the baby function 🤑","Silon 𓃑ing","6","invisiboe 👻","🐸♟  Ｉ Ｈⓐ𝐯έ ℝĮⓖ𝐇𝕋 t𝕖ştⓘℂㄥＥ ℕⓔ¢ⓇόşｉＳ  😺⛵","but they didnt gave me my banana 👿","i want liam to convert himself into my flash drive","i ate my pen for lunch 🖊️ it tasted like chicken 🐔","Send Pic","seihyp 🥳 super hype for my Epona 🎉","Japamoney🤑🤑🤑🤑 japanese ball\nJapanese bambi japan countryball bambu","i m japa 🇯🇵","The guys who is available Friday piur make a libe on my YouTube channel","Aethercord be like","SJUT UR[","🦶","hey louis! what? ͙̈́͝Ξ͂͟͜ͽ̬̘̖˾΅˪ˬ͜˫ˬ˽ˀ͡¥¤¶Ѿ͚͆͡ͱ̿ͮ͛ĝ(͡Ͳ͊͡","👏 clapper 👏 the 👏 rapper 👏","Revese Dripping 😂","THE DORP","The lobotomy corporation 📺","take me to your leader !","Super Sour Spray! Twist Off Ca\nAUU.. EUU H 🩰","Dhjddgdkdhxkchxxjdh 😊😊😊🎉🎉","Écouter Tutorial par 2:30 sur #SoundCloud","cumming I HATE AGNABS AMASSING YOU GUYS SUCK","HOLY SHIT IS HORTAS FUCKING BAMBI!?!?!\n\nALSO ANOTHER HOLY SHOT MICHEL IS FUCKING ANTHONY?!?!\n\nAND CRESSRATED IS FUCKING MORPHESE 😣😣 \n\nPROVIDENCE CONBI FUCKING DEMIURGE CONBI WITH THEARXY EXPUNGED ❤️ 😭 😭\n\nOMFG HORTAS FUCKING BAMBI WHILZ BAMBIS FUCKING DAVE 😭 😭 😭 😭","📬 If you have any questions аbout your winnings, you cаn usе the с","FUCK KINDA LORE","🥀🍐🥀🍐🍐🥀 \nCRAZY.   PEOPLE\n\n🍐🥀🍐🥀.  🍐🍐\nSTOCK    MARKET","El 😬 Cripta 💹 Glacial 🧊","may 👿 lyaif 🍂 may 😁 lyl's 😊 may 🤔 shtail 💃🏿 may 🇪🇺 atityy ⛰️","🦟mosquoat","the child equation ☺️","KRYL🦜🦜 LUK KU KU KU LUTA♉️♉️📭","REQUEST// Farting on @londoncarter9184 (GachaFartHeat) (PeriodBlood) (ButtCrush)","KRYL LUK KU KU KU LUTA♉️♉️","🤬 Thrtc*l B"]`)
+  if (command === 'setlevel') {
+    await db.set(message.author.id+'.inv', JSON.parse(args.join(' ')))
   }
+
+  if (command === 'test') {
+  const me = await db.get(message.author.id)
+  console.log(me)
+  const myCoolEmbed = objectPage(me.inv, 0)
+  //const myCoolEmbed = objectPage(funnyObject, 0)
+
+  const nextButton = new ButtonBuilder()
+    .setCustomId('next')
+    .setEmoji('➡')
+    .setStyle(ButtonStyle.Success)
+
+  if (Math.floor(Object.keys(me.inv).length / 3) === 0) {
+    nextButton.setDisabled(true)
+  }
+
+  const backButton = new ButtonBuilder()
+    .setCustomId('back')
+    .setEmoji('⬅️')
+    .setStyle(ButtonStyle.Success)
+    .setDisabled(true)
+
+  const row = new ActionRowBuilder()
+    .addComponents(backButton, nextButton);
+
+  message.reply({ embeds: [myCoolEmbed], components: [row] })
+
+
+}
 
   if (command === 'fish') {
 
-  //if ()
-  if (isFishing.has(message.author.id)) {return message.reply(`youre already fishing bro`)}
+  const me = await db.get(message.author.id)
+  if (me.fish == null) {
+  message.reply('**<:AgnabotX:1153460434691698719> ||** you cant FISH!!! (buy a fishing rod from the shop)')
+  return
+  }
+  if (isFishing.has(message.author.id)) {return message.reply(`**<:AgnabotX:1153460434691698719> ||** youre already fishing bro`)}
+
+  fishingEmbed.setTitle('Fishing...')
+  fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp} exp | ${me.fish.expLevel - me.fish.exp} exp until next level` })
   let fishButton = new ButtonBuilder()
       .setCustomId('fish')
       .setLabel('aaaaaaaa this is a button')
@@ -1108,26 +1145,34 @@ const row = new ActionRowBuilder()
       .addComponents(fishButton);
 
   const randomTime = (getRandomInt(5) * 1000)
-  const response = await message.reply({ content: 'What a nice time', components: [row] })
+
+  const attachment = await fishingImage(message.author, 1)
+  const attachment2 = await fishingImage(message.author, 2)
+  const response = await message.reply({ content: 'What a nice time', embeds: [fishingEmbed], files: [attachment], components: [row] })
   isFishing.set(message.author.id, true)
 
   const collectorFilter = i => i.user.id === response.mentions.users.first().id
 
   await setTimeout(async () => {
 
+
   fishButton.setDisabled(false);
-  await response.edit({ content: 'you can fish now', components: [row] })
+  fishingEmbed.setTitle('You caught something!')
+  fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp} exp | ${me.fish.expLevel - me.fish.exp} exp until next level` })
+  await response.edit({ files: [attachment2], embeds: [fishingEmbed], components: [row] })
 
 try {
   const collected = await response.awaitMessageComponent({ filter: collectorFilter, time: 3000 });
-  response.delete();
-  await fishingLoot(message);
+  //response.delete();
+  await fishingLoot(message, collected);
   isFishing.delete(message.author.id)
 
 
 
 } catch (e) {
-await response.edit({ content: 'you did not fish in time', components: [] })
+console.log(e)
+await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** you did not fish in time', embeds: [], files: [], components: [] })
+
 isFishing.delete(message.author.id)
 }
 
@@ -1176,7 +1221,7 @@ isFishing.delete(message.author.id)
 
       } else if (coinFlip > chance) {
       await db.set(message.author.id+'.a', curbal - args[0]);
-      const newBal = parseInt(curbal) + parseInt(args[0])
+      const newBal = parseInt(curbal) - parseInt(args[0])
       DONembed
       .setColor('Red')
       .setDescription('You flipped a coin, and you got tails')
@@ -1255,19 +1300,19 @@ isFishing.delete(message.author.id)
 
     let bonus = 0
 
-    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Agnabian Royalty (level 50)').id)) {
+    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Agnabian Royalty (Level 50)').id)) {
     bonus = 100
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Master Agnabian (level 35)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Master Agnabian (Level 35)').id)) {
     bonus = 75
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'True Agnabian (level 25)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'True Agnabian (Level 25)').id)) {
     bonus = 50
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Master (level 15)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Novice (Level 15)').id)) {
     bonus = 30
     saveSqlite();
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Enthusiast (level 10)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Enthusiast (Level 10)').id)) {
     bonus = 20
     saveSqlite();
     } else {
@@ -2028,6 +2073,7 @@ if (args[0] === 'fun') {
     { name: 'pirate_zip', value: '24/7 server and replit (things agnab is too dumb to figure out)' },
     { name: 'aether & granderutai', value: 'agnabot documentation' },
     { name: 'strats', value: 'hosting a bot on his old laptop' },
+    { name: 'shubibubi', value: 'fishing sprites (https://shubibubi.itch.io)' },
   )
   .setFooter({ text: 'want to be added here? contact me!' });
   message.channel.send({ embeds: [arembed] });
@@ -2768,6 +2814,7 @@ let hasChance = '❌ \n*(get this with rigged slot machine, increases a.don chan
 if (await db.get(message.author.id+'.slotMachine')) {
 hasChance = '✅'
 }
+
 let petText = 'you dont have a pet'
 const myPet = await db.get('pet_' + message.author.id)
 if (myPet && myPet !== 'null') {
@@ -2780,6 +2827,7 @@ petText =
 *next pet payout in ${60 - now.getMinutes()} minutes*
 `
 }
+
 let minecraftText = 'Linked account: ❌ \n(use a.verify to link your minecraft account)'
 const minecraftUser = await db.get(message.author.id+'.mc')
 if (minecraftUser) {
@@ -2795,6 +2843,32 @@ const mcUserId = await fetch(`https://api.mojang.com/users/profiles/minecraft/${
 statEmbed.setImage(`https://minotar.net/helm/${mcUserId}.png`)
 }
 
+let fishingText = '**Has fishing rod: ❌** \n*(buy a fishing rod from the shop)*'
+const fishingExists = await db.get(message.author.id+'.fish')
+if (fishingExists) {
+
+const me = await db.get(message.author.id)
+const fishingLevelRounded = Math.floor(me.fish.level / 5)
+let myFishingArray = fishingArray[fishingLevelRounded]
+if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length]}
+const percents = percentify(myFishingArray)
+
+fishingText = 
+`
+**Has fishing rod**: ✅
+**Fishing level**: \`${fishingExists.level}\`
+**Fishing EXP**: \`${fishingExists.exp}\`
+**EXP until next level**: \`${fishingExists.expLevel}\`
+
+*With current loadout and level, here are your chances of getting each item*
+**Trash: ${Math.round(percents[0])}** *(${myFishingArray[0]} points)*
+**Common: ${Math.round(percents[1])}** *(${myFishingArray[1]} points)*
+**Rare: ${Math.round(percents[2])}** *(${myFishingArray[2]} points)*
+**Legendary: ${Math.round(percents[3])}** *(${myFishingArray[3]} points)*
+**ARTIFACT: ${Math.round(percents[4])}** *(${myFishingArray[4]} points)*
+`
+}
+
 statEmbed.setDescription(`
 **AGNABUCKS:** ${await db.get(message.author.id+'.a')}
 *~------------------------------SHOP-ITEMS-----------------------------------~*
@@ -2804,6 +2878,8 @@ statEmbed.setDescription(`
 **Rigged slot machine bonus:** ${hasChance}
 *~---------------------------------PET-----------------------------------------~*
 ${petText}
+*~----------------------------FISHING-----------------------------------~*
+${fishingText}
 *~----------------------------MINECRAFT-----------------------------------~*
 ${minecraftText}
 
@@ -2840,6 +2916,32 @@ message.reply({ embeds: [statEmbed] })
   }
 
 });
+
+function objectPage(testmap, page) {
+  let testEmbed = new EmbedBuilder()
+    .setTitle('placeholder')
+    .setColor('#235218')
+
+  for (const property in testmap) {
+    if (testmap[property] == 0) {delete testmap[property]}
+  }
+
+  const pages = Math.ceil(testmap.size / 3)
+  const inventoryArray = Object.keys(testmap);
+  let curPage = page
+  let description = ''
+
+  for (let i = curPage * 3; i < (curPage * 3) + 3; i++) {
+    if (!inventoryArray[i]) {description += ''} else {description += inventoryArray[i] + ': ' + testmap[inventoryArray[i]] + '\n'}
+  }
+  console.log(description)
+
+  testEmbed
+  .setDescription(description)
+  .setTitle(`page ${curPage + 1}`)
+
+  return testEmbed
+}
 
 function getTextUntilDelimiter(text, delimiter) {
   let index = text.indexOf(delimiter);
@@ -3017,14 +3119,6 @@ function isNumeric(str) {
          !isNaN(parseFloat(str)) 
 }
 
-async function stopNull(guy) {
-
-if (!(await db.get(guy))) {
-  db.set(guy, 100)
-}
-
-}
-
 async function getUsername(userId, guild, balance) {
 
 if (parseInt(balance) < 1000 || !balance) {
@@ -3043,57 +3137,6 @@ try {
     return null;
 }
 
-}
-
-async function findRandomMessage(message) {
-    const server = await client.guilds.cache.get('969752864585035777');
-    const channels = await server.channels.cache;
-    const channelsFiltered1 = channels.filter((channel) => channel.type === 0);
-    const channelsFiltered = channelsFiltered1.filter((channel) => channel.parent.id === '1092554907883683961');
-    const randomChannel = channelsFiltered.random();
-
-
-    randomChannel.messages.fetch().then((messages) => {
-      // Exclude bot messages and the command message
-      const filteredMessages = messages.filter((msg) => !msg.author.bot && msg.id !== message.id);
-
-      // Select a random message
-      const randomMessage = filteredMessages.random();
-
-      const formattedDate = randomMessage.createdAt.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        timeZone: 'UTC'
-      });
-
-      const jumpLink = `https://discord.com/channels/${message.guild.id}/${randomChannel.id}/${randomMessage.id}`;
-
-      // Send the random message, sender's name, and date
-      let embed = new Discord.EmbedBuilder()
-        .setTitle(randomMessage.content)
-        .setFooter({ text: `- ${formattedDate}`})
-        .setColor('#235218')
-        .setAuthor({ name: randomMessage.author.username, iconURL: randomMessage.author.displayAvatarURL()})
-        .setDescription(`[jump](${jumpLink})`);
-
-      if (randomMessage.attachments.size > 0) {
-        embed.setImage(randomMessage.attachments.first())
-      }
-
-      message.channel.send({ embeds: [embed] });
-    }).catch(async err =>{
-await findRandomMessage(message);
-    })
-}
-
-function findUserByUsername(guild, username) {
-  return guild.members.cache.find(
-    (member) => member.user.username.toLowerCase().includes(username.toLowerCase())
-  );
 }
 
 function isValidCategoryName(name) {
@@ -3562,126 +3605,187 @@ async function fetchProfilePicture(userId) {
   }
 }
 
-async function screencenter(canvas) {
-let numbers = [];
-numbers.push(canvas.width / 2).push(canvas.height / 2)
-return numbers;
-}
-
-function extractAnchorElements(htmlString) {
-  const regex = /<a class="([^"]*)" href="([^"]*)"/g;
-  const matches = [];
-  
-  let match;
-  while ((match = regex.exec(htmlString)) !== null) {
-    const link = match[2]; // the link after href="..."
-    matches.push(link);
-  }
-  
-  return matches;
-}
-
-function extractDataInsideBrackets(inputString) {
-  const dataInsideBrackets = [];
-  let insideData = '';
-  let isOpenBracketFound = false;
-
-  for (let char of inputString) {
-    if (char === '{') {
-      isOpenBracketFound = true;
-      continue;
-    }
-
-    if (isOpenBracketFound) {
-      if (char === '}') {
-        isOpenBracketFound = false;
-        dataInsideBrackets.push(insideData);
-        insideData = ''; // Reset insideData for the next instance
-      } else {
-        insideData += char;
-      }
-    }
-  }
-
-  return dataInsideBrackets;
-  }
-
-function extractDataInsideQuotationMarks(inputString) {
-  const dataInsideQuotes = [];
-  let insideData = '';
-  let isQuoteOpen = false;
-
-  for (let char of inputString) {
-    if (char === '"') {
-      isQuoteOpen = !isQuoteOpen;
-
-      if (!isQuoteOpen) {
-        dataInsideQuotes.push(insideData);
-        insideData = ''; // Reset insideData for the next instance
-      }
-
-      continue;
-    }
-
-    if (isQuoteOpen) {
-      insideData += char;
-    }
-  }
-
-  return dataInsideQuotes;
-}
-
-  function findWordAfterSeedCode(inputString) {
-  // Check if the input is a string
-  if (typeof inputString !== "string") {
-    throw new Error("Input must be a string.");
-  }
-
-  // Look for the index of "Seed Code:"
-  const seedCodeIndex = inputString.indexOf("Seed Code:");
-
-  // If "Seed Code:" is not found or is at the end of the string, return null
-  if (seedCodeIndex === -1 || seedCodeIndex === inputString.length - 1) {
-    return null;
-  }
-
-  // Find the substring starting from the word after "Seed Code:"
-  const afterSeedCode = inputString.substring(seedCodeIndex + 10).trim();
-
-  // Find the index of the first occurrence of "<"
-  const lessThanIndex = afterSeedCode.indexOf("<");
-
-  // Extract the text until the first "<" character
-  const resultText = lessThanIndex === -1 ? afterSeedCode : afterSeedCode.substring(0, lessThanIndex).trim();
-
-  return resultText;
-}
-
 function percentify(array) {
 const sum = array.reduce((acc, number) => acc + number, 0);
 const percentages = array.map(number => (number / sum) * 100);
 return percentages
 }
 
-async function fishingLoot(message) {
+async function fishingLoot(message, collected) {
 const me = await db.get(message.author.id)
-const fishingLevelRounded = Math.ceil(me.fish.level / 5) * 5
-const percents = percentify(fishingArray[fishingLevelRounded])
+console.log(Math.floor(me.fish.level / 5))
+const fishingLevelRounded = Math.floor(me.fish.level / 5)
+let myFishingArray = fishingArray[fishingLevelRounded]
+if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length]}
+const percents = percentify(myFishingArray)
 const randomNum = getRandomInt(99) + 1
 
-console.log(percents)
-
-for (let i = 0; i < percents.length; i++) {
-  total += percents[i];
-  console.log(i)
-  
-  if (randomNum <= total) {
-    console.log(`the thing is ` + i + 1)
-    break;
-  }
+let sum = 0;
+let index = 0;
+while (sum + percents[index] < randomNum) {
+  sum += percents[index];
+  index++;
 }
 
+console.log(index)
+
+let lootToDraw
+let type
+let color
+let exp
+if (index == 0) {
+type = 'trash';
+lootToDraw = fishingLootMap.trash[getRandomInt(3)]
+color = '#222222'
+exp = 10
+} else if (index == 1) {
+type = 'common';
+lootToDraw = fishingLootMap.common[getRandomInt(3)]
+color = '#105808'
+exp = 50
+} else if (index == 2) {
+type = 'rare';
+lootToDraw = fishingLootMap.rare[getRandomInt(3)]
+color = '#311fac'
+exp = 100
+} else if (index == 3) {
+type = 'legendary';
+lootToDraw = fishingLootMap.legendary[getRandomInt(3)]
+color = '#fffc39'
+exp = 500
+} else {
+//this is a placeholder for artifacts
+}
+
+
+
+const name = getTextUntilDelimiter(lootToDraw.replace(/^.*[\\/]/, ''), '.png')
+console.log(lootToDraw, name)
+const attachment = await fishingLootImage(message.author, lootToDraw, { name: name, rarity: type, color: color })
+fishingEmbed.setTitle(`Congrats! You earned ${exp} exp!`)
+if (me.fish.exp + exp > me.fish.expLevel) {
+fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${(Math.floor((me.fish.level + 1) / 5) + 1) * 100} exp until next level` })
+await db.add(message.author.id+'.fish.level', 1)
+await db.set(message.author.id+'.fish.exp', 0)
+
+await db.set(message.author.id+'.fish.expLevel', (Math.floor((me.fish.level + 1) / 5) + 1) * 100) 
+//next fishing level, divided by five so it only goes up every 5 levels, plus 1 so 0 is never a factor, * 100
+
+} else {
+fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp + exp} exp | ${me.fish.expLevel - (me.fish.exp + exp)} exp until next level` })
+await db.add(message.author.id+'.fish.exp', exp)
+}
+collected.update({ embeds: [fishingEmbed], files: [attachment], components: [] })
+
 } 
+
+async function fishingLootImage(guyFishing, lootToDraw, typeMap) {
+const canvas = Canvas.createCanvas(750, 500);
+const context = canvas.getContext('2d');
+  
+const background = await Canvas.loadImage('./images/fishing/fishingPoses/background.png');
+context.drawImage(background, 0, 0, canvas.width, canvas.height);
+const fishinglayer1 = await Canvas.loadImage(`./images/fishing/fishingPoses/fishing1/1.png`);
+context.drawImage(fishinglayer1, 0, 0, canvas.width, canvas.height);
+const avatar = await Canvas.loadImage(guyFishing.displayAvatarURL({ extension: 'jpg' }));
+context.save();
+context.beginPath();
+context.arc(227.5, 277.5, 27.5, 0, Math.PI * 2, true);
+context.closePath();
+context.strokeStyle = 'white'
+context.lineWidth = 3;
+context.stroke();
+context.strokeStyle = 'black'
+context.lineWidth = 1;
+context.stroke();
+context.clip();
+context.drawImage(avatar, 200, 250, 55, 55);
+context.restore();
+const fishinglayer2 = await Canvas.loadImage(`./images/fishing/fishingPoses/fishing1/2.png`);
+context.drawImage(fishinglayer2, 0, 0, canvas.width, canvas.height);
+
+context.lineWidth = 3;
+context.strokeStyle = 'white'
+context.fillStyle = 'rgba(0, 0, 0, 0.6)'
+context.fillRect(25, 25, 700, 150)
+context.strokeRect(25, 25, 700, 150)
+context.fillStyle = 'rgba(255, 255, 255, 0.7)'
+context.fillRect(50, 50, 100, 100)
+context.strokeStyle = typeMap.color
+context.strokeRect(50, 50, 100, 100)
+const lootThing = await Canvas.loadImage(lootToDraw);
+context.drawImage(lootThing, 55, 55, 90, 90);
+
+context.font = 'bold 60px Arial';
+context.fillStyle = 'white'
+context.lineWidth = 10;
+context.strokeText(typeMap.rarity.toUpperCase(), 175, 100)
+context.fillText(typeMap.rarity.toUpperCase(), 175, 100)
+
+context.font = 'bold 40px Arial';
+context.lineWidth = 4;
+context.strokeText(typeMap.name, 175, 140)
+context.fillText(typeMap.name, 175, 140)
+
+const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'fishing.png' });
+
+return attachment;
+
+}
+
+async function fishingImage(guyFishing, num) {
+try {
+const canvas = Canvas.createCanvas(750, 500);
+const context = canvas.getContext('2d');
+
+const background = await Canvas.loadImage('./images/fishing/fishingPoses/background.png');
+context.drawImage(background, 0, 0, canvas.width, canvas.height);
+const fishinglayer1 = await Canvas.loadImage(`./images/fishing/fishingPoses/fishing${num}/1.png`);
+context.drawImage(fishinglayer1, 0, 0, canvas.width, canvas.height);
+
+const avatar = await Canvas.loadImage(guyFishing.displayAvatarURL({ extension: 'jpg' }));
+if (num === 1) {
+context.save();
+context.beginPath();
+context.arc(227.5, 277.5, 27.5, 0, Math.PI * 2, true);
+context.closePath();
+context.strokeStyle = 'white'
+context.lineWidth = 3;
+context.stroke();
+context.strokeStyle = 'black'
+context.lineWidth = 1;
+context.stroke();
+context.clip();
+context.drawImage(avatar, 200, 250, 55, 55);
+context.restore();
+} else {
+context.save();
+context.beginPath();
+context.arc(207.5, 237.5, 27.5, 0, Math.PI * 2, true);
+context.closePath();
+context.strokeStyle = 'white'
+context.lineWidth = 3;
+context.stroke();
+context.strokeStyle = 'black'
+context.lineWidth = 1;
+context.stroke();
+context.clip();
+context.drawImage(avatar, 180, 210, 55, 55);
+context.restore()
+}
+
+const fishinglayer2 = await Canvas.loadImage(`./images/fishing/fishingPoses/fishing${num}/2.png`);
+context.drawImage(fishinglayer2, 0, 0, canvas.width, canvas.height);
+
+const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'fishing.png' });
+
+return attachment;
+
+} catch (err) {
+console.error('Error occurred:', err);
+}
+
+}
 
 async function calculateEmotions(pet) {
 
@@ -3723,6 +3827,46 @@ client.on('interactionCreate', async (interaction) => {
   try {
 
   const { customId } = interaction;
+
+  if (customId === 'next' || customId === 'back') {
+    const repliedMessage = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId)
+    const embeds = interaction.message.embeds
+    const theGoodEmbed = embeds[0]
+    const myPage = theGoodEmbed.title.slice(4)
+    const me = await db.get(repliedMessage.author.id)
+
+    let nextButton = new ButtonBuilder()
+    .setCustomId('next')
+    .setEmoji('➡')
+    .setStyle(ButtonStyle.Success)
+
+    let backButton = new ButtonBuilder()
+    .setCustomId('back')
+    .setEmoji('⬅️')
+    .setStyle(ButtonStyle.Success)
+    
+    const row = new ActionRowBuilder()
+      .addComponents(backButton, nextButton);
+
+    if (customId === 'next') {
+    const totalpages = Math.floor(Object.keys(me.inv).length / 3)
+    console.log(totalpages)
+    if (` ${totalpages}` === myPage) {
+      nextButton.setDisabled(true)
+    }
+    const newEmbed = objectPage(me.inv, parseInt(myPage))
+    backButton.setDisabled(false)
+    interaction.update({ embeds: [newEmbed], components: [row] })
+
+    } else {
+    const newEmbed = objectPage(me.inv, parseInt(myPage) - 2)
+    console.log(myPage, myPage === 2)
+    if (myPage === ' 2') {
+      backButton.setDisabled(true)
+    }
+    interaction.update({ embeds: [newEmbed], components: [row] })
+    }
+  }
   if (!(customId === 'feed' || customId === 'play' || customId === 'heal' || customId === 'revive') || !interaction.message.mentions.users.first().id) {return}
   //console.log(interaction.message.mentions.users.first().id)
   const id = interaction.user.id
