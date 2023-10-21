@@ -38,6 +38,7 @@ const utilityEmbed = new EmbedBuilder()
 let statEmbed = new EmbedBuilder()
   .setColor('#235218')
   .setTitle('AGNABOT STATS')
+  .setImage(null)
 
 const bankEmbed = new EmbedBuilder()
   .setColor('#235218')
