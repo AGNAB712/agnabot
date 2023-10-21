@@ -522,7 +522,7 @@ return
     //if (!replit) {return}
     message.reply("y'all are dumb");
     lockdown = 'true';
-    saveSqlite();
+    forceSaveSqlite();
   }
 
   if (command === 'lockstatus') {
@@ -663,6 +663,10 @@ try {
   if (command === 'crash' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
   await message.reply('cya')
   process.exit(0);
+  }
+
+  if (command === 'crashlog' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+  await message.reply({ files: ['./info/crash logs/error.txt'] })
   }
 
   if (command === 'pet') {
@@ -1013,16 +1017,32 @@ if (command === 'work') {
     saveSqlite();
 
     curbal = await db.get(playerID+'.a');
-    const coolAssDescription = workArray[getRandomInt(workArray.length)].replace(/\[money\]/g, `**${moneyEarned}**`)
+    const workArrayIndex = getRandomInt(workArray.length)
+    const coolAssDescription = workArray[workArrayIndex].replace(/\[money\]/g, `**${moneyEarned}**`)
 
-      const embed = new EmbedBuilder()
+      let embed = new EmbedBuilder()
         .setColor('#235218')
         .setTitle('>---=**WORK**=---<')
         .setDescription(`
         **<:AgnabotCheck:1153525610665214094> + ${moneyEarned} ||** ${coolAssDescription}`)
         .setFooter({ text: `your money is now ${curbal}` })
+
+      let file
+      if (workArrayIndex !== 38) {
+        file = new AttachmentBuilder(`./images/work/${workArrayIndex}.png`, { name: 'workimage.png' })
+      } else {
+        if (moneyEarned !== 65) {
+        file = new AttachmentBuilder(`./images/work/38.2.png`, { name: 'workimage.png' })
+      } else {
+        file = new AttachmentBuilder(`./images/work/38.2.png`, { name: 'workimage.png' })
+      }
+      }
+
+      embed.setImage(`attachment://workimage.png`)
+
+      console.log(file)
       
-      message.reply({ embeds: [embed] });
+      message.reply({ embeds: [embed], files: [file] });
       const cooldownDuration = 60000;
       const expirationTime = Date.now() + cooldownDuration;
       cooldowns.set(playerID, expirationTime);
@@ -1101,7 +1121,7 @@ const curbal = await db.get(message.author.id+'.a')
     .setEmoji('➡')
     .setStyle(ButtonStyle.Success)
 
-  if (Math.floor(Object.keys(me.inv).length / 3) === 0) {
+  if (Math.floor(Object.keys(me.inv).length / 3) === 0 || Object.keys(me.inv).length === 3) {
     nextButton.setDisabled(true)
   }
 
@@ -3685,7 +3705,7 @@ const name = getTextUntilDelimiter(lootToDraw.replace(/^.*[\\/]/, ''), '.png')
 console.log(lootToDraw, name)
 const attachment = await fishingLootImage(message.author, lootToDraw, { name: name, rarity: type, color: color })
 fishingEmbed.setTitle(`Congrats! You earned ${exp} exp!`)
-if (me.fish.exp + exp > me.fish.expLevel) {
+if (me.fish.exp + exp >= me.fish.expLevel) {
 fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${(Math.floor((me.fish.level + 1) / 5) + 1) * 100} exp until next level` })
 await db.add(message.author.id+'.fish.level', 1)
 await db.set(message.author.id+'.fish.exp', 0)
@@ -3698,6 +3718,10 @@ fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp + exp} ex
 await db.add(message.author.id+'.fish.exp', exp)
 }
 collected.update({ embeds: [fishingEmbed], files: [attachment], components: [] })
+
+await db.add(`${message.author.id}.inv.${type}`, 1)
+
+saveSqlite()
 
 } 
 
@@ -3980,6 +4004,18 @@ trello.addCard(newMessage.content, `suggested by ${newMessage.author.username}`,
     console.error('Error adding card:', err);
   });
   }
+});
+
+//crash log system
+process.on('uncaughtException', async (err) => {
+  console.log('CRASHED, writing error...')
+  console.log(err)
+  const errorMessage = `${new Date().toISOString()} - Uncaught Exception: ${err}\n`;
+  await fs.writeFile('./info/crash logs/error.txt', errorMessage, (err) => { 
+    if (err) throw err; 
+  }) 
+  console.log('Done writing...')
+  //process.exit(1);
 });
 
 function isvalidhexcode(input) {
