@@ -1025,16 +1025,18 @@ if (command === 'work') {
         .setTitle('>---=**WORK**=---<')
         .setDescription(`
         **<:AgnabotCheck:1153525610665214094> + ${moneyEarned} ||** ${coolAssDescription}`)
-        .setFooter({ text: `your money is now ${curbal}` })
+        .setFooter({ text: `your money is now ${curbal} || work text ${workArrayIndex}` })
+
+      console.log(`the index is ${workArrayIndex} and so it should have ${workArrayIndex + 1}.png, and the work text is ${workArray[workArrayIndex]}`)
 
       let file
       if (workArrayIndex !== 38) {
-        file = new AttachmentBuilder(`./images/work/${workArrayIndex}.png`, { name: 'workimage.png' })
+        file = new AttachmentBuilder(`./images/work/${workArrayIndex + 1}.png`, { name: 'workimage.png' })
       } else {
         if (moneyEarned !== 65) {
         file = new AttachmentBuilder(`./images/work/38.2.png`, { name: 'workimage.png' })
       } else {
-        file = new AttachmentBuilder(`./images/work/38.2.png`, { name: 'workimage.png' })
+        file = new AttachmentBuilder(`./images/work/38.1.png`, { name: 'workimage.png' })
       }
       }
 
@@ -2863,9 +2865,12 @@ const fishingExists = await db.get(message.author.id+'.fish')
 if (fishingExists) {
 
 const me = await db.get(message.author.id)
-const fishingLevelRounded = Math.floor(me.fish.level / 5)
+let fishingLevelRounded = Math.floor(me.fish.level / 5)
+if (fishingLevelRounded > fishingArray.length) {
+  fishingLevelRounded = fishingArray.length
+}
 let myFishingArray = fishingArray[fishingLevelRounded]
-if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length]}
+if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length - 1]}
 const percents = percentify(myFishingArray)
 
 fishingText = 
@@ -3019,6 +3024,8 @@ bot.on('login', () => {
   playersOnline.forEach((name) => {
   minecraftPlayersCooldown.push(name)
   })
+
+  bot.chat(`/login helloguys`)
 
   setTimeout(() => {
   minecraftPlayersCooldown = []
@@ -3648,6 +3655,8 @@ async function fetchProfilePicture(userId) {
 }
 
 function percentify(array) {
+console.log(array)
+if (!array) {array = fishingArray[fishingArray.length]}
 const sum = array.reduce((acc, number) => acc + number, 0);
 const percentages = array.map(number => (number / sum) * 100);
 return percentages
@@ -3658,7 +3667,7 @@ const me = await db.get(message.author.id)
 console.log(Math.floor(me.fish.level / 5))
 const fishingLevelRounded = Math.floor(me.fish.level / 5)
 let myFishingArray = fishingArray[fishingLevelRounded]
-if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length]}
+if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length - 1]}
 const percents = percentify(myFishingArray)
 const randomNum = getRandomInt(99) + 1
 
@@ -3706,7 +3715,7 @@ console.log(lootToDraw, name)
 const attachment = await fishingLootImage(message.author, lootToDraw, { name: name, rarity: type, color: color })
 fishingEmbed.setTitle(`Congrats! You earned ${exp} exp!`)
 if (me.fish.exp + exp >= me.fish.expLevel) {
-fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${(Math.floor((me.fish.level + 1) / 5) + 1) * 100} exp until next level` })
+fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${((Math.floor((me.fish.level + 1) / 5) + 1) * 100) + me.fish.level * 10} exp until next level` })
 await db.add(message.author.id+'.fish.level', 1)
 await db.set(message.author.id+'.fish.exp', 0)
 
@@ -4010,7 +4019,7 @@ trello.addCard(newMessage.content, `suggested by ${newMessage.author.username}`,
 process.on('uncaughtException', async (err) => {
   console.log('CRASHED, writing error...')
   console.log(err)
-  const errorMessage = `${new Date().toISOString()} - Uncaught Exception: ${err}\n`;
+  const errorMessage = `${new Date().toISOString()} - Uncaught Exception: ${err.message}\n${err.stack}`;
   await fs.writeFile('./info/crash logs/error.txt', errorMessage, (err) => { 
     if (err) throw err; 
   }) 

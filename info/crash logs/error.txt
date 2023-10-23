@@ -1,1 +1,3 @@
-2023-10-21T16:17:10.758Z - Uncaught Exception: ReferenceError: file is not defined
+2023-10-23T03:07:52.949Z - Uncaught Exception: getaddrinfo ENOTFOUND discord.com
+Error: getaddrinfo ENOTFOUND discord.com
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:107:26)
