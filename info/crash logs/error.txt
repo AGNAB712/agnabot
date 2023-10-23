@@ -1,1 +1,1 @@
-2023-10-21T16:17:10.758Z - Uncaught Exception: ReferenceError: file is not defined
+2023-10-22T16:20:25.678Z - Uncaught Exception: TypeError: Cannot read properties of undefined (reading 'reduce')
