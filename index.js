@@ -381,7 +381,6 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)*/
 }
 }
-}
 
 //duo blocked agnabot :           (
 /*if (message.channel.type === 1 && message.content.includes('yukari') && message.author.id !== '1107764918293372989') {
