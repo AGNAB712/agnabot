@@ -1,9 +1,9 @@
 //key is [trash, common, rare, legendary, artifact]
 
 const fishingArray = 
-[[60, 15, 4, 1, 0], //level 0-5
-[60, 17, 6, 2, 1], //level 5-10
-[50, 20, 7, 3, 2], //10-15 (etc)
+[[90, 5, 2, 1, 0], //level 0-5
+[87, 7, 4, 2, 1], //level 5-10
+[85, 10, 7, 3, 2], //10-15 (etc)
 ]
 
 const fishingLootMap = {
