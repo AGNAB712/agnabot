@@ -355,7 +355,6 @@ client.on('messageCreate', async (message) => {
 if (message.channel.type === 1) {return}
 
 if (message.channel.id === minecraftchat.id && !message.author.bot) {
-  try {
   if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
   if (message.content.includes('\n')) {return message.reply('cant have a message with a linebreak')}
   let attachmentEmoji = ''
@@ -380,9 +379,6 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   await createMinecraftBot()
   waitMessage.delete()
   bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content}","color":"dark_green"}`)*/
-}
-} catch (e) {
-  message.reply('server off Broski')
 }
 }
 }
