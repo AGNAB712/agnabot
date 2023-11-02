@@ -15,10 +15,10 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const { readFile } = require('fs/promises');
 const { Image } = require('@napi-rs/canvas');
-const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed, } = require('./info/embeds.js')
+const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed } = require('./info/embeds.js')
 const { buyArray } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
-const { fishingArray, fishingLootMap } = require('./info/fishingMap.js')
+const { fishingArray, fishingLootMap } = require('./info/fishing.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
@@ -124,6 +124,9 @@ let fishingEmbed = new EmbedBuilder()
 .setTitle('Fishing...')
 .setImage('attachment://fishing.png')
 .setColor('#235218')
+let whitelistEmbed = new EmbedBuilder()
+.setColor('#235218')
+.setTitle('~=-Whitelist Request-=~')
 
 //saving sqlite function
 async function saveSqlite() {
@@ -369,11 +372,11 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${minecraftAuthor}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
   } else {
   bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
-}
+  }
   } else {
   bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
   }
-} catch (e) {
+  } catch (e) {
   //this means that the server is online, but agnabot isn't on the server
   /*const waitMessage = await message.reply('oh the server is online, but im not on the server. hold on')
   await createMinecraftBot()
@@ -523,6 +526,28 @@ return
 
   if (command === 'lockstatus') {
     message.reply('open')
+  }
+
+  if (command === 'whitelist') {
+
+  if (!args[0]) {return message.reply('give me a username to whitelist')}
+  const minecraftUsername = args[0]
+  whitelistEmbed.setDescription(`minecraft username: ${minecraftUsername}\ndiscord user: ${message.author}`)
+
+  const confirm = new ButtonBuilder()
+      .setCustomId('confirmWhitelist')
+      .setLabel('confirm')
+      .setStyle(ButtonStyle.Success);
+  const deny = new ButtonBuilder()
+      .setCustomId('denyWhitelist')
+      .setLabel('deny')
+      .setStyle(ButtonStyle.Danger);
+
+  const row = new ActionRowBuilder()
+  row.addComponents(confirm, deny);
+
+  message.delete();
+  message.channel.send({ embeds: [whitelistEmbed], components: [row] })
   }
 
   if (command === 'verify') {
@@ -1468,6 +1493,7 @@ message.delete()
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
+    const verified = await db.get(`${message.author.id}.mc`)
     console.log('has premium =', message.member.roles.cache.has('1120808808655102035'))
     console.log('has weed =', message.member.roles.cache.has('1120830175114973215'))
 
@@ -1482,7 +1508,8 @@ message.delete()
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
     if (me.value === 'avacado' && avacadoBought) {return}
-    if (me.value === 'name' && !message.member.guild.roles.cache.find(role => role.name === "minecraft participant")) {return}
+    if (me.value === 'name' && !message.member.guild.roles.cache.find(role => role.name === "Minecraft Participant")) {return}
+    if (me.value === 'head' && !verified) {return}
     select.addOptions(
       new StringSelectMenuOptionBuilder()
         .setLabel(me.label)
@@ -1733,6 +1760,25 @@ case 'avacado':
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100000));
     await saveSqlite();
       } else {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
+    }
+break;
+
+case 'head':
+    if (curbal > 25000) {
+    try {
+    if (!await isMinecraftOnline()) return message.reply('**<:AgnabotX:1153460434691698719> ||** server offline, sorry')
+    const mcUsername = await db.get(message.author.id+'.mc')
+    const playersOnline = Object.keys(bot.players)
+    if (!playersOnline.includes(mcUsername)) return message.reply('**<:AgnabotX:1153460434691698719> ||** get on the server first')
+    bot.chat(`/give ${mcUsername} minecraft:player_head{SkullOwner:${mcUsername}}`)
+    message.reply('**<:AgnabotCheck:1153525610665214094> ||** it should be in your inventory now')
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 25000));
+    await saveSqlite();
+  } catch (e) {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** sorry an error occured')
+  }
+    } else {
     message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
     }
 break;
@@ -2210,6 +2256,7 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
   if (command === 'balance' || command === 'bal') {
 
   console.log(await db.get(message.author.id))
+  console.log(await db.get('pet_'+message.author.id))
     let targetUser = message.mentions.users.first();
 
     if (targetUser) {
@@ -3711,12 +3758,12 @@ console.log(lootToDraw, name)
 const attachment = await fishingLootImage(message.author, lootToDraw, { name: name, rarity: type, color: color })
 fishingEmbed.setTitle(`Congrats! You earned ${exp} exp!`)
 if (me.fish.exp + exp >= me.fish.expLevel) {
-fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${((Math.floor((me.fish.level + 1) / 5) + 1) * 100) + me.fish.level * 10} exp until next level` })
+fishingEmbed.setFooter({ text: `level ${me.fish.level + 1} | 0 exp | ${((Math.floor((me.fish.level + 1) / 5) + 1) * 100) + me.fish.level * 25} exp until next level` })
 await db.add(message.author.id+'.fish.level', 1)
 await db.set(message.author.id+'.fish.exp', 0)
 
-await db.set(message.author.id+'.fish.expLevel', (Math.floor((me.fish.level + 1) / 5) + 1) * 100) 
-//next fishing level, divided by five so it only goes up every 5 levels, plus 1 so 0 is never a factor, * 100
+await db.set(message.author.id+'.fish.expLevel', (((Math.floor((me.fish.level + 1) / 5) + 1) * 100) + me.fish.level * 25))
+//next fishing level, divided by five so it only goes up every 5 levels, plus 1 so 0 is never a factor, * 100, + fishing level * 25
 
 } else {
 fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp + exp} exp | ${me.fish.expLevel - (me.fish.exp + exp)} exp until next level` })
@@ -3843,6 +3890,14 @@ async function calculateEmotions(pet) {
   const totalScore = pet.health + pet.affection + pet.hunger
   let emotionImage = await Canvas.loadImage(pet.image);
 
+  if (totalScore == 0) {
+  if (getRandomInt(99) >= 15) {
+  return await Canvas.loadImage('./images/emotions/dead.png');
+  } else {
+  return await Canvas.loadImage('./images/emotions/dead2.png');
+  }
+}
+
   if (pet.hunger <= 20 && pet.affection <= 20 && pet.health <= 20) {return await Canvas.loadImage('./images/emotions/suffering.png')}
   if (pet.hunger <= 20) {return await Canvas.loadImage('./images/emotions/famished.png')}
   if (pet.affection <= 20) {return await Canvas.loadImage('./images/emotions/neglected.png')}
@@ -3861,12 +3916,6 @@ async function calculateEmotions(pet) {
   if (totalScore < 100) {return await Canvas.loadImage('./images/emotions/sad.png');}
 
   //if dead
-  if (getRandomInt(99) >= 15) {
-  return await Canvas.loadImage('./images/emotions/dead.png');
-  } else {
-  return await Canvas.loadImage('./images/emotions/dead2.png');
-  }
-
   return Canvas.loadImage(pet.image)
 
 }
@@ -3878,6 +3927,47 @@ client.on('interactionCreate', async (interaction) => {
   try {
 
   const { customId } = interaction;
+
+  if (customId === 'confirmWhitelist' || customId === 'denyWhitelist') {
+  if (!(interaction.user.id == '765581160755363840' || interaction.user.id == '382226955870928897')) {  
+  await interaction.reply({
+  content: `only strats and agnab can verify`,
+  ephemeral: true
+  });
+  return
+  }
+
+  if (customId === 'confirmWhitelist') {
+    try {
+
+const minecraftUsername = getTextUntilDelimiter(interaction.message.embeds[0].data.description.slice(20), '\n')
+
+let updatedWhitelistEmbed = new EmbedBuilder()
+.setColor('Green')
+.setTitle('~=-Whitelist Request-=~')
+.setDescription(`**-WHITELIST VERIFIED-**\nusername: ${minecraftUsername}`)
+interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
+bot.chat(`/whitelist add ${minecraftUsername}`)
+    } catch (e) {
+    interaction.update({ content: 'some error occured Sorry', embeds: [], components: [] })
+    }
+  }
+
+  if (customId === 'denyWhitelist') {
+    try {
+
+const minecraftUsername = getTextUntilDelimiter(interaction.message.embeds[0].data.description.slice(20), '\n')
+
+let updatedWhitelistEmbed = new EmbedBuilder()
+.setColor('Red')
+.setTitle('~=-Whitelist Request-=~')
+.setDescription(`**-WHITELIST DENIED-**\nusername: ${minecraftUsername}`)
+interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
+    } catch (e) {
+    interaction.update({ content: 'some error occured Sorry', embeds: [], components: [] })
+    }
+  }
+  }
 
   if (customId === 'next' || customId === 'back') {
     const repliedMessage = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId)
