@@ -1,1 +1,4 @@
-2023-10-22T16:20:25.678Z - Uncaught Exception: TypeError: Cannot read properties of undefined (reading 'reduce')
+2023-11-01T23:47:20.185Z - Uncaught Exception: Cannot read properties of undefined (reading 'id')
+TypeError: Cannot read properties of undefined (reading 'id')
+    at Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1325:118)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
