@@ -15,6 +15,7 @@ const buyArray =
 { label: 'Fishing Rod', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '🎣' },
 { label: 'Avacado', description: '100,000 AGNABUCKS (literally just an avacado)', value: 'avacado', emoji: '1155948289305362542' },
 { label: 'Name color', description: '50,000 AGNABUCKS (colors your name in minecraft)', value: 'name', emoji: '🟥' },
+{ label: 'Player head', description: '50,000 AGNABUCKS (gives you your player head in minecraft)', value: 'head', emoji: '1169665834315161741' },
 ]
 
 module.exports ={
