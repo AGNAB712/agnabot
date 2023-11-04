@@ -199,10 +199,14 @@ async function loadCurrentStatus() {
 
 //child labor function (for the child labor shop item)
 async function doChildLabor() {
+
+  const amassing = client.guilds.cache.get('969752864585035777');
+
   const allUserData = await db.all()
   const toWork = allUserData.filter(data => data.id.startsWith('children_'))
   await toWork.forEach(async (value, index) => {
     const userId = value.id.slice(9)
+    if (!amassing.members.cache.get(userId)) {return}
     const curbal = await db.get(userId+'.a')
     await db.set(userId+'.a', parseInt(parseInt(curbal) + value.value));
     if (index = toWork.length) {
@@ -1344,6 +1348,7 @@ isFishing.delete(message.author.id)
 
     let bonus = 0
 
+    try {
     if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Agnabian Royalty (Level 50)').id)) {
     bonus = 100
     saveSqlite();
@@ -1362,6 +1367,9 @@ isFishing.delete(message.author.id)
     } else {
       return message.channel.send('sorry youre not a high enough level to use this yet');
     }
+  } catch (e) {
+    return message.channel.send('sorry youre not a high enough level to use this yet');
+  }
 
     await db.set(playerID+'.a', parseInt(curbal) + bonus);
 
@@ -3016,13 +3024,22 @@ for (let i = 1; i < 4; i++) {
   }
 
   if (command === 'sell') {
+
+    if (message.author.id == '315567663424471042' || message.author.id == '1033453898830188554') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have been banned from selling for an indeterminate amount of time')}
     let amountToSell = 1;
-    const inventory = await db.get(message.author.id+'.inv') 
+    const inventory = await db.get(message.author.id+'.inv')
+    for (const key in inventory) {
+      if (inventory[key] === 0 || inventory[key] < 0) {
+        delete inventory[key];
+      }
+    } 
     if (!inventory) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have literally no shit you are poor as FUCK.')}
     const inventoryArray = Object.keys(inventory)
 
+
     if (isNaN(args[0])) {return message.reply('**<:AgnabotX:1153460434691698719> ||** thats not a Cool Number!')}
     const indexToSell = parseInt(args[0]) - 1
+    console.log(inventoryArray.length, indexToSell > inventoryArray.length)
     if (!indexToSell && !indexToSell == 0) {return message.reply('**<:AgnabotX:1153460434691698719> ||** i cant sell nothing stupid')}
     if (indexToSell > inventoryArray.length) {return message.reply('**<:AgnabotX:1153460434691698719> ||** Womp womp')}
     if (indexToSell + 1 <= 0 ) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you are stupid')}
@@ -3097,7 +3114,7 @@ function objectPage(testmap, page) {
     .setColor('#235218')
 
   for (const property in testmap) {
-    if (testmap[property] == 0) {delete testmap[property]}
+    if (testmap[property] == 0 || testmap[property] < 0) {delete testmap[property]}
   }
 
   const pages = Math.ceil(testmap.size / 3)
@@ -4013,7 +4030,9 @@ console.error('Error occurred:', err);
 async function calculateEmotions(pet) {
 
   const totalScore = pet.health + pet.affection + pet.hunger
-  let emotionImage = await Canvas.loadImage(pet.image);
+  let emotionImage;
+
+  console.log(totalScore)
 
   if (totalScore == 0) {
   if (getRandomInt(99) >= 15) {
@@ -4040,8 +4059,7 @@ async function calculateEmotions(pet) {
   if (totalScore > 100) {return await Canvas.loadImage('./images/emotions/ok.png');}
   if (totalScore < 100) {return await Canvas.loadImage('./images/emotions/sad.png');}
 
-  //if dead
-  return Canvas.loadImage(pet.image)
+  return await Canvas.loadImage('./images/emotions/sad.png');
 
 }
 
