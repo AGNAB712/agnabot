@@ -438,7 +438,7 @@ return
 
   if (message.author.id !== '1107764918293372989') { 
     if (message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
-    message.reply('dafuq you want from pirate?')
+    message.reply('explode')
   }
   }};
 
