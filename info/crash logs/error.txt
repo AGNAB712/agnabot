@@ -1,4 +1,4 @@
-2023-11-04T05:38:51.932Z - Uncaught Exception: Cannot read properties of undefined (reading 'id')
+2023-11-04T14:22:51.875Z - Uncaught Exception: Cannot read properties of undefined (reading 'id')
 TypeError: Cannot read properties of undefined (reading 'id')
     at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:1356:118)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
