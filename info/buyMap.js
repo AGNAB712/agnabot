@@ -15,9 +15,27 @@ const buyArray =
 { label: 'Fishing Rod', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '🎣' },
 { label: 'Avacado', description: '100,000 AGNABUCKS (literally just an avacado)', value: 'avacado', emoji: '1155948289305362542' },
 { label: 'Name color', description: '50,000 AGNABUCKS (colors your name in minecraft)', value: 'name', emoji: '🟥' },
-{ label: 'Player head', description: '50,000 AGNABUCKS (gives you your player head in minecraft)', value: 'head', emoji: '1169665834315161741' },
+{ label: 'Player head', description: '25,000 AGNABUCKS (gives you your player head in minecraft)', value: 'head', emoji: '1169665834315161741' },
 ]
 
+const inventoryFormats = {
+	rings: `\💍 \`Wedding rings:     [count]\` \n`,
+	ttspasses: `\🎟 \`TTS passes:     [count]\` \n`,
+	trash: `\<:trash:1165126468649615391> \`Fishing trash:     [count]\` \n`,
+	common: `\<:common:1165126466258862171> \`Common fish:     [count]\` \n`,
+	rare: `\<:rare:1165126462622416937> \`Rare fish:     [count]\` \n`,
+	legendary: `\<:legendary:1165126464782487632> \`Legendary fish:     [count]\` \n`
+}
+
+const itemWorth = {
+	rings: 10000,
+	ttspasses: 100,
+	trash: 10,
+	common: 500,
+	rare: 2500,
+	legendary: 5000
+}
+
 module.exports ={
-	buyArray
+	buyArray, inventoryFormats, itemWorth
 }

@@ -1,12 +1,4 @@
-2023-11-02T16:39:45.138Z - Uncaught Exception: minecraftchat is not defined
-ReferenceError: minecraftchat is not defined
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:360:28)
-    at Client.emit (node:events:513:28)
-    at MessageCreateAction.handle (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\client\actions\MessageCreate.js:28:14)
-    at module.exports [as MESSAGE_CREATE] (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\client\websocket\handlers\MESSAGE_CREATE.js:4:32)
-    at WebSocketManager.handlePacket (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\client\websocket\WebSocketManager.js:354:31)
-    at WebSocketManager.<anonymous> (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\client\websocket\WebSocketManager.js:238:12)
-    at WebSocketManager.emit (C:\agnabot-main\agnabot-main\node_modules\@vladfrangu\async_event_emitter\dist\index.js:282:31)
-    at WebSocketShard.<anonymous> (C:\agnabot-main\agnabot-main\node_modules\@discordjs\ws\dist\index.js:1103:51)
-    at WebSocketShard.emit (C:\agnabot-main\agnabot-main\node_modules\@vladfrangu\async_event_emitter\dist\index.js:282:31)
-    at WebSocketShard.onMessage (C:\agnabot-main\agnabot-main\node_modules\@discordjs\ws\dist\index.js:938:14)
+2023-11-04T05:38:51.932Z - Uncaught Exception: Cannot read properties of undefined (reading 'id')
+TypeError: Cannot read properties of undefined (reading 'id')
+    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:1356:118)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

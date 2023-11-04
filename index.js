@@ -16,9 +16,9 @@ const cheerio = require('cheerio');
 const { readFile } = require('fs/promises');
 const { Image } = require('@napi-rs/canvas');
 const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed } = require('./info/embeds.js')
-const { buyArray } = require('./info/buyMap.js')
+const { buyArray, inventoryFormats, itemWorth } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
-const { fishingArray, fishingLootMap } = require('./info/fishing.js')
+const { fishingArray, fishingLootMap, artifacts, outfitFormats } = require('./info/fishing.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
@@ -526,6 +526,10 @@ return
 
   if (command === 'lockstatus') {
     message.reply('open')
+  }
+
+  if (command === 'artifact') {
+    giftArtifact(message)
   }
 
   if (command === 'whitelist') {
@@ -1132,10 +1136,12 @@ const curbal = await db.get(message.author.id+'.a')
     await db.set(message.author.id+'.inv', JSON.parse(args.join(' ')))
   }
 
+
+
   if (command === 'inv' || command === 'inventory') {
   const me = await db.get(message.author.id)
   if (!me.inv) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have an inventory')}
-  console.log(me)
+  console.log(me.inv)
   const myCoolEmbed = objectPage(me.inv, 0)
   //const myCoolEmbed = objectPage(funnyObject, 0)
 
@@ -2978,6 +2984,111 @@ message.reply({ embeds: [statEmbed] })
 
   }
 
+  if (command === 'equip') {
+
+  }
+
+  if (command === 'outfit') {
+
+  let outfit = await db.get(message.author.id+'.outfit')
+  if (!outfit) {
+  await db.set(message.author.id+'.outfit', { slot1: 'null', slot2: 'null', slot3: 'null' })
+  outfit = { slot1: 'null', slot2: 'null', slot3: 'null' }
+  }
+
+  let responseArray = []
+  let outfitArray = Object.values(outfit)
+for (let i = 1; i < 4; i++) {
+  if (outfitFormats.hasOwnProperty(outfitArray[i-1])) {
+    responseArray[i-1] = `${i}. ` + outfitFormats[outfitArray[i-1]]
+  } else {
+    responseArray[i-1] = `${i}. ❔ || **UNKNOWN** (${outfitArray[i-1]})`
+  }
+}
+
+
+  let meEmbed = new EmbedBuilder()
+  .setColor('#235218')
+  .setTitle(`~=-${message.author.username}'s outfit-=~`)
+  .setDescription(`${responseArray[0]}\n${responseArray[1]}\n${responseArray[2]}`)
+
+  message.reply({ embeds: [meEmbed] })
+  }
+
+  if (command === 'sell') {
+    let amountToSell = 1;
+    const inventory = await db.get(message.author.id+'.inv') 
+    if (!inventory) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have literally no shit you are poor as FUCK.')}
+    const inventoryArray = Object.keys(inventory)
+
+    if (isNaN(args[0])) {return message.reply('**<:AgnabotX:1153460434691698719> ||** thats not a Cool Number!')}
+    const indexToSell = parseInt(args[0]) - 1
+    if (!indexToSell && !indexToSell == 0) {return message.reply('**<:AgnabotX:1153460434691698719> ||** i cant sell nothing stupid')}
+    if (indexToSell > inventoryArray.length) {return message.reply('**<:AgnabotX:1153460434691698719> ||** Womp womp')}
+    if (indexToSell + 1 <= 0 ) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you are stupid')}
+    if (typeof inventory[inventoryArray[indexToSell]] === 'object') {return message.reply('**<:AgnabotX:1153460434691698719> ||** cant sell artifacts')}
+
+    if (args[1]) {
+    if (args[1] === 'all') {amountToSell = parseInt(inventory[inventoryArray[indexToSell]])} else {
+
+    if (isNaN(args[1])) {return message.reply('**<:AgnabotX:1153460434691698719> ||** not a number')}
+    const amountToSellQuery = parseInt(args[1])
+    if (amountToSellQuery > inventory[inventoryArray[indexToSell]]) {return message.reply('**<:AgnabotX:1153460434691698719> ||** cant sell stuff you dont have')}
+    if (amountToSellQuery <= 0) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you are stupid')}
+    amountToSell = amountToSellQuery
+
+    }
+    }
+
+    const confirm = new ButtonBuilder()
+      .setCustomId('confirmSell')
+      .setLabel('confirm')
+      .setStyle(ButtonStyle.Success);
+    const cancel = new ButtonBuilder()
+      .setCustomId('cancelSell')
+      .setLabel('cancel')
+      .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder()
+      .addComponents(confirm, cancel);
+
+    const response = await message.reply({
+        content: `are you sure you want to sell **${amountToSell}** ${inventoryArray[indexToSell]} for **${amountToSell * itemWorth[inventoryArray[indexToSell]]}** agnabucks?`,
+        components: [row],
+    });
+
+const collectorFilter = i => message.author.id;
+
+try {
+
+  const collected = await response.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  if (collected.customId === 'confirmSell') {
+    await db.add(message.author.id+'.a', amountToSell * itemWorth[inventoryArray[indexToSell]])
+    await db.add(message.author.id+'.inv.'+inventoryArray[indexToSell], -1 * amountToSell)
+    response.edit({    
+    content: `**<:AgnabotCheck:1153525610665214094> ||** your balance is now ${await db.get(message.author.id+'.a')}`,
+    components: [],
+  })
+  } else {
+    response.edit({    
+    content: `**<:AgnabotX:1153460434691698719> ||** okey doke`,
+    components: [],
+  })
+  }
+
+} catch (e) {
+  response.edit({ 
+    content: `**<:AgnabotX:1153460434691698719> ||** timed out`,
+    components: [],
+  })
+}
+
+  }
+
+  if (command === 'trade') {
+    
+  }
+
 });
 
 function objectPage(testmap, page) {
@@ -2996,35 +3107,19 @@ function objectPage(testmap, page) {
 
   for (let i = curPage * 3; i < (curPage * 3) + 3; i++) {
     if (!inventoryArray[i]) {description += ''} else {
-    switch (inventoryArray[i]) {
 
-    //replace this later with an object or something
-
-    case 'rings':
-      description += `\💍 \`Wedding rings:     ${testmap[inventoryArray[i]]}\` \n`
-    break;
-    case 'ttspasses':
-      description += `\🎟 \`TTS passes:     ${testmap[inventoryArray[i]]}\` \n`
-    break;
-    case 'trash':
-      description += `\<:trash:1165126468649615391> \`Fishing trash:     ${testmap[inventoryArray[i]]}\` \n`
-    break;
-    case 'common': 
-      description += `\<:common:1165126466258862171> \`Common fish:     ${testmap[inventoryArray[i]]}\` \n`
-    break;
-    case 'rare':
-      description += `\<:rare:1165126462622416937> \`Rare fish:     ${testmap[inventoryArray[i]]}\` \n`
-    break;
-    case 'legendary':
-      description += `\<:legendary:1165126464782487632> \`Legendary fish:     ${testmap[inventoryArray[i]]}\` \n`
-    break
-  default:
-    description += `\❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
+    if (inventoryFormats.hasOwnProperty(inventoryArray[i])) {
+      description += inventoryArray.indexOf(inventoryArray[i]) + 1 + '. ' + inventoryFormats[inventoryArray[i]].replace("[count]", testmap[inventoryArray[i]]);
+    } else {
+      if (typeof testmap[inventoryArray[i]] === 'object') {
+        description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown Artifact (${inventoryArray[i]}):     ${testmap[inventoryArray[i]].count} (${testmap[inventoryArray[i]].rarity})\` \n`
+      } else {
+        description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
+      }
     }
 
     }
   }
-  console.log(description)
 
   testEmbed
   .setDescription(description)
@@ -3776,6 +3871,36 @@ await db.add(`${message.author.id}.inv.${type}`, 1)
 saveSqlite()
 
 } 
+
+async function giftArtifact(message) {
+
+  const artifactArray = Object.keys(artifacts)
+  const randomArtifact = artifactArray[getRandomInt(artifactArray.length)]
+
+  const artifactRarityChance = getRandomInt(99)
+
+  let artifactRarity = [];
+  if (artifactRarityChance < 60) {
+    artifactRarity = ['rare', 0];
+  } else if (artifactRarityChance < 90) {
+    artifactRarity = ['legendary', 1];
+  } else {
+    artifactRarity = ['uber', 2];
+  }
+
+  message.reply(`congrats you got ${randomArtifact} of rarity ${artifactRarity[0]}
+  ${artifacts[randomArtifact].description}
+  ${artifacts[randomArtifact].text}
+  X = ${artifacts[randomArtifact].values[1]}
+  (this is part of the set "${artifacts[randomArtifact].set}")
+  `)
+
+  const artifactRarityString = artifactRarity[0]
+  await db.add(`${message.author.id}.inv.${randomArtifact}.count`, 1)
+  await db.push(`${message.author.id}.inv.${randomArtifact}.rarity`, artifactRarityString)
+
+
+}
 
 async function fishingLootImage(guyFishing, lootToDraw, typeMap) {
 const canvas = Canvas.createCanvas(750, 500);
