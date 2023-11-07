@@ -24,7 +24,29 @@ const inventoryFormats = {
 	trash: `\<:trash:1165126468649615391> \`Fishing trash:     [count]\` \n`,
 	common: `\<:common:1165126466258862171> \`Common fish:     [count]\` \n`,
 	rare: `\<:rare:1165126462622416937> \`Rare fish:     [count]\` \n`,
-	legendary: `\<:legendary:1165126464782487632> \`Legendary fish:     [count]\` \n`
+	legendary: `\<:legendary:1165126464782487632> \`Legendary fish:     [count]\` \n`,
+	factorygloves: '<:factorygloves:1171510979700465716> \`Factory gloves:     [count]\` \n',
+	basementenlarger: '<:basementenlarger:1171510886104571964> \`Basement enlarger:     [count]\` \n',
+	smogshard: '<:smokeshard:1171510993055129661> \`Smogshard:     [count]\` \n',
+	elixiroftears: `<:elixeroftears:1171510888965087232> \`Elixir of tears:     [count]\` \n`,
+	amuletoflaziness: '<:amuletoflaziness:1171510874163384452> \`Amulet of laziness:     [count]\` \n',
+	impenetrableshield: `<:impenetrableshield:1171510897399844874> \`Impenetrable shield:     [count]\` \n`,
+	moneylaundrymachine: `<:moneylaundrymachine:1171510988839858237> \`Money laundry machine:     [count]\` \n`,
+	fourleafclover: `<:fourleafclover:1171510980849709136> \`4 leaf clover:     [count]\` \n`,
+	emeraldhelmet: `<:emeraldhelmet:1171510890407923802> \`Emerald helmet:     [count]\` \n`,
+	amuletofdedication: `<:amuletofdedication:1171510872246603847> \`Amulet of dedication:     [count]\` \n`,
+	workmanscharm: `<:workmanscharm:1171510903691292794> \`Workman's charm:     [count]\` \n`,
+	cryoheart: `<:cryoheart:1171510887459336332> \`Cryoheart:     [count]\` \n`,
+	laboriouslure: `<:laboriouslure:1171510987489284158> \`Laborious lure:     [count]\` \n`,
+	mosseater: `<:mosseater:1171510900704944249> \`Moss eater:     [count]\` \n`,
+	gemofgreatness: `<:gemofgreatness:1171510895462068295> \`Gem of greatness:     [count]\` \n`,
+	sharktoothnecklace: `<:sharktoothnecklace:1171510991784263791> \`Shark tooth necklace:     [count]\` \n`,
+	amuletofaquaboon: `<:amuletofaquaboon:1171510868798885929> \`Amulet of aquaboon:     [count]\` \n`,
+	auraofdeflection: `<:auraofdeflection:1171510878772924436> \`Aura of deflection:     [count]\` \n`,
+	auraofdevotion: `<:auraofdevotion:1171510881285328906> \`Aura of deflection:     [count]\` \n`,
+	auraofthecraft: `<:auraofthecraft:1171510884934361198> \`Aura of the craft:     [count]\` \n`,
+	auraofthecaretaker: '<:auraofthecaretaker:1171510882749141073> \`Aura of the caretaker:     [count]\` \n',
+	auraoffemboy: '<:auraoffemboy:1171512600903819324> \`Aura of femboy:     [count]\` \n'
 }
 
 const itemWorth = {
