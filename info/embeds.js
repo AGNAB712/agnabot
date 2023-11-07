@@ -98,6 +98,19 @@ const petEmbed = new EmbedBuilder()
     { name: 'a.pet background', value: `sets the background of your pet to an image` },
   )
 
+const fishingHelpEmbed = new EmbedBuilder()
+  .setColor('#235218')
+  .setTitle('Command List')
+  .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
+  .addFields(
+    { name: 'a.pet', value: 'views your pet' },
+    { name: 'a.pet buy', value: 'buys a pet (1000 agnabucks)' },
+    { name: 'a.pet disown', value: `disowns your pet` },
+    { name: 'a.pet image', value: 'sets your pets image' },
+    { name: 'a.pet name', value: `renames your pet` },
+    { name: 'a.pet background', value: `sets the background of your pet to an image` },
+  )
+
 module.exports = {
   funEmbed,
   utilityEmbed,
@@ -105,6 +118,7 @@ module.exports = {
   adminEmbed,
   hotelEmbed,
   petEmbed,
-  statEmbed
+  statEmbed,
+  fishingHelpEmbed
 };
 

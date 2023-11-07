@@ -2,6 +2,31 @@
 
 **Child labor related**
 
+Factory gloves
+"This factory is greasy as hell bro"
++ Child labor increases by X%
+- A.work cannot be used
+X = (rare: 5, legendary: 10, uber: 20)
+
+Basement enlarger
+"Dark humor fans"
++ Your maximum amount of children is increased to X
+- Pet agnabuck gain is halved
+~ Unequipping this keeps the children, but doesn't let them make money
+X = (rare: 11, legendary: 12, uber: 13)
+
+Smogshard
+"Mmmmmm tasty tasty polluted fish"
++ Every X minutes, your children automatically fish for you
+- You cannot use a.fish
+X = (rare: 90, legendary: 75, uber: 60)
+
+Elixir of tears
+"You have utterly ruined the lives of multiple innocent children. Good job."
++ Every X times child labor is activated, your children earn 50% more agnabucks
+- A.redeem cannot be used
+X = (rare: 50, legendary: 25, uber: 10)
+
 **Pet related**
 
 Amulet of laziness
@@ -87,7 +112,9 @@ Moss eater
 + Trash is automatically sold
 + Moss balls fished up sell for double the price
 + Fishing exp gain on trash and commons is increased by X% (in the case laborious lure is equipped, the reduction is DECREASED by this amount instead)
-~ If laborious lure is equipped, fishing stats are locked at [150, 30, 10, 3, 1] instead
+~ If laborious lure is equipped, fishing stats are locked at [200, 30, 10, 3, 1] instead
+- Upgrades to your fishing rod are not available or applied
+- You cannot equip any other fishing related artifacts
 X = (rare: 50%, legendary: 75%, uber: 100%)
 
 Gem of greatness
@@ -97,8 +124,22 @@ Gem of greatness
 - You cannot use a.redeem
 X = (rare: 1, legendary: 3, uber: 5)
 
+Shark tooth necklace
+"Terara"
++ Your fishables (besides trash) increase in value by X%
++ All fishables are automatically sold for agnabucks (you will be notified when this happens and your new balance)
+- Child labor does not accrue agnabucks
+X = (rare: 10, legendary: 20, uber: 30)
 
+Amulet of aquaboon
+"Aquaboon is really fun to say. Aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon"
++ Your fishing exp increases by X%
+- Pets do not accrue agnabucks
+X = (rare: 10, legendary: 20, uber: 30)
 
+Set bonus:
++ Fishing chance is set to 5 levels above your current fishing level
+- Child labor does not accrue agnabucks
 
 **Passive/cosmetic artifacts**
 
@@ -128,3 +169,9 @@ Aura of the caretaker
 ~ This artifact contributes to pet set bonus
 ~ The only rarity of this item is rare
 ~ Unequipping this artifact will clear all of these
+
+Aura of the ???
+"Ambatakam"
++ Unlocks a new item in the shop (Worth 15k agnabucks)
++ Duration of buying this item is X minutes
+X = (rare: 15, legendary: 30, uber: 60)

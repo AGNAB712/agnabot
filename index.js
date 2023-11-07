@@ -373,12 +373,12 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   const repliedMessage = await message.channel.messages.fetch(message.reference.messageId)
   if (repliedMessage.author.id == '1107764918293372989') {
   const minecraftAuthor = getTextUntilDelimiter(repliedMessage.content, '||').replace(/\*/g, '').trim()
-  bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${minecraftAuthor}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+  bot.chat(`/dctomc ${message.author.username} (replying to ${minecraftAuthor}) ${message.content} ${attachmentEmoji}`)
   } else {
-  bot.chat(`/tellraw @a {"text":"${message.author.username} || (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+  bot.chat(`/dctomc ${message.author.username} || (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}`)
   }
   } else {
-  bot.chat(`/tellraw @a {"text":"${message.author.username} || ${message.content} ${attachmentEmoji}","color":"dark_green"}`)
+  bot.chat(`/dctomc ${message.author.username} || ${message.content} ${attachmentEmoji}`)
   }
   } catch (e) {
   //this means that the server is online, but agnabot isn't on the server
@@ -2994,23 +2994,182 @@ message.reply({ embeds: [statEmbed] })
 
   if (command === 'equip') {
 
+    const slot1 = new ButtonBuilder()
+      .setCustomId('slot1')
+      .setLabel('slot 1')
+      .setStyle(ButtonStyle.Success);
+    const slot2 = new ButtonBuilder()
+      .setCustomId('slot2')
+      .setLabel('slot 2')
+      .setStyle(ButtonStyle.Success);
+    const slot3 = new ButtonBuilder()
+      .setCustomId('slot3')
+      .setLabel('slot 3')
+      .setStyle(ButtonStyle.Success);
+
+    const row = new ActionRowBuilder()
+      .addComponents(slot1, slot2, slot3);
+
+    const response = await message.reply({
+        content: `what slot should i equip in`,
+        components: [row],
+    });
+
+    let slot = 1
+
+const collectorFilter = i => message.author.id;
+
+try {
+
+  const collected2 = await response.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  slot = collected2.customId
+  response.delete()
+
+} catch (e) {
+  return response.edit({ 
+    content: `**<:AgnabotX:1153460434691698719> ||** timed out`,
+    components: [],
+  })
+}
+
+    const inv = await db.get(message.author.id+'.inv')
+    const invArray = Object.keys(inv)
+    let outfit = await db.get(message.author.id+'.outfit')
+    let artifacts = {}; 
+
+    //filter to be only artifacts
+    invArray.forEach((key, i) => {
+      if (typeof inv[key] !== 'object') {
+        return delete inv[key];
+      }
+
+      const myObject = inv[key];
+
+
+      if (myObject.count > 1) {
+        for (let i = 0; i < myObject.count; i++) {
+
+          //this weird ass piece of code checks if there's an artifact of the same rarity and name, and if so skips one of the artifacts
+          let numberRarity = 0
+          if (inv[key].rarity[i] == 'uber') {numberRarity = 3} else if (inv[key].rarity[i] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
+          if (outfit.slot1[0] == key && outfit.slot1[1] == numberRarity) {
+          console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
+          outfit.slot1 = ['', '']
+          } else if (outfit.slot2[0] == key && outfit.slot2[1] == numberRarity) {
+          console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
+          outfit.slot2 = ['', ''] 
+          } else if (outfit.slot3[0] == key && outfit.slot3[1] == numberRarity) {
+          console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
+          outfit.slot3 = ['', ''] 
+          } else {
+          artifacts[key + ` #${(i + 1)}`] = inv[key].rarity[i]
+          } 
+
+        }
+      } else {
+
+        let numberRarity = 0
+        if (inv[key].rarity[0] == 'uber') {numberRarity = 3} else if (inv[key].rarity[0] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
+        //same down here
+        //i should prob use a guard system using returns or a for loop but im lazy
+        if (outfit.slot1[0] == key && outfit.slot1[1] == numberRarity) {outfit.slot1 = ['', '']}
+        else if (outfit.slot2[0] == key && outfit.slot2[1] == numberRarity) {outfit.slot2 = ['', '']}
+        else if (outfit.slot3[0] == key && outfit.slot3[1] == numberRarity) {outfit.slot3 = ['', '']}
+        else {
+        artifacts[key] = inv[key].rarity[0]
+        }
+      }
+    })
+    
+
+    const artifactArray = Object.keys(artifacts)
+
+    let select = new StringSelectMenuBuilder()
+      .setCustomId('equip')
+      .setPlaceholder('Equip an artifact')
+      .addOptions(
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`Cancel`)
+      .setValue(`cancel`),
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`Unequip`)
+      .setValue(`unequip`)
+    )
+
+    artifactArray.forEach((name, i) => {
+    select.addOptions(    
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`${name}`)
+      .setValue(`${name}`)
+      .setDescription(`Rarity: ${artifacts[name]}`)
+    )
+    })
+
+    const row2 = new ActionRowBuilder()
+      .addComponents(select);
+
+    const myMessage = await message.reply({
+      content: 'equip what artifact?',
+      components: [row2],
+    });
+
+try {
+  const confirmation = await myMessage.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+
+
+  if (confirmation.values[0] === 'cancel') {return await confirmation.update({ content: '**<:AgnabotX:1153460434691698719> ||** oook bai :3', components: [] })}
+  if (confirmation.values[0] === 'unequip') {
+  confirmation.update({ content: `**<:AgnabotCheck:1153525610665214094> ||** successfully unequipped **${slot}**`, components: [] })
+  return await db.set(message.author.id+'.outfit.'+slot, [ "null", 0 ])
   }
+
+  let toEquipName
+  let toEquipRarity
+  const regex = /#(\d+)$/; // regex to match " #(number)" at the end of the string
+  const match = confirmation.values[0].match(regex);
+  if (match) {
+    const number = match[1];
+    toEquipName = confirmation.values[0].slice(0, -1*(number.length+1)).trim()
+    toEquipRarity = inv[toEquipName].rarity[parseInt(number, 10) - 1];
+  } else {
+    toEquipName = confirmation.values[0]
+    toEquipRarity = inv[toEquipName].rarity[0];
+  }
+
+  let toEquipRarityNumber = 0
+  if (toEquipRarity === 'uber') {toEquipRarityNumber = 3} else if (toEquipRarity === 'legendary') {toEquipRarityNumber = 2} else {toEquipRarityNumber = 1}
+  await db.set(message.author.id+'.outfit.'+slot, [ toEquipName, toEquipRarityNumber ])
+  confirmation.update({ content: `**<:AgnabotCheck:1153525610665214094> ||** successfully equipped **${toEquipName}** (of rarity **${toEquipRarity}**) in **${slot}**`, components: [] })
+
+} catch (e) {
+  console.error(e)
+  myMessage.edit({ content: '**<:AgnabotX:1153460434691698719> ||** timed out', components: [] })
+}
+
+  }
+
+  //debug command technically
+  if (command === 'outfitreset') {
+  await db.set(message.author.id+'.outfit', { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] })
+  message.reply('**<:AgnabotCheck:1153525610665214094> ||** just reset your outfit :   )')}
 
   if (command === 'outfit') {
 
   let outfit = await db.get(message.author.id+'.outfit')
   if (!outfit) {
-  await db.set(message.author.id+'.outfit', { slot1: 'null', slot2: 'null', slot3: 'null' })
-  outfit = { slot1: 'null', slot2: 'null', slot3: 'null' }
+  await db.set(message.author.id+'.outfit', { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] })
+  outfit = { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] }
   }
 
   let responseArray = []
   let outfitArray = Object.values(outfit)
 for (let i = 1; i < 4; i++) {
-  if (outfitFormats.hasOwnProperty(outfitArray[i-1])) {
-    responseArray[i-1] = `${i}. ` + outfitFormats[outfitArray[i-1]]
+  if (outfitFormats.hasOwnProperty(outfitArray[i-1][0])) {
+    let textRarity
+    if (outfitArray[i-1][1] == 0) {textRarity = '(none)'} else if (outfitArray[i-1][1] == 1) {textRarity = 'RARE'} else if (outfitArray[i-1][1] == 2) {textRarity = 'LEGENDARY'} else {textRarity = 'UBER'}
+    responseArray[i-1] = `${i}. **` + outfitFormats[outfitArray[i-1][0]] + `** of rarity **${textRarity}**`
   } else {
-    responseArray[i-1] = `${i}. ❔ || **UNKNOWN** (${outfitArray[i-1]})`
+    responseArray[i-1] = `${i}. ❔ || **UNKNOWN** (${outfitArray[i-1][0]})`
   }
 }
 
@@ -3126,7 +3285,11 @@ function objectPage(testmap, page) {
     if (!inventoryArray[i]) {description += ''} else {
 
     if (inventoryFormats.hasOwnProperty(inventoryArray[i])) {
+      if (typeof testmap[inventoryArray[i]] === 'object') {
+      description += inventoryArray.indexOf(inventoryArray[i]) + 1 + '. ' + inventoryFormats[inventoryArray[i]].replace("[count]", `${testmap[inventoryArray[i]].count} (${testmap[inventoryArray[i]].rarity})`);
+      } else {
       description += inventoryArray.indexOf(inventoryArray[i]) + 1 + '. ' + inventoryFormats[inventoryArray[i]].replace("[count]", testmap[inventoryArray[i]]);
+    }
     } else {
       if (typeof testmap[inventoryArray[i]] === 'object') {
         description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown Artifact (${inventoryArray[i]}):     ${testmap[inventoryArray[i]].count} (${testmap[inventoryArray[i]].rarity})\` \n`
@@ -3823,6 +3986,7 @@ console.log(Math.floor(me.fish.level / 5))
 const fishingLevelRounded = Math.floor(me.fish.level / 5)
 let myFishingArray = fishingArray[fishingLevelRounded]
 if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length - 1]}
+if (message.author.id == '765581160755363840') {myFishingArray = [0, 0, 0, 0, 100]}
 const percents = percentify(myFishingArray)
 const randomNum = getRandomInt(99) + 1
 
@@ -3860,7 +4024,12 @@ lootToDraw = fishingLootMap.legendary[getRandomInt(3)]
 color = '#fffc39'
 exp = 500
 } else {
-//this is a placeholder for artifacts
+console.log('hello')
+const newMessage = await giftArtifact(message)
+console.log(newMessage)
+collected.update(newMessage)
+await saveSqlite()
+return
 }
 
 
@@ -3885,7 +4054,7 @@ collected.update({ embeds: [fishingEmbed], files: [attachment], components: [] }
 
 await db.add(`${message.author.id}.inv.${type}`, 1)
 
-saveSqlite()
+await saveSqlite()
 
 } 
 
@@ -3897,26 +4066,94 @@ async function giftArtifact(message) {
   const artifactRarityChance = getRandomInt(99)
 
   let artifactRarity = [];
+  let artifactColor 
   if (artifactRarityChance < 60) {
     artifactRarity = ['rare', 0];
+    artifactColor = '#690d0d'
   } else if (artifactRarityChance < 90) {
     artifactRarity = ['legendary', 1];
+    artifactColor = '#ffe582'
   } else {
     artifactRarity = ['uber', 2];
+    artifactColor = '#5380c3'
   }
 
-  message.reply(`congrats you got ${randomArtifact} of rarity ${artifactRarity[0]}
-  ${artifacts[randomArtifact].description}
-  ${artifacts[randomArtifact].text}
-  X = ${artifacts[randomArtifact].values[1]}
-  (this is part of the set "${artifacts[randomArtifact].set}")
-  `)
+  const attachment = await artifactImage(message.author, `./images/fishing/artifacts/${randomArtifact}.png`, { name: randomArtifact, rarity: artifactRarity[0], color: artifactColor })
+  let xText = ''
+  if (artifacts[randomArtifact].values[artifactRarity[1]] != 0) {
+  xText = `\n***X = ${artifacts[randomArtifact].values[artifactRarity[1]]}***`
+  }
+
+  let artifactEmbed = new EmbedBuilder()
+    .setTitle('~-=ARTIFACT CAUGHT=-~')
+    .setImage('attachment://fishing.png')
+    .setColor(artifactColor)
+    .setDescription(`**You got ${randomArtifact.toUpperCase()} of rarity ${artifactRarity[0].toUpperCase()}**
+    ~-=*${artifacts[randomArtifact].description}*=-~
+    ${artifacts[randomArtifact].text}
+    ${xText}
+
+    *(this is part of the set "${artifacts[randomArtifact].set}")*`)
 
   const artifactRarityString = artifactRarity[0]
   await db.add(`${message.author.id}.inv.${randomArtifact}.count`, 1)
   await db.push(`${message.author.id}.inv.${randomArtifact}.rarity`, artifactRarityString)
 
+  console.log('ok im done')
 
+  return { embeds: [artifactEmbed], files: [attachment], components: [], content: 'You fished up an artifact!' }
+
+}
+
+async function artifactImage(guyFishing, lootToDraw, typeMap) {
+const canvas = Canvas.createCanvas(750, 500);
+const context = canvas.getContext('2d');
+  
+const background = await Canvas.loadImage('./images/fishing/fishingPoses/background.png');
+context.drawImage(background, 0, 0, canvas.width, canvas.height);
+const fishinglayer1 = await Canvas.loadImage(`./images/fishing/fishingPoses/artifact/1.png`);
+context.drawImage(fishinglayer1, 0, 0, canvas.width, canvas.height);
+const avatar = await Canvas.loadImage(guyFishing.displayAvatarURL({ extension: 'jpg' }));
+context.save();
+context.beginPath();
+context.arc(262.5, 252.5, 22.5, 0, Math.PI * 2, true);
+context.closePath();
+context.strokeStyle = 'white'
+context.lineWidth = 3;
+context.stroke();
+context.strokeStyle = 'black'
+context.lineWidth = 1;
+context.stroke();
+context.clip();
+context.drawImage(avatar, 240, 230, 45, 45);
+context.restore();
+
+context.lineWidth = 3;
+context.strokeStyle = 'white'
+context.fillStyle = 'rgba(0, 0, 0, 0.6)'
+context.fillRect(25, 25, 700, 150)
+context.strokeRect(25, 25, 700, 150)
+context.fillStyle = 'rgba(255, 255, 255, 0.7)'
+context.fillRect(50, 50, 100, 100)
+context.strokeStyle = typeMap.color
+context.strokeRect(50, 50, 100, 100)
+const lootThing = await Canvas.loadImage(lootToDraw);
+context.drawImage(lootThing, 55, 55, 90, 90);
+
+context.font = 'bold 60px Arial';
+context.fillStyle = 'black'
+context.lineWidth = 6;
+context.strokeText(typeMap.rarity.toUpperCase(), 175, 100)
+context.fillText(typeMap.rarity.toUpperCase(), 175, 100)
+
+context.font = 'bold 40px Arial';
+context.lineWidth = 2;
+context.strokeText(typeMap.name, 175, 140)
+context.fillText(typeMap.name, 175, 140)
+
+const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'fishing.png' });
+
+return attachment;
 }
 
 async function fishingLootImage(guyFishing, lootToDraw, typeMap) {
