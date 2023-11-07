@@ -375,10 +375,10 @@ if (message.channel.id === minecraftchat.id && !message.author.bot) {
   const minecraftAuthor = getTextUntilDelimiter(repliedMessage.content, '||').replace(/\*/g, '').trim()
   bot.chat(`/dctomc ${message.author.username} (replying to ${minecraftAuthor}) ${message.content} ${attachmentEmoji}`)
   } else {
-  bot.chat(`/dctomc ${message.author.username} || (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}`)
+  bot.chat(`/dctomc ${message.author.username} (replying to ${repliedMessage.author.username}) ${message.content} ${attachmentEmoji}`)
   }
   } else {
-  bot.chat(`/dctomc ${message.author.username} || ${message.content} ${attachmentEmoji}`)
+  bot.chat(`/dctomc ${message.author.username} ${message.content} ${attachmentEmoji}`)
   }
   } catch (e) {
   //this means that the server is online, but agnabot isn't on the server
