@@ -1,4 +1,9 @@
-2023-11-04T11:57:08.388Z - Uncaught Exception: Cannot read properties of undefined (reading 'id')
-TypeError: Cannot read properties of undefined (reading 'id')
-    at Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1356:118)
+2023-11-06T05:39:22.647Z - Uncaught Exception: Unknown Message
+DiscordAPIError[10008]: Unknown Message
+    at handleErrors (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:640:13)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async SequentialHandler.runRequest (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:1021:23)
+    at async SequentialHandler.queueRequest (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:862:14)
+    at async REST.request (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:1387:22)
+    at async MessageManager.edit (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\discord.js\src\managers\MessageManager.js:176:15)
+    at async Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1828:3)
