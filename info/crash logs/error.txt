@@ -1,4 +1,4 @@
-2023-11-06T05:39:22.647Z - Uncaught Exception: Unknown Message
+2023-11-08T21:33:57.754Z - Uncaught Exception: Unknown Message
 DiscordAPIError[10008]: Unknown Message
     at handleErrors (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:640:13)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
