@@ -1,9 +1,4 @@
-2023-11-07T19:26:55.391Z - Uncaught Exception: Unknown Message
-DiscordAPIError[10008]: Unknown Message
-    at handleErrors (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:640:13)
+2023-11-09T01:24:25.974Z - Uncaught Exception: Cannot read properties of undefined (reading 'bot')
+TypeError: Cannot read properties of undefined (reading 'bot')
+    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2998:17)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SequentialHandler.runRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1021:23)
-    at async SequentialHandler.queueRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:862:14)
-    at async REST.request (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1387:22)
-    at async MessageManager.edit (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\managers\MessageManager.js:176:15)
-    at async Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:1828:3)
