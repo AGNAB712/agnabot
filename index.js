@@ -19,6 +19,8 @@ const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, sta
 const { buyArray, inventoryFormats, itemWorth } = require('./info/buyMap.js')
 const { workArray } = require('./info/agnabot_work_texts.js')
 const { fishingArray, fishingLootMap, artifacts, outfitFormats } = require('./info/fishing.js')
+//ignore this horrible coding practice idfk at this point
+const fishingJs = require('./info/fishing.js')
 const { google } = require('googleapis');
 const { promises } = require('fs')
 const { join } = require('path')
@@ -509,18 +511,6 @@ return
     bot.chat(args.join(' '))
   }
 
-  if (command === 'login') {
-    checkMinecraftServer()
-  }
-
-  if (command === 'status') {
-    if (await isMinecraftOnline()) {
-      message.reply('online')
-    } else {
-      message.reply('offline')
-    }
-  }
-
   if (command === 'lock' || command === 'lockdown' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     //if (!replit) {return}
     message.reply("y'all are dumb");
@@ -530,10 +520,6 @@ return
 
   if (command === 'lockstatus') {
     message.reply('open')
-  }
-
-  if (command === 'artifact') {
-    giftArtifact(message)
   }
 
   if (command === 'whitelist') {
@@ -2888,6 +2874,10 @@ let hasChance = '❌ \n*(get this with rigged slot machine, increases a.don chan
 if (await db.get(message.author.id+'.slotMachine')) {
 hasChance = '✅'
 }
+let isMarried = '❌ \n*(use a.marry after you buy a ring from the shop)*'
+if (await db.get(message.author.id+'.married')) {
+isMarried = `✅ (married to ${client.users.fetch(await db.get(message.author.id+'.married')).username})`
+}
 
 let petText = 'you dont have a pet'
 const myPet = await db.get('pet_' + message.author.id)
@@ -2953,6 +2943,7 @@ statEmbed.setDescription(`
 *(${await db.get('children_' + message.author.id)} agnabucks every 5 minutes)*
 **Premium bonus:** ${hasBonus}
 **Rigged slot machine bonus:** ${hasChance}
+**Is married:** ${isMarried}
 *~---------------------------------PET-----------------------------------------~*
 ${petText}
 *~----------------------------FISHING-----------------------------------~*
@@ -2987,31 +2978,128 @@ message.reply({ embeds: [statEmbed] })
   }
 
   if (command === 'marry') {
+  const me = await db.get(message.author.id)
+  const proposalRecipient = message.mentions.users.first()
+  if (!proposalRecipient) {return message.reply(`<:AgnabotX:1153460434691698719> || can't marry nobody bro Smh`)}
+  if (!(me.inv.rings > 0)) {return message.reply(`<:AgnabotX:1153460434691698719> || you dont have any wedding rings`)}
+  const them = await db.get(proposalRecipient.id)
+  if (them.married || me.married) {return message.reply(`<:AgnabotX:1153460434691698719> || one of yall is already married`)}
+  if (proposalRecipient.bot) {return message.reply(`<:AgnabotX:1153460434691698719> || what`)}
+  if (proposalRecipient.id == message.author.id) {return message.reply(`<:AgnabotX:1153460434691698719> || sorry no sologamy`)}
 
-  message.reply('wip')
+    const accept = new ButtonBuilder()
+      .setCustomId('acceptProposal')
+      .setLabel('Accept')
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('<:AgnabotCheck:1153525610665214094>')
 
+    const cancel = new ButtonBuilder()
+      .setCustomId('cancelProposal')
+      .setLabel('Deny')
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji('<:AgnabotX:1153460434691698719>')
+
+    const row = new ActionRowBuilder()
+      .addComponents(accept, cancel);
+
+    const attachment = await marriageImage(message.author, proposalRecipient, "propose")
+
+    let marryEmbed = new EmbedBuilder()
+      .setColor('#235218')
+      .setTitle('>-= MARRIAGE PROPOSAL =-<')
+      .setDescription(`>-= **${message.author.username}** wants to marry **${proposalRecipient.username}**! =-<`)
+      .setImage('attachment://marriage.png')
+
+    const response = await message.reply({
+        embeds: [marryEmbed],
+        files: [attachment],
+        components: [row],
+    });
+
+    const collectorFilter = i => i.user.id == proposalRecipient.id;
+
+try {
+
+  const collected = await response.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  if (collected.customId == 'acceptProposal') {
+  
+  const attachment2 = await marriageImage(message.author, proposalRecipient, "confirm")
+  marryEmbed.setDescription(`>-= Congrats **${message.author.username}**! **${proposalRecipient.username}** accepted your proposal! =-<`)
+
+  collected.update({ 
+    embeds: [marryEmbed],
+    components: [],
+    files: [attachment2],
+  })
+
+  await db.sub(message.author.id+'.inv.rings', 1)
+  await db.set(message.author.id+'.married', proposalRecipient.id)
+  await db.set(proposalRecipient.id+'.married', message.author.id)
+  await saveSqlite()
   }
+  if (collected.customId == 'cancelProposal') {
+
+  const attachment2 = await marriageImage(message.author, proposalRecipient, "deny")
+  marryEmbed.setDescription(`>-= Sorry **${message.author.username}**, but **${proposalRecipient.username}** denied your proposal. =-<`).setColor('Red')
+
+  collected.update({ 
+    embeds: [marryEmbed],
+    components: [],
+    files: [attachment2],
+  })}
+  } catch (e) {
+    console.log(e)
+  }
+}
 
   if (command === 'equip') {
+
+    let outfit = await db.get(message.author.id+'.outfit')
+    let outfitRaritiesReformat = []
+
+    Object.values(outfit).forEach((key, i) => {
+      //the me variable here is the number value of the rarity
+      let me = key[1]
+      if (me == 1) {me = 'rare'} else if (me == 2) {me = 'legendary'} else if (me == 0) {me = '(none)'} else {me = 'uber'}
+      outfitRaritiesReformat.push(me)
+    })
+
+    const equipEmbed = new EmbedBuilder()
+      .setColor('#235218')
+      .setTitle('>==-- Equip Menu --==<')
+      .addFields(
+    { name: `Slot 1 (rarity ${outfitRaritiesReformat[0]})`, value: `${outfitFormats[outfit.slot1[0]]}`, inline: true },
+    { name: `Slot 2 (rarity ${outfitRaritiesReformat[1]})`, value: `${outfitFormats[outfit.slot2[0]]}`, inline: true },
+    { name: `Slot 3 (rarity ${outfitRaritiesReformat[2]})`, value: `${outfitFormats[outfit.slot3[0]]}`, inline: true },
+        )
+      .setFooter({ text: 'please select the slot you want to equip in' })
 
     const slot1 = new ButtonBuilder()
       .setCustomId('slot1')
       .setLabel('slot 1')
-      .setStyle(ButtonStyle.Success);
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('1️⃣')
     const slot2 = new ButtonBuilder()
       .setCustomId('slot2')
       .setLabel('slot 2')
-      .setStyle(ButtonStyle.Success);
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('2️⃣')
     const slot3 = new ButtonBuilder()
       .setCustomId('slot3')
       .setLabel('slot 3')
-      .setStyle(ButtonStyle.Success);
+      .setStyle(ButtonStyle.Success)
+      .setEmoji('3️⃣')
+    const cancel = new ButtonBuilder()
+      .setCustomId('cancelEquip')
+      .setLabel('Cancel')
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji('<:AgnabotX:1153460434691698719>')
 
     const row = new ActionRowBuilder()
-      .addComponents(slot1, slot2, slot3);
+      .addComponents(slot1, slot2, slot3, cancel);
 
     const response = await message.reply({
-        content: `what slot should i equip in`,
+        embeds: [equipEmbed],
         components: [row],
     });
 
@@ -3022,6 +3110,11 @@ const collectorFilter = i => message.author.id;
 try {
 
   const collected2 = await response.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  if (collected2.customId == 'cancelEquip') {return collected2.update({ 
+    content: `**<:AgnabotX:1153460434691698719> ||** goobye :3`,
+    components: [],
+    embeds: [],
+  })}
   slot = collected2.customId
   response.delete()
 
@@ -3029,12 +3122,12 @@ try {
   return response.edit({ 
     content: `**<:AgnabotX:1153460434691698719> ||** timed out`,
     components: [],
+    embeds: [],
   })
 }
 
     const inv = await db.get(message.author.id+'.inv')
     const invArray = Object.keys(inv)
-    let outfit = await db.get(message.author.id+'.outfit')
     let artifacts = {}; 
 
     //filter to be only artifacts
@@ -3045,20 +3138,19 @@ try {
 
       const myObject = inv[key];
 
-
       if (myObject.count > 1) {
         for (let i = 0; i < myObject.count; i++) {
 
           //this weird ass piece of code checks if there's an artifact of the same rarity and name, and if so skips one of the artifacts
           let numberRarity = 0
           if (inv[key].rarity[i] == 'uber') {numberRarity = 3} else if (inv[key].rarity[i] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
-          if (outfit.slot1[0] == key && outfit.slot1[1] == numberRarity) {
+          if (outfit.slot1[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
           outfit.slot1 = ['', '']
-          } else if (outfit.slot2[0] == key && outfit.slot2[1] == numberRarity) {
+          } else if (outfit.slot2[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
           outfit.slot2 = ['', ''] 
-          } else if (outfit.slot3[0] == key && outfit.slot3[1] == numberRarity) {
+          } else if (outfit.slot3[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
           outfit.slot3 = ['', ''] 
           } else {
@@ -3096,12 +3188,29 @@ try {
       .setValue(`unequip`)
     )
 
+    console.log(fishingJs.artifacts)
+
     artifactArray.forEach((name, i) => {
+
+      let artifactDescription
+      let artifactEmoji
+      const regex = /#(\d+)$/; // regex to match " #(number)" at the end of the string
+      const match = name.match(regex);
+      if (match) {
+        const number = match[1];
+        artifactDescription = fishingJs.artifacts[name.slice(0, -1*(number.length+1)).trim()].description //gets the artifact name without the #(number)
+        artifactEmoji = inventoryFormats[name.slice(0, -1*(number.length+1)).trim()].split(' ')[0]
+      } else {
+        artifactDescription = fishingJs.artifacts[name].description
+        artifactEmoji = inventoryFormats[name].split(' ')[0]
+      }
+
     select.addOptions(    
       new StringSelectMenuOptionBuilder()
-      .setLabel(`${name}`)
+      .setLabel(`${name} (${artifacts[name]})`)
       .setValue(`${name}`)
-      .setDescription(`Rarity: ${artifacts[name]}`)
+      .setDescription(`"${artifactDescription}"`)
+      .setEmoji(artifactEmoji)
     )
     })
 
@@ -3144,9 +3253,7 @@ try {
 } catch (e) {
   console.error(e)
   myMessage.edit({ content: '**<:AgnabotX:1153460434691698719> ||** timed out', components: [] })
-}
-
-  }
+}}
 
   //debug command technically
   if (command === 'outfitreset') {
@@ -3179,8 +3286,7 @@ for (let i = 1; i < 4; i++) {
   .setTitle(`~=-${message.author.username}'s outfit-=~`)
   .setDescription(`${responseArray[0]}\n${responseArray[1]}\n${responseArray[2]}`)
 
-  message.reply({ embeds: [meEmbed] })
-  }
+  message.reply({ embeds: [meEmbed] })}
 
   if (command === 'sell') {
 
@@ -3266,6 +3372,10 @@ try {
   }
 
 });
+
+async function artifactValue(id, artifactName) {
+  const me = await db.get(id)
+}
 
 function objectPage(testmap, page) {
   let testEmbed = new EmbedBuilder()
@@ -3694,6 +3804,72 @@ try {
 return fightResponse;
 
 }
+
+async function marriageImage(guy1, guy2, type) {
+
+  try {
+    const canvas = Canvas.createCanvas(2000, 1000);
+    const context = canvas.getContext('2d');
+
+  const avatar1pos = [500, 500, 700]
+
+  let avatar = await Canvas.loadImage(guy1.displayAvatarURL({ extension: 'jpg' }));
+  context.save();
+  context.beginPath();
+  context.arc(avatar1pos[2]/2+(avatar1pos[0]-(avatar1pos[2]/2)), avatar1pos[2]/2+(avatar1pos[1]-(avatar1pos[2]/2)), avatar1pos[2]/2, 0, Math.PI * 2, true);
+  context.closePath();
+  context.strokeStyle = 'white'
+  context.lineWidth = 30;
+  context.stroke();
+  context.strokeStyle = 'black'
+  context.lineWidth = 10;
+  context.stroke();
+  context.clip();
+  context.drawImage(avatar, avatar1pos[0]-(avatar1pos[2]/2), avatar1pos[1]-(avatar1pos[2]/2), avatar1pos[2], avatar1pos[2]);
+  context.restore();
+
+  const avatar2pos = [1500, 500, 700]
+
+  avatar = await Canvas.loadImage(guy2.displayAvatarURL({ extension: 'jpg' }));
+  context.save();
+  context.beginPath();
+  context.arc(avatar2pos[2]/2+(avatar2pos[0]-(avatar2pos[2]/2)), avatar2pos[2]/2+(avatar2pos[1]-(avatar2pos[2]/2)), avatar2pos[2]/2, 0, Math.PI * 2, true);
+  context.closePath();
+  context.strokeStyle = 'white'
+  context.lineWidth = 30;
+  context.stroke();
+  context.strokeStyle = 'black'
+  context.lineWidth = 10;
+  context.stroke();
+  context.clip();
+  context.drawImage(avatar, avatar2pos[0]-(avatar2pos[2]/2), avatar2pos[1]-(avatar2pos[2]/2), avatar2pos[2], avatar2pos[2]);
+  context.restore();
+
+  let overlayImage
+  switch(type) {
+  case 'propose':
+    overlayImage = await Canvas.loadImage('./images/marriage/questionmark.png');
+  break;
+  case 'confirm':
+    overlayImage = await Canvas.loadImage('./images/marriage/heart.png');
+  break;
+  case 'deny':
+    overlayImage = await Canvas.loadImage('./images/marriage/X.png');
+  break;
+  }
+  context.drawImage(overlayImage, 1000-(overlayImage.width/2), 500-(overlayImage.height/2), overlayImage.width, overlayImage.width);
+
+  context.strokeStyle = 'white';
+  context.lineWidth = 30;
+  context.strokeRect(0, 0, canvas.width, canvas.height);
+
+  const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'marriage.png' });
+
+  return attachment;
+    } catch (err) {
+      console.error('Error occurred:', err);
+    }
+  }
 
 async function podium(winner, loser, channel) {
 
