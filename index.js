@@ -2093,13 +2093,15 @@ if (args[0] === 'fun') {
   
   if (command === 'balance' || command === 'bal') {
 
-  console.log(await db.get(message.author.id))
-  console.log(await db.get('pet_'+message.author.id))
+  
     let targetUser = message.mentions.users.first();
 
     if (targetUser) {
     const userId = targetUser.id;
     const variableValue = await db.get(userId+'.a');
+    console.log(await db.get(userId))
+    console.log(await db.get('pet_'+userId))
+
 
     if (!variableValue) {
   const userId = targetUser.id;
@@ -2123,6 +2125,8 @@ if (args[0] === 'fun') {
     if (targetUser) {
     const userId = targetUser.id;
     const variableValue = await db.get(userId+'.a');
+    console.log(await db.get(userId))
+    console.log(await db.get('pet_'+userId))
 
     if (!variableValue) {
   const userId = targetUser.id;
@@ -3497,6 +3501,7 @@ function objectPage(testmap, page) {
 
   for (const property in testmap) {
     if (testmap[property] == 0 || testmap[property] < 0) {delete testmap[property]}
+    if (property == 'undefined') {delete testmap[property]}
   }
 
   const pages = Math.ceil(testmap.size / 3)
