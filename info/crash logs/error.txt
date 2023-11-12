@@ -1,9 +1,5 @@
-2023-11-08T21:33:57.754Z - Uncaught Exception: Unknown Message
-DiscordAPIError[10008]: Unknown Message
-    at handleErrors (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:640:13)
+2023-11-12T18:40:50.337Z - Uncaught Exception: Cannot read properties of null (reading 'count')
+TypeError: Cannot read properties of null (reading 'count')
+    at objectPage (C:\Users\gamer\Documents\GitHub\agnabot\index.js:3405:154)
+    at Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1135:23)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SequentialHandler.runRequest (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:1021:23)
-    at async SequentialHandler.queueRequest (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:862:14)
-    at async REST.request (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\rest\dist\index.js:1387:22)
-    at async MessageManager.edit (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\discord.js\src\managers\MessageManager.js:176:15)
-    at async Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1828:3)
