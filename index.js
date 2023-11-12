@@ -448,10 +448,6 @@ return
   }
   }};
 
-  if(message.author.id === '907055124503994398') {
-    //message.react('🤓');
-  }
-
     if(message.author.id!== '437808476106784770') {
 
   
@@ -505,22 +501,25 @@ return
   const command = args.shift().toLowerCase();
     
  //actual commands
- if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
+  if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
+
+  if (command === 'test') {await db.sub(message.author.id+`.inv.undefined`, 0)}
+
+  if (command === 'rob') {message.reply('i just set your balance to 0 you fucking filthy criminal')}
+  if (command === 'bak') {
+    message.reply('lol')}
 
   if (command === 'mcsudo' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-    bot.chat(args.join(' '))
-  }
+    bot.chat(args.join(' '))}
 
   if (command === 'lock' || command === 'lockdown' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     //if (!replit) {return}
     message.reply("y'all are dumb");
     lockdown = 'true';
-    forceSaveSqlite();
-  }
+    forceSaveSqlite();}
 
   if (command === 'lockstatus') {
-    message.reply('open')
-  }
+    message.reply('open')}
 
   if (command === 'whitelist') {
 
@@ -541,8 +540,7 @@ return
   row.addComponents(confirm, deny);
 
   message.delete();
-  message.channel.send({ embeds: [whitelistEmbed], components: [row] })
-  }
+  message.channel.send({ embeds: [whitelistEmbed], components: [row] })}
 
   if (command === 'verify') {
 
@@ -603,9 +601,7 @@ try {
 } catch (e) {
   console.log(e)
   await myMessage.edit({ content: '**<:AgnabotX:1153460434691698719> ||** confirmation not received within 1 minute, cancelling', components: [] });
-}
-
-  }
+}}
 
   if (command === 'minecraft' || command === 'mc') {
     if (await isMinecraftOnline()) {
@@ -637,8 +633,7 @@ try {
   }
   } else {
     message.reply('**<:AgnabotX:1153460434691698719> ||** server offline')
-  }
-  }
+  }}
 
  if (command === 'leaderboard' || command === 'lb') {
     const allUserData = await db.all()
@@ -662,27 +657,21 @@ try {
   .setAuthor({ name: 'AGNABOT', iconURL: 'https://media.discordapp.net/attachments/831714424658198532/1108080081106116759/ALCwGrbxStSvAAAAAElFTkSuQmCC.png'})
   .setDescription(descText)
 
-  message.reply({ embeds: [leaderboadEmbed] })
-
- }
+  message.reply({ embeds: [leaderboadEmbed] })}
 
   if (command === 'ping') {
   const pingMessage = `API Latency: ${client.ws.ping}ms\nClient Latency: ${Date.now() - message.createdTimestamp}ms`
-  message.reply(`${pingMessage}`)
-  }
+  message.reply(`${pingMessage}`)}
 
   if (command === 'instance') {
-  await message.reply(`${os.hostname()}`)
-  }
+  await message.reply(`${os.hostname()}`)}
 
   if (command === 'crash' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
   await message.reply('cya')
-  process.exit(0);
-  }
+  process.exit(0);}
 
   if (command === 'crashlog' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-  await message.reply({ files: ['./info/crash logs/error.txt'] })
-  }
+  await message.reply({ files: ['./info/crash logs/error.txt'] })}
 
   if (command === 'pet') {
 
@@ -788,9 +777,7 @@ try {
   await db.set(('pet_' + message.author.id) + '.background', saveUrl)
   await saveSqlite();
   message.reply('ok i did it :    )')
-  }
-
-}
+  }}
 
   if (command === 'hotel') {
 
@@ -1003,11 +990,9 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
   message.reply('now everybody can talk in your hotel room')
 
   }
-  }
+  }}
 
-}
-
-if (command === 'work') {
+  if (command === 'work') {
     const playerID = message.author.id;
 
     if (cooldowns.has(playerID)) {
@@ -1067,37 +1052,7 @@ if (command === 'work') {
       setTimeout(() => {
         cooldowns.delete(playerID);
       }, cooldownDuration);
-    }
-  }
-
-if (command === 'rng') {
-
-
-if (!isNumeric(args[0]) || parseInt(args[0]) > 5 || parseInt(args[0]) < 1) {
-  return message.reply('use a Cool number Beeyatch');
-}
-
-const toGuess = getRandomInt(5) + 1;
-
-if (toGuess === parseInt(args[0])) {
-const curbal = await db.get(message.author.id+'.a')
-  winEmbed = new EmbedBuilder()
-  .setColor('#235218')
-  .setTitle('you win!')
-  .setDescription('you gained 30 ꬰ')
-  .setFooter({ text: `your balance is now ${curbal + 30}`})
-  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) + 30));
-  message.reply({ embeds: [winEmbed] });
-} else {
-  loseEmbed = new EmbedBuilder()
-  .setColor('Red')
-  .setTitle('you lose')
-  .setDescription(`the number was ${toGuess} and yours was ${args[0]}`)
-  .setFooter({ text: `better luck next time`})
-  message.reply({ embeds: [loseEmbed] });
-}
-
-  }
+    }}
 
   if (command === 'setmoney' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
 
@@ -1119,14 +1074,10 @@ const curbal = await db.get(message.author.id+'.a')
 
   } else {
     message.channel.send('gotta mention someone dude')
-  }
-  }
+  }}
 
   if (command === 'setlevel') {
-    await db.set(message.author.id+'.inv', JSON.parse(args.join(' ')))
-  }
-
-
+    await db.set(message.author.id+'.fish.level', JSON.parse(args.join(' ')))}
 
   if (command === 'inv' || command === 'inventory') {
   const me = await db.get(message.author.id)
@@ -1153,10 +1104,7 @@ const curbal = await db.get(message.author.id+'.a')
   const row = new ActionRowBuilder()
     .addComponents(backButton, nextButton);
 
-  message.reply({ embeds: [myCoolEmbed], components: [row] })
-
-
-}
+  message.reply({ embeds: [myCoolEmbed], components: [row] })}
 
   if (command === 'fish') {
 
@@ -1210,12 +1158,9 @@ await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** you did n
 isFishing.delete(message.author.id)
 }
 
-  }, randomTime + 5000)
+  }, randomTime + 5000)}
 
-
-  }
-
-      if (command === 'don' || command === 'doubleornothing') {
+  if (command === 'don' || command === 'doubleornothing') {
 
       const curbal = await db.get(message.author.id+'.a');
 
@@ -1272,9 +1217,7 @@ isFishing.delete(message.author.id)
 
       } else {
         message.reply('cant gamble nothing bro')
-      }
-
-  }
+      }}
 
   if (command === 'donate') {
 
@@ -1312,10 +1255,7 @@ isFishing.delete(message.author.id)
   } else {
 
     message.channel.send('gotta mention someone to donate to, and yknow, how much you wanna donate')
-  }
-
-
-  }
+  }}
 
   if (command === 'redeem') {
 
@@ -1374,11 +1314,9 @@ isFishing.delete(message.author.id)
 
       setTimeout(() => {
         cooldowns2.delete(playerID);
-      }, cooldownDuration);
+      }, cooldownDuration);}
 
-  }
-
-    if (command === 'ask') {
+  if (command === 'ask') {
 
     message.channel.sendTyping()
     cleverbot(args.join(' '),conversation)
@@ -1387,15 +1325,11 @@ isFishing.delete(message.author.id)
       conversation.push(res);
       message.reply(res.toLowerCase().replace(/\./g, ''));
     })
-    .catch(error => console.error(`error with ai: ${error}`))
-  
-
-}
+    .catch(error => console.error(`error with ai: ${error}`))}
 
   if (command === 'clearconversation') {
     conversation = [];
-    message.channel.send('cleared conversation')
-  }
+    message.channel.send('cleared conversation')}
 
   if (command === 'balbackground' || command === 'balancebackground' || command === 'balimage' || command === 'balanceimage') {
 
@@ -1422,10 +1356,7 @@ isFishing.delete(message.author.id)
   await db.set('balimage_' + message.author.id, saveUrl)
   await saveSqlite();
 
-  message.reply('ok i did it :    )')
-  
-  }
-
+  message.reply('ok i did it :    )')}
 
   if (command === 'impersonate') {
 let webhookCollection = await message.channel.fetchWebhooks();
@@ -1473,10 +1404,7 @@ try {
 message.delete()
 } catch (error) {
   console.error(error)
-}
-
-}
-
+}}
 
   if (command === 'buy' || command === 'shop' ) {
 
@@ -1812,12 +1740,9 @@ break;
 
 } catch (e) {
   await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** Confirmation not received within 1 minute, cancelling', components: [] });
-}
+}}
 
-
-}
-
-if (command === 'fight') {
+  if (command === 'fight') {
 
   const mentionedUser = message.mentions.users.first()
     if (!mentionedUser) {
@@ -1904,44 +1829,9 @@ if (command === 'fight') {
       console.error('Error occurred during fight:', error);
       playersInFight.delete(message.author.id);
       playersInFight.delete(mentionedUser.id);
-    }
-  }
+    }}
 
-  if (command === 'mokou' && message.author.id === '335800596424818690') {
-    message.channel.send('https://media.discordapp.net/attachments/969776163142656070/1133537411444523119/IMG_2981.png?width=808&height=585')
-  }
-
-    if (command === 'vengeful') {
-
-    let canvasxsave = 700
-
-    if (args[0]) {
-      canvasxsave = parseInt(args[0])
-    }
-
-    try {
-    const canvas = Canvas.createCanvas(canvasxsave, 250);
-    const context = canvas.getContext('2d');
-  
-  const background = await Canvas.loadImage('./images/vengeful.jpg');
-
-  context.drawImage(background, 0, 0, canvas.width, canvas.height);
-
-  const { body } = await request(message.author.displayAvatarURL({ extension: 'jpg' }));
-  const avatar = await Canvas.loadImage(await body.arrayBuffer());
-
-  context.drawImage(avatar, 48, 10, canvas.width - 100, canvas.height - 70);
-
-  // Use the helpful Attachment class structure to process the file for you
-  const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'profile-image.png' });
-
-  message.reply({ files: [attachment] });
-    } catch (err) {
-      console.error('Error occurred:', err);
-    }
-  }
-
-    if (command === 'quote') {
+  if (command === 'quote') {
 
   try {
 
@@ -2008,9 +1898,9 @@ if (command === 'fight') {
   message.reply({ files: [attachment] });
     } catch (err) {
       console.error('Error occurred:', err);
-    }
-  }
+    }}
 
+  //reminder to reformat this command later
   if (command === 'help') {
 
       const select = new StringSelectMenuBuilder()
@@ -2119,9 +2009,7 @@ if (args[0] === 'fun') {
   message.channel.send({ embeds: [delpEmbed] });
 } else if (args[0] === 'hotel') {
 
-}
-  
- }
+}}
   
   if (command === 'credits') {
   const arembed = new EmbedBuilder()
@@ -2135,50 +2023,7 @@ if (args[0] === 'fun') {
     { name: 'shubibubi', value: 'fishing sprites (https://shubibubi.itch.io)' },
   )
   .setFooter({ text: 'want to be added here? contact me!' });
-  message.channel.send({ embeds: [arembed] });
-  
-  }
-
-  if (command === 'rob') {
-message.reply('i just set your balance to 0 you fucking filthy criminal')
-  }
-
-
-  if (command === 'timer') {
-    const reminderFlagIndex = args.findIndex(arg => arg.startsWith('-'));
-
-    let reminderMessage = '';
-    if (reminderFlagIndex !== -1) {
-      reminderMessage = args.slice(reminderFlagIndex).join(' ').slice(1);
-      args.splice(reminderFlagIndex, 1);
-    }
-
-    const duration = parseDuration(args);
-
-    if (duration) {
-      const milliseconds = durationToMilliseconds(duration);
-
-      if (milliseconds > 0) {
-        message.channel.send(`your timer is set for ${formatDuration(duration)}.`);
-
-        setTimeout(() => {
-          message.author.send(`timer done ${message.author}`).catch(error => console.log('cant send messages to that user'));;
-
-          if (reminderMessage) {
-            message.author.send(`remember, ${reminderMessage}`).catch(error => console.log('cant send messages to that user'));;
-          }
-        }, milliseconds);
-      } else {
-        message.channel.send('nah dude you got an invalid format. use the help command to see the correct formatting');
-      }
-    } else {
-      message.channel.send('nah dude you got an invalid format. use the help command to see the correct formatting');
-    }
-  } 
-     
- if (command === 'invite') {
-        message.channel.send("here: https://discord.gg/Rjv2URZuYM");
-     }
+  message.channel.send({ embeds: [arembed] });}
      
   if (command === 'setstatus') {
  if (message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
@@ -2212,11 +2057,9 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
     } 
     else {
     message.channel.send(`lol no perms`);
-    }
-    
-     }
+    }}
 
-    if (command === 'define') {
+  if (command === 'define') {
     const searchQuery = args.join(' ');
     if (!searchQuery) {
       return message.reply('gimme a word');
@@ -2246,13 +2089,8 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
     } catch (error) {
       console.error('Error retrieving data from Urban Dictionary:', error);
       message.reply('error happene OH NO!!!!!!!!');
-    }
-  }
-
-  if (command === 'bak') {
-    message.reply('lol')
-  }
-
+    }}
+  
   if (command === 'balance' || command === 'bal') {
 
   console.log(await db.get(message.author.id))
@@ -2304,12 +2142,9 @@ message.reply('i just set your balance to 0 you fucking filthy criminal')
 
   }
 
-}
+}}
 
-}
-
-     
-if (command === 'addcategory') {
+  if (command === 'addcategory') {
     if (args.length === 0) {
       message.channel.send('Please provide a category name.');
       return;
@@ -2346,8 +2181,7 @@ if (command === 'addcategory') {
         sentMessage.reactions.cache.get('👍').users.remove(client.user);
         message.channel.send('Command timed out. Please try again.');
       }
-    });
-  }
+    });}
   
   if (command === 'forcecategory' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
     // Check if any category name was provided after the command
@@ -2359,11 +2193,9 @@ if (command === 'addcategory') {
     // Join the arguments into a single string
     const categoryName = args.join(' ');
         await db.push('category', categoryName);
-        message.channel.send(`Category "${categoryName}" has been added.`);
-  }
+        message.channel.send(`Category "${categoryName}" has been added.`);}
 
-    
-    if (command === 'toggleautoreact' || command === 'tar') {
+  if (command === 'toggleautoreact' || command === 'tar') {
     if (!(users.includes(message.author.id))) {
       users.push(message.author.id);
       message.channel.send(`my bad`);
@@ -2375,11 +2207,9 @@ if (command === 'addcategory') {
   }
     message.channel.send(`im back baby`);
     saveStopUsers()
-    }
-  }
+    }}
 
-  
-    if (command === 'say') {
+  if (command === 'say') {
     if (!await db.get('locked_' + message.author.id)) {
     if (args.length === 0) {
       message.channel.send('i cant just say nothing bro');
@@ -2411,17 +2241,7 @@ if (command === 'addcategory') {
   } catch (error) {
     console.log(error);
   }
-}
-  }
-
-      if (command === 'togglesay') {
-if (!await db.get('locked_' + message.author.id)) {
-if (!says.includes(message.author.id)) {
-message.delete();
-says.push(message.author.id);
-}
-}
-  }
+}}
 
   if (command === 'reveal') {
         const repliedMessageID = message.reference?.messageId;
@@ -2453,11 +2273,8 @@ says.push(message.author.id);
       .setDescription(`${userName.username} sent "${repliedMessageFull.content}"`)
       .setImage(userName.displayAvatarURL({ format: 'png', dynamic: true }));
 
-        message.channel.send({ embeds: [revealEmbed] });
+        message.channel.send({ embeds: [revealEmbed] });}
 
-  }
-
-  
   if (command === 'showcategories') {
     const categoryNames = await db.get('category')
     if (categoryNames.length === 0) {
@@ -2468,8 +2285,7 @@ says.push(message.author.id);
     const filename = `${Date.now()}_text.txt`
     fs.writeFileSync(filename, categoriesMessage);
     await message.reply({ files: [filename] });
-    fs.unlinkSync(filename);
-  }
+    fs.unlinkSync(filename);}
 
   
 if (command === 'deletecategory') {
@@ -3055,6 +2871,10 @@ try {
   if (command === 'equip') {
 
     let outfit = await db.get(message.author.id+'.outfit')
+    if (!outfit) {
+      await db.set(message.author.id+'.outfit', { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] })
+      outfit = { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] }
+    }
     let outfitRaritiesReformat = []
 
     Object.values(outfit).forEach((key, i) => {
@@ -3146,13 +2966,10 @@ try {
           if (inv[key].rarity[i] == 'uber') {numberRarity = 3} else if (inv[key].rarity[i] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
           if (outfit.slot1[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
-          outfit.slot1 = ['', '']
           } else if (outfit.slot2[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
-          outfit.slot2 = ['', ''] 
           } else if (outfit.slot3[0] == key) {
           console.log(`${key} (${inv[key].rarity[i]}) is already equipped`)
-          outfit.slot3 = ['', ''] 
           } else {
           artifacts[key + ` #${(i + 1)}`] = inv[key].rarity[i]
           } 
@@ -3290,16 +3107,18 @@ for (let i = 1; i < 4; i++) {
 
   if (command === 'sell') {
 
-    if (message.author.id == '315567663424471042' || message.author.id == '1033453898830188554') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have been banned from selling for an indeterminate amount of time')}
     let amountToSell = 1;
     const inventory = await db.get(message.author.id+'.inv')
-    for (const key in inventory) {
-      if (inventory[key] === 0 || inventory[key] < 0) {
+    let inventoryArray = Object.keys(inventory)
+    inventoryArray.forEach((key, i) => {
+      if (inventory[key] == 0 || inventory[key] < 0) {
         delete inventory[key];
+        delete inventoryArray[inventoryArray.indexOf(key)];
       }
-    } 
+    }) 
+    inventoryArray = inventoryArray.filter(n => n)
+    console.log(inventoryArray.filter(n => n))
     if (!inventory) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have literally no shit you are poor as FUCK.')}
-    const inventoryArray = Object.keys(inventory)
 
 
     if (isNaN(args[0])) {return message.reply('**<:AgnabotX:1153460434691698719> ||** thats not a Cool Number!')}
@@ -3368,10 +3187,304 @@ try {
   }
 
   if (command === 'trade') {
-    
+
+  if (!message.mentions.users.first()) {return message.reply('**<:AgnabotX:1153460434691698719> ||** cant trade with nobody bro')}
+  const myInv = await db.get(message.author.id+'.inv')
+  const theirInv = await db.get(message.mentions.users.first().id+'.inv')
+  if (!myInv || !theirInv) {return message.reply('**<:AgnabotX:1153460434691698719> ||** one of you doesnt have an inventory')}
+  if (message.mentions.users.first().id == message.author.id) {return message.reply('**<:AgnabotX:1153460434691698719> ||** cant trade with yourself')}
+  let myTrade = await tradePage(message.author.id, message, message.author.username);
+
+  if (myTrade == 'cancel') {return message.channel.send('**<:AgnabotX:1153460434691698719> ||** ok goobai :3')}
+
+  let amount = [1, 1]
+
+  if (typeof myTrade === 'string') {
+
+  if (typeof myInv[myTrade] == 'object') {
+    let rarityNum = 0
+    if (myInv[myTrade].rarity == 'uber') {rarityNum = 3} else if (myInv[myTrade].rarity == 'legendary') {rarityNum = 2} else {rarityNum = 1}
+    myTrade = [myTrade, rarityNum]
+  } else {
+
+  const awaitMessage = await message.channel.send(`**<:AgnabotCheck:1153525610665214094> ||** how many ${myTrade}?`)
+  const msg_filter = (m) => m.author.id === message.author.id;
+  const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
+
+  let itemMax
+  if (myTrade == 'agnabucks') { itemMax = await db.get(message.author.id+'.a') } else { itemMax = myInv[myTrade] }
+
+  amount[0] = parseInt(collected.first().content)
+  if (isNaN(amount[0])) {
+
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** gotta be a number')}
+  if (amount[0] > itemMax) {
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have enough of that')}
+  if (amount[1] <= 0) {
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** lol')}
+  }
+}
+  
+  let theirTrade = await tradePage(message.mentions.users.first().id, message, message.mentions.users.first().username)
+
+  if (theirTrade == 'cancel') {return message.channel.send('**<:AgnabotX:1153460434691698719> ||** ok goobai :3')}
+
+  if (typeof theirTrade === 'string') {
+
+  if (typeof theirInv[theirTrade] == 'object') {
+    let rarityNum = 0
+    if (theirInv[theirTrade].rarity == 'uber') {rarityNum = 3} else if (theirInv[theirTrade].rarity == 'legendary') {rarityNum = 2} else {rarityNum = 1}
+    theirTrade = [theirTrade, rarityNum]
+  } else {
+
+  const awaitMessage = await message.channel.send(`**<:AgnabotCheck:1153525610665214094> ||** how many ${theirTrade}?`)
+  const msg_filter = (m) => m.author.id === message.author.id;
+  const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
+
+  if (theirTrade == 'agnabucks') { itemMax = await db.get(message.mentions.users.first().id+'.a') } else { itemMax = theirInv[theirTrade] }
+
+  amount[1] = parseInt(collected.first().content)
+  if (isNaN(amount[1])) {
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** gotta be a number')}
+  if (amount[1] > itemMax) {
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have enough of that')}
+  if (amount[1] <= 0) {
+    awaitMessage.delete()
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** lol')}
+  }
+
+  }
+
+  console.log(myTrade, amount[0], theirTrade, amount[1])
+
+  let mySellText
+  if (typeof myTrade == 'string') {
+    mySellText = `**${amount[0]} ${myTrade}**`
+  } else {
+    let rarityText
+    if (myTrade[1] == 1) {rarityText = 'RARE'} else if (myTrade[1] == 2) {rarityText = 'LEGENDARY'} else {rarityText = 'UBER'}
+    mySellText = `**${myTrade[0]}** artifact of rarity **${rarityText}**`
+  }
+
+  let theirSellText
+  if (typeof theirTrade == 'string') {
+    theirSellText = `**${amount[1]} ${theirTrade}**`
+  } else {
+    let rarityText
+    if (theirTrade[1] == 1) {rarityText = 'RARE'} else if (theirTrade[1] == 2) {rarityText = 'LEGENDARY'} else {rarityText = 'UBER'}
+    theirSellText = `**${theirTrade[0]}** artifact of rarity **${rarityText}**`
+  }
+
+  const tradeEmbed = new EmbedBuilder()
+  .setColor('#235218')
+  .setTitle('-=~ Trade offer ~=-')
+  .setImage('https://media.discordapp.net/attachments/1141115132399849603/1173077239584280586/zKC0fTR.png?ex=6562a450&is=65502f50&hm=e136f904b020946086373a623079b7e3cce3264d02354f587eaf3c32cff25bf4&=&width=306&height=431')
+  .setDescription(`-**${message.author.username}** offers **${message.mentions.users.first().username}** a deal-
+  ${mySellText} 
+  -FOR-
+  ${theirSellText}`)
+
+  const confirm = new ButtonBuilder()
+      .setCustomId('confirmTrade')
+      .setLabel('Agree')
+      .setStyle(ButtonStyle.Success);
+  const deny = new ButtonBuilder()
+      .setCustomId('denyTrade')
+      .setLabel('Reject')
+      .setStyle(ButtonStyle.Danger);
+
+  const row = new ActionRowBuilder()
+  row.addComponents(confirm, deny);
+
+  const tradeMessage = await message.channel.send({ components: [row], embeds: [tradeEmbed] })
+
+  const collectorFilter = i => {
+  console.log(i.user.id, message.mentions.users.first().id)
+  return i.user.id === message.mentions.users.first().id
+  };
+
+  try {
+  const collected = await tradeMessage.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  if (collected.customId === 'confirmTrade') {
+    tradeEmbed.setColor('Green').setDescription(`-=**${message.mentions.users.first().username}** ACCEPTED THE DEAL=-`)
+    collected.update({ embeds: [tradeEmbed], components: [] })
+
+    console.log(typeof myTrade)
+
+    if (typeof myTrade == 'object') {
+      await db.sub(`${message.author.id}.inv.${myTrade[0]}.count`, 1)
+      let rarityText
+      if (myTrade[1] === 1) {rarityText = 'rare'} else if (myTrade[1] === 2) {rarityText = 'legendary'} else {rarityText = 'uber'}
+      await db.pull(`${message.author.id}.inv.${myTrade[0]}.rarity`, rarityText)
+
+      await db.add(`${message.mentions.users.first().id}.inv.${myTrade[0]}.count`, 1)
+      await db.push(`${message.mentions.users.first().id}.inv.${myTrade[0]}.rarity`, rarityText)
+    } else {
+      if (myTrade == 'agnabucks') {
+        await db.sub(`${message.author.id}.a`, amount[0])
+        await db.add(`${message.mentions.users.first().id}.a`, amount[0])
+      } else {
+        await db.sub(`${message.author.id}.inv.${myTrade}`, amount[0])
+        await db.add(`${message.mentions.users.first().id}.inv.${myTrade}`, amount[0]) 
+      }
+    }
+
+    if (typeof theirTrade == 'object') {
+      await db.add(`${message.author.id}.inv.${theirTrade[0]}.count`, 1)
+      let rarityText
+      if (theirTrade[1] == 1) {rarityText = 'rare'} else if (theirTrade[1] == 2) {rarityText = 'legendary'} else {rarityText = 'uber'}
+      await db.push(`${message.author.id}.inv.${theirTrade[0]}.rarity`, rarityText)
+
+      await db.sub(`${message.mentions.users.first().id}.inv.${theirTrade[0]}.count`, 1)
+      await db.pull(`${message.mentions.users.first().id}.inv.${theirTrade[0]}.rarity`, rarityText)
+    } else {
+      if (theirTrade == 'agnabucks') {
+        await db.add(`${message.author.id}.a`, amount[1])
+        await db.sub(`${message.mentions.users.first().id}.a`, amount[1])
+      } else {
+        await db.add(`${message.author.id}.inv.${theirTrade}`, amount[1])
+        await db.sub(`${message.mentions.users.first().id}.inv.${theirTrade}`, amount[1]) 
+      }
+    }
+
+    saveSqlite()
+
+  }
+  if (collected.customId === 'denyTrade') {
+    tradeEmbed.setColor('Red').setDescription(`-=**${message.mentions.users.first().username}** REJECTED THE DEAL=-`)
+    collected.update({ embeds: [tradeEmbed], components: [] })
+  return
+  }
+} catch (e) {
+  tradeMessage.edit({ content: 'they took too long Lol', components: [], embeds: [] })
+}
+
   }
 
 });
+
+async function tradePage(id, message, username) {
+  const inv = await db.get(id+'.inv')
+  const invArray = Object.keys(inv)
+  let outfit = await db.get(id+'.outfit')
+    if (!outfit) {
+      await db.set(message.author.id+'.outfit', { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] })
+      outfit = { slot1: ['null', 0], slot2: ['null', 0], slot3: ['null', 0] }
+    }
+  let artifacts = {}; 
+
+    //filter to be only artifacts
+    invArray.forEach((key, i) => {
+
+      const myObject = inv[key];
+
+      if (myObject <= 0 || myObject?.count <= 0) {return}
+
+      if (outfit.slot1[0] == key) {return}
+      if (outfit.slot2[0] == key) {return}
+      if (outfit.slot3[0] == key) {return}
+
+      if (typeof myObject !== 'object') {
+        artifacts[key] = inv[key]
+        return
+      }
+
+      if (myObject.count > 1) {
+        for (let i = 0; i < myObject.count; i++) {
+          let numberRarity = 0
+          if (inv[key].rarity[i] == 'uber') {numberRarity = 3} else if (inv[key].rarity[i] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
+          artifacts[key + ` #${(i + 1)}`] = inv[key].rarity[i]
+        }
+      } else {
+
+        let numberRarity = 0
+        if (inv[key].rarity[0] == 'uber') {numberRarity = 3} else if (inv[key].rarity[0] == 'legendary') {numberRarity = 2} else {numberRarity = 1}
+        artifacts[key] = inv[key].rarity[0]}
+
+    })    
+
+    const artifactArray = Object.keys(artifacts)
+
+    let select = new StringSelectMenuBuilder()
+      .setCustomId('equip')
+      .setPlaceholder(`${username}'s inventory`)
+      .addOptions(
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`Cancel`)
+      .setValue(`cancel`)
+      .setEmoji('<:AgnabotX:1153460434691698719>'),
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`AGNABUCKS`)
+      .setValue(`agnabucks`)
+      .setDescription(`you currently have ${await db.get(id+'.a')} agnabucks`)
+      .setEmoji('💰')
+    )
+
+    //console.log(fishingJs.artifacts)
+
+    artifactArray.forEach((name, i) => {
+
+      let artifactDescription
+      let artifactEmoji
+      const regex = /#(\d+)$/; // regex to match " #(number)" at the end of the string
+      const match = name.match(regex);
+      if (match) {
+        const number = match[1];
+        artifactDescription = fishingJs.artifacts[name.slice(0, -1*(number.length+1)).trim()].description //gets the artifact name without the #(number)
+        artifactEmoji = inventoryFormats[name.slice(0, -1*(number.length+1)).trim()].split(' ')[0]
+      } else {
+        if (typeof inv[name] !== 'object') {
+        artifactDescription = `${username} has ${inv[name]} of these`
+        artifactEmoji = inventoryFormats[name].split(' ')[0]
+        } else {
+        artifactDescription = fishingJs.artifacts[name].description
+        artifactEmoji = inventoryFormats[name].split(' ')[0]
+      }
+      }
+
+    select.addOptions(    
+      new StringSelectMenuOptionBuilder()
+      .setLabel(`${name} (${artifacts[name]})`)
+      .setValue(`${name}`)
+      .setDescription(`${artifactDescription}`)
+      .setEmoji(artifactEmoji)
+    )
+    })
+
+    const row2 = new ActionRowBuilder()
+      .addComponents(select);
+
+    const myMessage = await message.reply({
+      content: 'choose an item to trade',
+      components: [row2],
+    });
+
+    const collectorFilter = i => i.user.id === message.author.id;
+try {
+  const confirmation = await myMessage.awaitMessageComponent({ filter: collectorFilter, time: 60000 });
+  myMessage.delete()
+
+  const regex = /#(\d+)$/; // regex to match " #(number)" at the end of the string
+  const match = confirmation.values[0].match(regex);
+  if (match) {
+    const number = match[1];
+    const name = confirmation.values[0].slice(0, -1*(number.length+1)).trim()
+    const rarityNum = parseInt(number, 10) - 1
+    return [name, rarityNum]
+  }
+
+  return confirmation.values[0]
+} catch (e) {
+  console.error(e)
+  myMessage.edit({ content: '**<:AgnabotX:1153460434691698719> ||** timed out', components: [] })
+}
+
+}
 
 async function artifactValue(id, artifactName) {
   const me = await db.get(id)

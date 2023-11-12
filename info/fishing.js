@@ -174,7 +174,7 @@ const artifacts = {
 	},
 	amuletofaquaboon: {
 		values: [10, 20, 30],
-		description: "Aquaboon is really fun to say. Aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon aquaboon",
+		description: "Aquaboon is really fun to say. Aquaboon aquaboon aquaboon aquaboon aquaboon aquaboo",
 		text: `+ Your fishing exp increases by X%
 \- Pets do not accrue agnabucks`,
 		set: "fish"

@@ -1,4 +1,2 @@
-2023-11-09T01:24:25.974Z - Uncaught Exception: Cannot read properties of undefined (reading 'bot')
-TypeError: Cannot read properties of undefined (reading 'bot')
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2998:17)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2023-11-12T04:51:24.765Z - Uncaught Exception: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\images\work\38.2.png'
+Error: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\images\work\38.2.png'
