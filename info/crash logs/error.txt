@@ -1,2 +1,6 @@
-2023-11-12T04:51:24.765Z - Uncaught Exception: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\images\work\38.2.png'
-Error: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\images\work\38.2.png'
+2023-11-12T18:52:35.575Z - Uncaught Exception: Cannot read properties of null (reading 'count')
+TypeError: Cannot read properties of null (reading 'count')
+    at C:\agnabot-main\agnabot-main\index.js:2965:20
+    at Array.forEach (<anonymous>)
+    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2958:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

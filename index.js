@@ -2959,6 +2959,9 @@ try {
       if (typeof inv[key] !== 'object') {
         return delete inv[key];
       }
+      if (key == 'undefined') {
+        return delete inv[key];
+      }
 
       const myObject = inv[key];
 
