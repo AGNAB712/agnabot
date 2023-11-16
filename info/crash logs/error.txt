@@ -1,6 +1,5 @@
-2023-11-12T18:52:35.575Z - Uncaught Exception: Cannot read properties of null (reading 'count')
-TypeError: Cannot read properties of null (reading 'count')
-    at C:\agnabot-main\agnabot-main\index.js:2965:20
-    at Array.forEach (<anonymous>)
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2958:14)
+2023-11-16T22:56:40.028Z - Uncaught Exception: Missing second argument (value)
+Error: Missing second argument (value)
+    at QuickDB.set (C:\agnabot-main\agnabot-main\node_modules\quick.db\out\index.js:99:19)
+    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2888:14)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

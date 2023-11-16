@@ -208,7 +208,7 @@ const outfitFormats = {
 	sharktoothnecklace: `<:sharktoothnecklace:1171510991784263791> || Shark tooth necklace`,
 	amuletofaquaboon: `<:amuletofaquaboon:1171510868798885929> || Amulet of aquaboon`,
 	auraofdeflection: `<:auraofdeflection:1171510878772924436> || Aura of deflection`,
-	auraofdevotion: `<:auraofdevotion:1171510881285328906> || Aura of deflection`,
+	auraofdevotion: `<:auraofdevotion:1171510881285328906> || Aura of devotion`,
 	auraofthecraft: `<:auraofthecraft:1171510884934361198> || Aura of the craft`,
 	auraofthecaretaker: '<:auraofthecaretaker:1171510882749141073> || Aura of the caretaker',
 	auraoffemboy: '<:auraoffemboy:1171512600903819324> || Aura of femboy'

@@ -503,7 +503,11 @@ return
  //actual commands
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
-  if (command === 'test') {await db.sub(message.author.id+`.inv.undefined`, 0)}
+  if (command === 'test') {console.log(await hasArtifact(message.author.id, 'mosseater'), await hasArtifact(message.author.id, 'Cock'))}
+  if (command === 'giveartifact' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+  await db.add(`${message.author.id}.inv.${args[0]}.count`, 1)
+  await db.push(`${message.author.id}.inv.${args[0]}.rarity`, 'uber')
+  }
 
   if (command === 'rob') {message.reply('i just set your balance to 0 you fucking filthy criminal')}
   if (command === 'bak') {
@@ -713,10 +717,10 @@ row.addComponents(feed, play, heal);
 row.addComponents(revive);
 
 }
-  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-  const attachment = await petImage(myPet)
   if (attachment === 'image') {return message.reply('you need to set an image for the pet first (a.pet image)')}
   if (attachment === 'name') {return message.reply('you need to set an name for the pet first (a.pet name)')}
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+  const attachment = await petImage(myPet)
 loadingMessage.delete()
 try {
   const response = await message.reply({ files: [attachment], components: [row] })
@@ -762,7 +766,7 @@ try {
   const shift = args.shift()
   const newName = args.join(' ')
   if (!newName) {return message.reply('come on give me a name')}
-  if (newName.length >= 15) {return message.reply('shorter name please :       )')}
+  if (newName.length >= 25) {return message.reply('shorter name please :       )')}
   await db.set(('pet_' + message.author.id) + '.name', newName)
   saveSqlite();
   message.reply(`your pets new name is ${newName}`)
@@ -777,7 +781,29 @@ try {
   await db.set(('pet_' + message.author.id) + '.background', saveUrl)
   await saveSqlite();
   message.reply('ok i did it :    )')
-  }}
+  }
+
+  if (command2 === 'color') {
+  try {
+    saveUrl = message.attachments.first().proxyURL
+  } catch (error) {
+    return message.reply('you need a valid image')
+  }
+  await db.set(('pet_' + message.author.id) + '.image', saveUrl)
+  saveSqlite();
+  message.reply('ok i did it :    )')
+  }
+
+  if (command2 === 'subtitle') {
+  const shift = args.shift()
+  const subtitle = args.join(' ')
+  if (!subtitle) {return message.reply('come on give me a subtitle')}
+  if (subtitle.length >= 15) {return message.reply('shorter subtitle please :       )')}
+  await db.set(('pet_' + message.author.id) + '.subtitle', subtitle)
+  saveSqlite();
+  message.reply(`your pets new subtitle is ${subtitle}`)
+  }
+}
 
   if (command === 'hotel') {
 
@@ -994,6 +1020,7 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 
   if (command === 'work') {
     const playerID = message.author.id;
+    const me = await db.get(message.author.id)
 
     if (cooldowns.has(playerID)) {
       const expirationTime = cooldowns.get(playerID);
@@ -1013,7 +1040,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
       moneyEarned = math.floor(moneyEarned * 1.25)
     }
 
-    await db.set(playerID+'.a', parseInt(curbal) + moneyEarned);
     saveSqlite();
 
     curbal = await db.get(playerID+'.a');
@@ -1027,8 +1053,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
         **<:AgnabotCheck:1153525610665214094> + ${moneyEarned} ||** ${coolAssDescription}`)
         .setFooter({ text: `your money is now ${curbal} || work text ${workArrayIndex}` })
 
-      console.log(`the index is ${workArrayIndex} and so it should have ${workArrayIndex + 1}.png, and the work text is ${workArray[workArrayIndex]}`)
-
       let file
       if (workArrayIndex !== 38) {
         file = new AttachmentBuilder(`./images/work/${workArrayIndex + 1}.png`, { name: 'workimage.png' })
@@ -1041,8 +1065,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
       }
 
       embed.setImage(`attachment://workimage.png`)
-
-      console.log(file)
       
       message.reply({ embeds: [embed], files: [file] });
       const cooldownDuration = 60000;
@@ -1052,6 +1074,17 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
       setTimeout(() => {
         cooldowns.delete(playerID);
       }, cooldownDuration);
+
+    await db.add(playerID+'.a', moneyEarned);
+    if (me.married) {
+      const auraOfDevotion = await hasArtifact(message.author.id, 'auraofdevotion')
+      if (!auraOfDevotion) return;
+      const percentage = (auraOfDevotion[1] / 100)
+      const marriedUserId = me.married
+      console.log(percentage, moneyEarned * percentage)
+      await db.add(marriedUserId+'.a', Math.round(moneyEarned * percentage))
+    }
+
     }}
 
   if (command === 'setmoney' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
@@ -1082,7 +1115,6 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
   if (command === 'inv' || command === 'inventory') {
   const me = await db.get(message.author.id)
   if (!me.inv) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have an inventory')}
-  console.log(me.inv)
   const myCoolEmbed = objectPage(me.inv, 0)
   //const myCoolEmbed = objectPage(funnyObject, 0)
 
@@ -1108,12 +1140,13 @@ channel.permissionOverwrites.edit(channel.guild.roles.everyone, { SendMessages: 
 
   if (command === 'fish') {
 
+  if (isFishing.has(message.author.id)) {return message.reply(`**<:AgnabotX:1153460434691698719> ||** youre already fishing bro`)}
+  isFishing.set(message.author.id, true)
   const me = await db.get(message.author.id)
   if (me.fish == null) {
   message.reply('**<:AgnabotX:1153460434691698719> ||** you cant FISH!!! (buy a fishing rod from the shop)')
   return
   }
-  if (isFishing.has(message.author.id)) {return message.reply(`**<:AgnabotX:1153460434691698719> ||** youre already fishing bro`)}
 
   fishingEmbed.setTitle('Fishing...')
   fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp} exp | ${me.fish.expLevel - me.fish.exp} exp until next level` })
@@ -1131,7 +1164,6 @@ const row = new ActionRowBuilder()
   const attachment = await fishingImage(message.author, 1)
   const attachment2 = await fishingImage(message.author, 2)
   const response = await message.reply({ content: 'What a nice time', embeds: [fishingEmbed], files: [attachment], components: [row] })
-  isFishing.set(message.author.id, true)
 
   const collectorFilter = i => i.user.id === response.mentions.users.first().id
 
@@ -1531,16 +1563,23 @@ case 'bomb':
     if (curbal > 1000) {
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 1000));
     const muteGuy = message.mentions.members.first();
+    const auraOfDeflection = await hasArtifact(muteGuy.id, 'auraofdeflection')
     if (muteGuy.id == '1107764918293372989') {return message.reply('noob')}
     if (muteGuy) {
       const cooldownDuration = 60000;
       const expirationTime = Date.now() + cooldownDuration;
-    const role = message.member.guild.roles.cache.find(role => role.name === "Muted");
-    muteGuy.roles.add(role);
-    message.reply(`**<:AgnabotCheck:1153525610665214094> ||** <@${muteGuy.id}> you just got MUTED! what a nerd.........................`)
+      const randomChance = getRandomInt(99) + 1
+      console.log(randomChance, auraOfDeflection[1])
+      if (randomChance <= auraOfDeflection[1]) {
+        message.member.timeout(cooldownDuration)
+        message.reply(`**<:AgnabotCheck:1153525610665214094> ||** **(AURA OF DEFLECTION CAUSED BOMB TO BACKFIRE)** \n<@${message.author.id}> you just got MUTED! what a nerd.........................`)
+      } else {
+        muteGuy.timeout(cooldownDuration)
+        message.reply(`**<:AgnabotCheck:1153525610665214094> ||** <@${muteGuy.id}> you just got MUTED! what a nerd.........................`)
+      }
+
       setTimeout(() => {
         message.channel.send(`<@${muteGuy.id}> your mute is over`);
-        muteGuy.roles.remove(role);
       }, cooldownDuration);
 
     } else {
@@ -1739,6 +1778,7 @@ break;
 }
 
 } catch (e) {
+  console.error(e)
   await response.edit({ content: '**<:AgnabotX:1153460434691698719> ||** Confirmation not received within 1 minute, cancelling', components: [] });
 }}
 
@@ -2872,6 +2912,10 @@ try {
   }
 }
 
+  if (command === 'divorce') {
+    await db.set(message.author.id+'.married', false)
+  }
+
   if (command === 'equip') {
 
     let outfit = await db.get(message.author.id+'.outfit')
@@ -2962,6 +3006,9 @@ try {
       if (key == 'undefined') {
         return delete inv[key];
       }
+      if (inv[key].count === 0) {
+        return delete inv[key];
+      }
 
       const myObject = inv[key];
 
@@ -3011,8 +3058,6 @@ try {
       .setLabel(`Unequip`)
       .setValue(`unequip`)
     )
-
-    console.log(fishingJs.artifacts)
 
     artifactArray.forEach((name, i) => {
 
@@ -3371,9 +3416,50 @@ try {
   tradeMessage.edit({ content: 'they took too long Lol', components: [], embeds: [] })
 }
 
-  }
+}
+
+if (command === `inspect`) {
+const index = args[0]
+if (!index) {return message.reply(`<:AgnabotX:1153460434691698719> || gimme an index`)}
+if (isNaN(index)) {return message.reply(`<:AgnabotX:1153460434691698719> || gotta be a number bro`)}
+const me = await db.get(message.author.id)
+if (!me.inv) {return message.reply(`<:AgnabotX:1153460434691698719> || you dont have an inventory`)}
+let inv = me.inv
+for (const property in inv) {
+  if (inv[property] == 0 || inv[property] < 0) {delete inv[property]}
+  if (property == 'undefined') {delete inv[property]}
+}
+const inventoryArray = Object.keys(inv)
+const artifactName = inventoryArray[index - 1]
+if (typeof me.inv[artifactName] !== `object`) {return message.reply(`<:AgnabotX:1153460434691698719> || not an artifact`)}
+const artifactObject = fishingJs.artifacts[artifactName]
+
+const inspectEmbed = new EmbedBuilder()
+.setTitle(`-=~artifact ${artifactName}~=-`)
+.setDescription(`*${artifactObject.description}*
+
+${artifactObject.text}`)
+.setColor(`#235218`)
+message.reply({ embeds: [inspectEmbed] })
+}
 
 });
+
+async function hasArtifact(id, artifactName) {
+  const me = await db.get(id)
+  if (!me.outfit) {return false}
+  const outfitArray = Object.values(me.outfit)
+  let output = false
+
+  outfitArray.forEach((key, i) => { 
+    if (outfitArray[i][0] === artifactName) {
+      const myArtifact = fishingJs.artifacts[artifactName]
+      output = [outfitArray[i][1], myArtifact.values[parseInt(outfitArray[i][1]) - 1]];
+      return;
+    }
+  })
+  return output
+}
 
 async function tradePage(id, message, username) {
   const inv = await db.get(id+'.inv')
@@ -3493,17 +3579,13 @@ try {
 
 }
 
-async function artifactValue(id, artifactName) {
-  const me = await db.get(id)
-}
-
 function objectPage(testmap, page) {
   let testEmbed = new EmbedBuilder()
     .setTitle('placeholder')
     .setColor('#235218')
 
   for (const property in testmap) {
-    if (testmap[property] == 0 || testmap[property] < 0) {delete testmap[property]}
+    if (testmap[property] == 0 || testmap[property] < 0 || testmap[property]?.count == 0) {delete testmap[property]}
     if (property == 'undefined') {delete testmap[property]}
   }
 
@@ -4279,7 +4361,6 @@ return percentages
 
 async function fishingLoot(message, collected) {
 const me = await db.get(message.author.id)
-console.log(Math.floor(me.fish.level / 5))
 const fishingLevelRounded = Math.floor(me.fish.level / 5)
 let myFishingArray = fishingArray[fishingLevelRounded]
 if (!myFishingArray) {myFishingArray = fishingArray[fishingArray.length - 1]}
@@ -4294,7 +4375,6 @@ while (sum + percents[index] < randomNum) {
   index++;
 }
 
-console.log(index)
 
 let lootToDraw
 let type
@@ -4323,7 +4403,6 @@ exp = 500
 } else {
 console.log('hello')
 const newMessage = await giftArtifact(message)
-console.log(newMessage)
 collected.update(newMessage)
 await saveSqlite()
 return
@@ -4332,7 +4411,6 @@ return
 
 
 const name = getTextUntilDelimiter(lootToDraw.replace(/^.*[\\/]/, ''), '.png')
-console.log(lootToDraw, name)
 const attachment = await fishingLootImage(message.author, lootToDraw, { name: name, rarity: type, color: color })
 fishingEmbed.setTitle(`Congrats! You earned ${exp} exp!`)
 if (me.fish.exp + exp >= me.fish.expLevel) {
@@ -4651,7 +4729,6 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
     const embeds = interaction.message.embeds
     const theGoodEmbed = embeds[0]
     const myPage = theGoodEmbed.title[8]
-    console.log(myPage)
     const me = await db.get(repliedMessage.author.id)
 
     let nextButton = new ButtonBuilder()
@@ -4669,7 +4746,6 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
     if (customId === 'next') {
     const totalpages = Math.floor(Object.keys(me.inv).length / 3)
-    console.log(totalpages)
     if (`${totalpages}` === myPage) {
       nextButton.setDisabled(true)
     }
@@ -4679,7 +4755,6 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
     } else {
     const newEmbed = objectPage(me.inv, parseInt(myPage) - 2)
-    console.log(myPage, myPage === 2)
     if (myPage === '2') {
       backButton.setDisabled(true)
     }
@@ -4818,3 +4893,7 @@ async function shutdown() {
 }
 
 client.login(token);
+
+module.exports = {
+  db
+}
