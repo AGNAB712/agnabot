@@ -1,5 +1,12 @@
-2023-11-12T18:40:50.337Z - Uncaught Exception: Cannot read properties of null (reading 'count')
-TypeError: Cannot read properties of null (reading 'count')
-    at objectPage (C:\Users\gamer\Documents\GitHub\agnabot\index.js:3405:154)
-    at Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:1135:23)
+2023-11-17T14:48:12.819Z - Uncaught Exception: Invalid number value
+Error: Invalid number value
+    at Object.run (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:773:72)
+    at C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:212:66
+    at Array.reduce (<anonymous>)
+    at NumberValidator.parse (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:212:29)
+    at StringSelectMenuBuilder.addOptions (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\builders\dist\index.js:934:28)
+    at StringSelectMenuBuilder.addOptions (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\discord.js\src\structures\StringSelectMenuBuilder.js:49:18)
+    at C:\Users\gamer\Documents\GitHub\agnabot\index.js:3457:12
+    at Array.forEach (<anonymous>)
+    at tradePage (C:\Users\gamer\Documents\GitHub\agnabot\index.js:3437:19)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
