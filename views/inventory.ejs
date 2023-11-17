@@ -1,0 +1,25 @@
+<!-- views/inventory.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Inventory for User <%= userId %></h1>
+    <ul>
+      <% inventoryArray.forEach(item => { %>
+        <li><%= item %></li>
+      <% }) %>
+    </ul>
+    <h2>Amount of agnabucks for User <%= userId %></h2>
+    <ul>
+      <li><%= agnabuckAmount %></li>
+    </ul>
+  </div>
+</body>
+</html>
