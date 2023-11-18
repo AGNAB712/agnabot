@@ -1,12 +1,4 @@
-2023-11-17T14:48:12.819Z - Uncaught Exception: Invalid number value
-Error: Invalid number value
-    at Object.run (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:773:72)
-    at C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:212:66
-    at Array.reduce (<anonymous>)
-    at NumberValidator.parse (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@sapphire\shapeshift\dist\index.js:212:29)
-    at StringSelectMenuBuilder.addOptions (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\@discordjs\builders\dist\index.js:934:28)
-    at StringSelectMenuBuilder.addOptions (C:\Users\gamer\Documents\GitHub\agnabot\node_modules\discord.js\src\structures\StringSelectMenuBuilder.js:49:18)
-    at C:\Users\gamer\Documents\GitHub\agnabot\index.js:3457:12
-    at Array.forEach (<anonymous>)
-    at tradePage (C:\Users\gamer\Documents\GitHub\agnabot\index.js:3437:19)
+2023-11-18T11:19:08.603Z - Uncaught Exception: Cannot access 'attachment' before initialization
+ReferenceError: Cannot access 'attachment' before initialization
+    at Client.<anonymous> (C:\Users\gamer\Documents\GitHub\agnabot\index.js:720:3)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
