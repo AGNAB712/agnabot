@@ -45,7 +45,6 @@ const artifacts = {
 		description: "This should probably go in the pet category but whatever lmao",
 		text: `+ You gain access to "a.pet subtitle" which adds a bit of text under your pet's name
 			   + You gain access to "a.pet color" which changes the color of the border around your pet's image
-			   + You gain access to "a.pet notif" which toggles if agnabot dms you if your pet is in critical condition (10% on all stats or less)
 			   ~ This artifact contributes to pet set bonus
 			   ~ The only rarity of this item is rare
 			   ~ Unequipping this artifact will clear all of these`,
@@ -54,7 +53,7 @@ const artifacts = {
 	amuletoflaziness: {
 		values: [5, 10, 20],
 		description: "Basically child labor at this point.",
-		text: `+ When your pet reaches below 25% in all stats, instead of generating money, your pet generates X% per 5 minutes until its stats are full
+		text: `+ When your pet reaches below 25% in all stats, your pet generates X% per 5 minutes until its stats are full
 \- Your gain from child labor is halved`,
 		set: "pet"
 	},
@@ -74,7 +73,7 @@ const artifacts = {
 		set: "pet"
 	},
 	fourleafclover: {
-		values: [50, 75, 100],
+		values: [60, 45, 25],
 		description: "I love the spire it's my favorite landmark!",
 		text: `+ Your pet can randomly dig up random amounts of agnabucks (100\-300) and trash/common items every X minutes
 \- A.fish cannot be used`,

@@ -35,7 +35,7 @@ const inventoryFormats = {
 	fourleafclover: `<:fourleafclover:1171510980849709136> \`4 leaf clover:     [count]\` \n`,
 	emeraldhelmet: `<:emeraldhelmet:1171510890407923802> \`Emerald helmet:     [count]\` \n`,
 	amuletofdedication: `<:amuletofdedication:1171510872246603847> \`Amulet of dedication:     [count]\` \n`,
-	workmanscharm: `<:workmanscharm:1171510903691292794> \`Workman's charm:     [count]\` \n`,
+	workmanscharm: `<:workmanscharm:1171510995844337684> \`Workman's charm:     [count]\` \n`,
 	cryoheart: `<:cryoheart:1171510887459336332> \`Cryoheart:     [count]\` \n`,
 	laboriouslure: `<:laboriouslure:1171510987489284158> \`Laborious lure:     [count]\` \n`,
 	mosseater: `<:mosseater:1171510900704944249> \`Moss eater:     [count]\` \n`,

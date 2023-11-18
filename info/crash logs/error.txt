@@ -1,5 +1,3 @@
-2023-11-16T22:56:40.028Z - Uncaught Exception: Missing second argument (value)
-Error: Missing second argument (value)
-    at QuickDB.set (C:\agnabot-main\agnabot-main\node_modules\quick.db\out\index.js:99:19)
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:2888:14)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2023-11-18T06:00:00.418Z - Uncaught Exception: playerID is not defined
+ReferenceError: playerID is not defined
+    at C:\agnabot-main\agnabot-main\index.js:318:38

@@ -99,6 +99,7 @@ const cuss = ['FUCK','SHIT','BITCH']
 //maps
 const cooldowns = new Map();
 const cooldowns2 = new Map();
+const cooldowns3 = new Map();
 const isFishing = new Map();
 const verifyMap = new Map();
 const mutes = new Map();
@@ -210,7 +211,10 @@ async function doChildLabor() {
     const userId = value.id.slice(9)
     if (!amassing.members.cache.get(userId)) {return}
     const curbal = await db.get(userId+'.a')
-    await db.set(userId+'.a', parseInt(parseInt(curbal) + value.value));
+    const laziness = await hasArtifact(userId, 'amuletoflaziness');
+    let multiplyValue = 1
+    if (laziness) {multiplyValue = 0.5}
+    await db.set(userId+'.a', parseInt(parseInt(curbal) + (value.value * 0.5)));
     if (index = toWork.length) {
       saveSqlite();
     } 
@@ -219,36 +223,87 @@ async function doChildLabor() {
 
 //for updating pet stats
 async function updatePets() {
+
   const allUserData = await db.all()
   const toUpdate = allUserData.filter(data => data.id.startsWith('pet_'))
-  await toUpdate.forEach(async (value, index) => {
-    const userId = value.id.slice(4)
-    const myPet = await db.get('pet_' + userId)
+  toUpdate.forEach(async (value, index) => {
 
-    if (getRandomInt(3) + 1 === 3) {
-    if (myPet.hunger - 1 < 0) {await db.set('pet_' + userId + '.hunger', 0)
-    return }
-    await db.set('pet_' + userId + '.hunger', myPet.hunger - 1);
-    }
+    const userId = value.id.slice(4);
+    const myPet = await db.get('pet_' + userId);
 
-    if (getRandomInt(2) + 1 === 2) {
-    if (myPet.affection - 1 < 0) {await db.set('pet_' + userId + '.affection', 0)
-    return }
-    await db.set('pet_' + userId + '.affection', myPet.affection - 1);
-    }
+    const laziness = await hasArtifact(userId, 'amuletoflaziness');
+    if (!laziness) {
+      await db.set('pet_' + userId + '.lazy', false);
+      await deprivePets(myPet, userId)
+    } else {
 
-    if (getRandomInt(5) + 1 === 5) {
-    if (myPet.health - 1 < 0) {await db.set('pet_' + userId + '.health', 0)
-    return}
-    await db.set('pet_' + userId + '.health', myPet.health - 1);
+      if (myPet.lazy) {
+        if (myPet.hunger === 100 && myPet.health === 100 && myPet.affection === 100) {
+          await db.set('pet_' + userId + '.lazy', false);
+        }
+        if (myPet.health + laziness[1] > 100) {await db.set('pet_' + userId + '.health', 100);} else {await db.add('pet_' + userId + '.health', laziness[1]);}
+        if (myPet.affection + laziness[1] > 100) {await db.set('pet_' + userId + '.affection', 100);} else {await db.add('pet_' + userId + '.affection', laziness[1]);}
+        if (myPet.hunger + laziness[1] > 100) {await db.set('pet_' + userId + '.hunger', 100);} else {await db.add('pet_' + userId + '.hunger', laziness[1]);}
+      } else {
+        if (myPet.hunger - 1 < 25 || myPet.health - 1 < 25 || myPet.affection - 1 < 25) {
+          await db.set('pet_' + userId + '.lazy', true);
+        }
+
+        await deprivePets(myPet, userId)
+      }
+
     }
 
     //console.log(myPet)
-
     if (index = toUpdate.length) {
       saveSqlite();
-    } 
+    }
   })
+}
+
+async function deprivePets(myPet, userId) {
+
+  const shield = hasArtifact(userId, 'impenetrableshield')
+
+  if (getRandomInt(3) + 1 === 3) {
+    if (myPet.hunger - 1 < 0) {
+      await db.set('pet_' + userId + '.hunger', 0);
+      return;
+    }
+    await db.set('pet_' + userId + '.hunger', myPet.hunger - 1);
+  }
+
+  if (getRandomInt(2) + 1 === 2) {
+    if (myPet.affection - 1 < 0) {
+      await db.set('pet_' + userId + '.affection', 0);
+      return;
+    }
+    await db.set('pet_' + userId + '.affection', myPet.affection - 1);
+  }
+
+  if (shield) {
+  
+    await db.set('pet_' + userId + '.shielded', true);
+
+  if (myPet.hunger == 0 && myPet.affection) {
+    if (myPet.health - 3 < 0) {
+      await db.set('pet_' + userId + '.health', 0);
+      return;
+    }
+    await db.set('pet_' + userId + '.health', myPet.health - 3);
+  }
+
+  } else {
+
+    await db.set('pet_' + userId + '.shielded', false);
+    if (getRandomInt(5) + 1 === 5) {
+      if (myPet.health - 1 < 0) {
+        await db.set('pet_' + userId + '.health', 0);
+        return;
+      }
+      await db.set('pet_' + userId + '.health', myPet.health - 1);
+    }
+  }
 }
 
 async function payPets() {
@@ -258,8 +313,18 @@ async function payPets() {
     const userId = value.id.slice(4)
     const myPet = await db.get('pet_' + userId)
     const curbal = await db.get(userId+'.a')
+    const helmet = await hasArtifact(playerID, 'emeraldhelmet')
+    const shield = await hasArtifact(playerID, 'impenetrableshield')
+    if (helmet) {return}
 
-    await db.set(userId+'.a', curbal + myPet.health + myPet.affection + myPet.hunger)
+    let toAdd = myPet.affection + myPet.hunger
+    if (!shield) {
+      toAdd += myPet.health
+    } else {
+      toAdd += myPet.health * shield[1]
+    }
+
+    await db.add(userId+'.a', toAdd)
 
     if (index = toUpdate.length) {
       saveSqlite();
@@ -503,7 +568,26 @@ return
  //actual commands
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
-  if (command === 'test') {console.log(await hasArtifact(message.author.id, 'mosseater'), await hasArtifact(message.author.id, 'Cock'))}
+  if (command === 'test') {
+    const pet = await db.get('pet_'+message.author.id)
+    console.log('ok!')
+    await updatePets()
+  }
+
+  if (command === 'test2') {
+    await db.set('pet_'+message.author.id+'.health', 10)
+    await db.set('pet_'+message.author.id+'.affection', 10)
+    await db.set('pet_'+message.author.id+'.hunger', 10)
+    await updatePets()
+  }
+
+  if (command === 'test3') {
+    await db.set('pet_'+message.author.id+'.health', 100)
+    await db.set('pet_'+message.author.id+'.affection', 100)
+    await db.set('pet_'+message.author.id+'.hunger', 100)
+    await updatePets()
+  }
+
   if (command === 'giveartifact' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
   await db.add(`${message.author.id}.inv.${args[0]}.count`, 1)
   await db.push(`${message.author.id}.inv.${args[0]}.rarity`, 'uber')
@@ -717,11 +801,11 @@ row.addComponents(feed, play, heal);
 row.addComponents(revive);
 
 }
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+  const attachment = await petImage(myPet, message.author.id)
+  loadingMessage.delete()
   if (attachment === 'image') {return message.reply('you need to set an image for the pet first (a.pet image)')}
   if (attachment === 'name') {return message.reply('you need to set an name for the pet first (a.pet name)')}
-  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-  const attachment = await petImage(myPet)
-loadingMessage.delete()
 try {
   const response = await message.reply({ files: [attachment], components: [row] })
 } catch (e) {
@@ -784,21 +868,23 @@ try {
   }
 
   if (command2 === 'color') {
-  try {
-    saveUrl = message.attachments.first().proxyURL
-  } catch (error) {
-    return message.reply('you need a valid image')
-  }
-  await db.set(('pet_' + message.author.id) + '.image', saveUrl)
+  const caretaker = await hasArtifact(message.author.id, 'auraofthecaretaker')
+  if (!caretaker) {return}
+  const hex = args[1]
+  if (!hex) {return message.reply('come on give me a hex')}
+  if (!isvalidhexcode(hex)) {return message.reply('not a valid hex code')}
+  await db.set(('pet_' + message.author.id) + '.hex', hex)
   saveSqlite();
   message.reply('ok i did it :    )')
   }
 
   if (command2 === 'subtitle') {
+  const caretaker = await hasArtifact(message.author.id, 'auraofthecaretaker')
+  if (!caretaker) {return}
   const shift = args.shift()
   const subtitle = args.join(' ')
   if (!subtitle) {return message.reply('come on give me a subtitle')}
-  if (subtitle.length >= 15) {return message.reply('shorter subtitle please :       )')}
+  if (subtitle.length >= 25) {return message.reply('shorter subtitle please :       )')}
   await db.set(('pet_' + message.author.id) + '.subtitle', subtitle)
   saveSqlite();
   message.reply(`your pets new subtitle is ${subtitle}`)
@@ -1289,6 +1375,41 @@ isFishing.delete(message.author.id)
     message.channel.send('gotta mention someone to donate to, and yknow, how much you wanna donate')
   }}
 
+  if (command === 'loot') {
+
+    const playerID = message.author.id;
+
+    const helmet = await hasArtifact(playerID, 'emeraldhelmet')
+
+    if (cooldowns3.has(playerID)) {
+      const expirationTime = cooldowns3.get(playerID);
+      const remainingTime = (expirationTime - Date.now()) / 1000;
+      return message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
+    }
+
+    if (!helmet) {
+      return message.reply(`**<:AgnabotX:1153460434691698719> ARTIFACT ||** you don't have an emerald helmet equipped`);
+    }
+
+    await db.add(playerID+'.a', helmet[1]);
+
+    const embed = new EmbedBuilder()
+      .setColor('#235218')
+      .setTitle('>---=**LOOT**=---<')
+      .setDescription(`
+      **<:AgnabotCheck:1153525610665214094> +${helmet[1]} ||**  Lootylicious`)
+      .setFooter({ text: `your money is now ${await db.get(playerID+'.a')}`})
+
+      message.reply({ embeds: [embed] })
+
+      const cooldownDuration = 300000;
+      const expirationTime = Date.now() + cooldownDuration;
+      cooldowns3.set(playerID, expirationTime);
+
+      setTimeout(() => {
+        cooldowns3.delete(playerID);
+      }, cooldownDuration);}
+
   if (command === 'redeem') {
 
     const playerID = message.author.id;
@@ -1299,6 +1420,9 @@ isFishing.delete(message.author.id)
       return message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
     }
 
+    if (await hasArtifact(playerID, 'impenetrableshield')) {
+      return message.reply(`**<:AgnabotX:1153460434691698719> ARTIFACT ||** impenetrable shield equipped`);
+    }
 
     const member = message.member;
 
@@ -3074,6 +3198,8 @@ try {
         artifactEmoji = inventoryFormats[name].split(' ')[0]
       }
 
+      if (i > 22) {return}
+
     select.addOptions(    
       new StringSelectMenuOptionBuilder()
       .setLabel(`${name} (${artifacts[name]})`)
@@ -3446,10 +3572,16 @@ message.reply({ embeds: [inspectEmbed] })
 });
 
 async function hasArtifact(id, artifactName) {
-  const me = await db.get(id)
-  if (!me.outfit) {return false}
-  const outfitArray = Object.values(me.outfit)
-  let output = false
+
+  let outfitArray
+  let output = false;
+  if (typeof id === 'object') {
+    outfitArray = Object.values(id)
+  } else {
+    const me = await db.get(id)
+    if (!me?.outfit) {return false}
+    outfitArray = Object.values(me.outfit)
+  }
 
   outfitArray.forEach((key, i) => { 
     if (outfitArray[i][0] === artifactName) {
@@ -3539,6 +3671,8 @@ async function tradePage(id, message, username) {
         artifactEmoji = inventoryFormats[name].split(' ')[0]
       }
       }
+
+      if (i > 22) {return}
 
     select.addOptions(    
       new StringSelectMenuOptionBuilder()
@@ -4189,12 +4323,17 @@ async function balance(mention) {
     }
   }
 
-async function petImage(pet) {
+async function petImage(pet, id) {
 
   try {
 
   const canvas = Canvas.createCanvas(600, 400);
   const context = canvas.getContext('2d');
+  const caretaker = await hasArtifact(id, 'auraofthecaretaker')
+  let color = '#235218'
+  if (pet.hex && caretaker) {
+  color = '#'+pet.hex
+  }
 
   //return with specified strings if null
   if (!pet.image) {return 'image'}
@@ -4216,6 +4355,16 @@ async function petImage(pet) {
   context.strokeText(pet.name, 70, 100);
   context.fillText(pet.name, 70, 100)
 
+  //pet subtitle
+  if (pet.subtitle && caretaker) {
+  context.strokeStyle = 'black';
+  context.lineWidth = 5;
+  context.font = `bold 25px Arial`;
+  context.fillStyle = '#939393';
+  context.strokeText(pet.subtitle, 80, 130);
+  context.fillText(pet.subtitle, 80, 130)
+  }
+
   //pet image
   const petImage = await Canvas.loadImage(pet.image);
   context.drawImage(petImage, canvas.width / 1.99, canvas.height / 2.2, 200, 200);
@@ -4229,7 +4378,7 @@ async function petImage(pet) {
   context.fillText(`Hunger (${pet.hunger}%)`, 35, 175)
 
   //hunger bar fill
-  context.fillStyle = '#235218';
+  context.fillStyle = color;
   context.lineWidth = 10;
   context.fillRect(35, 190, (pet.hunger / 100) * 150, 20);
 
@@ -4247,7 +4396,7 @@ async function petImage(pet) {
   context.fillText(`Affection (${pet.affection}%)`, 35, 240)
 
   //affection bar fill
-  context.fillStyle = '#235218';
+  context.fillStyle = color;
   context.lineWidth = 10;
   context.fillRect(35, 255, (pet.affection / 100) * 150, 20);
 
@@ -4265,7 +4414,7 @@ async function petImage(pet) {
   context.fillText(`Health (${pet.health}%)`, 35, 305)
 
   //health bar fill
-  context.fillStyle = '#235218';
+  context.fillStyle = color;
   context.lineWidth = 10;
   context.fillRect(35, 315, (pet.health / 100) * 150, 20);
 
@@ -4275,11 +4424,20 @@ async function petImage(pet) {
   context.strokeRect(35, 315, 150, 20);
 
   //pet emotion
-  const Image = await Canvas.loadImage(pet.image);
   context.drawImage(await calculateEmotions(pet), 400, 30 / 2.2, 138, 120);
 
+  //shielded
+  if (pet.shielded) {
+  const shieldImage = await Canvas.loadImage('./images/shielded.png');
+  context.drawImage(shieldImage, canvas.width - 65, canvas.height - 65, 60, 60);
+  }
+
   //outline
-  context.strokeStyle = 'white';
+  if (color !== '#235218') {
+    context.strokeStyle = color;
+  } else {
+    context.strokeStyle = 'white';
+  }
   context.lineWidth = 10;
   context.strokeRect(0, 0, canvas.width, canvas.height);
 
@@ -4646,6 +4804,10 @@ async function calculateEmotions(pet) {
 
   console.log(totalScore)
 
+  if (pet.lazy) {
+    return await Canvas.loadImage('./images/emotions/lazy.png');
+  }
+
   if (totalScore == 0) {
   if (getRandomInt(99) >= 15) {
   return await Canvas.loadImage('./images/emotions/dead.png');
@@ -4824,7 +4986,7 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
   saveSqlite();
 
-  const attachment = await petImage(await db.get(`pet_${id}`))
+  const attachment = await petImage(await db.get(`pet_${id}`), id)
   await interaction.message.edit({ files: [attachment] });
 
 } catch (e) {
