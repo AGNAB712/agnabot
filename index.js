@@ -570,7 +570,7 @@ return
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
     const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-    await exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
+    await exec('git fetch && git merge --strategy-option theirs && pm2 reload all', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
@@ -581,17 +581,7 @@ return
       }
       console.log(`stdout: ${stdout}`);
     });
-    await exec('pm2 reload all', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-        return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
+
     loadingMessage.delete()
     message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
   }
