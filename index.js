@@ -565,7 +565,7 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    message.reply('it worketh 2')
+    message.reply('it worketh 3')
   }
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
