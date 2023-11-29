@@ -1,5 +1,8 @@
-2023-11-29T22:57:04.197Z - Uncaught Exception: Cannot read properties of undefined (reading 'members')
+2023-11-29T23:27:55.632Z - Uncaught Exception: Cannot read properties of undefined (reading 'members')
 TypeError: Cannot read properties of undefined (reading 'members')
     at C:\agnabot-main\agnabot-main\index.js:218:19
     at Array.forEach (<anonymous>)
     at Timeout.doChildLabor [as _onTimeout] (C:\agnabot-main\agnabot-main\index.js:216:16)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at listOnTimeout (node:internal/timers:538:9)
+    at process.processTimers (node:internal/timers:512:7)

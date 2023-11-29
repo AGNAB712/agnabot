@@ -579,7 +579,6 @@ return
         console.error(`stderr: ${stderr}`);
         return;
       }
-      console.log(`stdout: ${stdout}`);
     });
     await exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
       if (error) {
@@ -590,9 +589,19 @@ return
         console.error(`stderr: ${stderr}`);
         return;
       }
-      console.log(`stdout: ${stdout}`);
+      console.log(stdout.trim())
+      if (stdout.trim() === 'Already up to date.') {
+        return message.channel.send('already up to date')
+      } 
+
     });
-    await exec('pm2 reload all', (error, stdout, stderr) => {
+
+    loadingMessage.delete()
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
+  }
+
+  if (command === 'reload') {
+    exec('pm2 reload all', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
@@ -601,11 +610,9 @@ return
         console.error(`stderr: ${stderr}`);
         return;
       }
-      console.log(`stdout: ${stdout}`);
     });
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** reloaded successfully')
 
-    loadingMessage.delete()
-    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
   }
 
   if (command === 'giveartifact' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
