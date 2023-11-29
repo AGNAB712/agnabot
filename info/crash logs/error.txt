@@ -1,3 +1,5 @@
-2023-11-18T06:00:00.418Z - Uncaught Exception: playerID is not defined
-ReferenceError: playerID is not defined
-    at C:\agnabot-main\agnabot-main\index.js:318:38
+2023-11-29T21:48:56.810Z - Uncaught Exception: Cannot read properties of undefined (reading 'setName')
+TypeError: Cannot read properties of undefined (reading 'setName')
+    at updateCategoryName (C:\agnabot-main\agnabot-main\index.js:3903:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:385:3)
