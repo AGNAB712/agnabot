@@ -565,12 +565,23 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    message.reply('it worketh FINAL 2')
+    message.reply('it worketh FINAL MOMOMOM')
   }
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
     const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-    await exec('git fetch && git merge --strategy-option theirs', (error, stdout, stderr) => {
+    await exec('git fetch', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    await exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
