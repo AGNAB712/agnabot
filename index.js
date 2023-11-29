@@ -565,23 +565,7 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    const pet = await db.get('pet_'+message.author.id)
-    console.log('ok!')
-    await updatePets()
-  }
-
-  if (command === 'test2') {
-    await db.set('pet_'+message.author.id+'.health', 10)
-    await db.set('pet_'+message.author.id+'.affection', 10)
-    await db.set('pet_'+message.author.id+'.hunger', 10)
-    await updatePets()
-  }
-
-  if (command === 'test3') {
-    await db.set('pet_'+message.author.id+'.health', 100)
-    await db.set('pet_'+message.author.id+'.affection', 100)
-    await db.set('pet_'+message.author.id+'.hunger', 100)
-    await updatePets()
+    message.reply('it worketh')
   }
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
