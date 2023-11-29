@@ -180,6 +180,8 @@ await client.channels.cache.get('1156302752218091530').messages.fetch('115630291
   )
 }
 
+
+
 //status load function
 async function loadCurrentStatus() {
   const channelId = '1140672130619543603';
@@ -419,8 +421,10 @@ drive = google.drive({ version: 'v3', auth: auth });
 client.on('messageCreate', async (message) => {
 
 if (message.channel.type === 1) {return}
+if (replit && message.guild.id == '831714424658198529') {return}
 
-if (message.channel.id === minecraftchat.id && !message.author.bot) {
+
+if (message.channel.id === minecraftchat?.id && !message.author.bot && replit) {
   if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
   if (message.content.includes('\n')) {return message.reply('cant have a message with a linebreak')}
   let attachmentEmoji = ''
@@ -578,6 +582,34 @@ return
     await db.set('pet_'+message.author.id+'.affection', 100)
     await db.set('pet_'+message.author.id+'.hunger', 100)
     await updatePets()
+  }
+
+  if (command === 'pull' && message.author.id == '765581160755363840') {
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+    exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    exec('pm2 reload all', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    loadingMessage.delete()
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
   }
 
   if (command === 'giveartifact' && message.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
