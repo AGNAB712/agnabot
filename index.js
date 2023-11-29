@@ -54,6 +54,7 @@ const botArgs = {
 //consts and global variables
 const prefix = `a.`;
 const token = process.env.TOKEN;
+const backupToken = process.env.TESTTOKEN;
 const currentDateTime = new Date();
 let saveCount = 0
 let curPlay = false;
@@ -133,6 +134,7 @@ let whitelistEmbed = new EmbedBuilder()
 
 //saving sqlite function
 async function saveSqlite() {
+if (!replit) {return}
 if (lockdown !== 'false') {return}
 
 //guard to stop it always saving because it gets laggy often
@@ -147,6 +149,7 @@ forceSaveSqlite()
 }
 
 async function forceSaveSqlite() {
+if (!replit) {return}
   saveCount = 0
   const fileName = 'json.sqlite';
   await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
@@ -162,6 +165,7 @@ async function forceSaveSqlite() {
 
 //load sqlite function
 async function loadSqlite() {
+if (!replit) {return}
 await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then(async (lastMessage) => {
     if (lastMessage.attachments.size > 0) {
       const attachment = lastMessage.attachments.first();
@@ -215,9 +219,6 @@ async function doChildLabor() {
     let multiplyValue = 1
     if (laziness) {multiplyValue = 0.5}
     await db.set(userId+'.a', parseInt(parseInt(curbal) + (value.value * 0.5)));
-    if (index = toWork.length) {
-      saveSqlite();
-    } 
   })
 }
 
@@ -252,11 +253,6 @@ async function updatePets() {
         await deprivePets(myPet, userId)
       }
 
-    }
-
-    //console.log(myPet)
-    if (index = toUpdate.length) {
-      saveSqlite();
     }
   })
 }
@@ -325,10 +321,6 @@ async function payPets() {
     }
 
     await db.add(userId+'.a', toAdd)
-
-    if (index = toUpdate.length) {
-      saveSqlite();
-    } 
   })
 }
 
@@ -3902,6 +3894,8 @@ reaction.message.react('yeah:1106953116311625768');
 
 
 async function updateCategoryName() {
+
+   if (!replit) {return}
         
   const channel = client.channels.cache.get('1092554907883683961');
 
@@ -5054,7 +5048,11 @@ async function shutdown() {
   process.exit(0);
 }
 
+if (replit) {
 client.login(token);
+} else {
+client.login(backupToken);
+}
 
 module.exports = {
   db
