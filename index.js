@@ -565,12 +565,11 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    message.reply('it worketh FINAL MOMOMOM')
+    message.reply('it worketh FINAL hello time')
   }
 
-  if (command === 'pull' && message.author.id == '765581160755363840') {
-    const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-    await exec('git fetch', (error, stdout, stderr) => {
+  if (command === 'fetch') {
+  exec('git fetch', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
@@ -580,7 +579,11 @@ return
         return;
       }
     });
-    await exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
+  }
+
+  if (command === 'pull' && message.author.id == '765581160755363840') {
+    const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+    exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
@@ -593,11 +596,9 @@ return
       if (stdout.trim() === 'Already up to date.') {
         return message.channel.send('already up to date')
       } 
-
-    });
-
     loadingMessage.delete()
     message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
+    });
   }
 
   if (command === 'reload') {
