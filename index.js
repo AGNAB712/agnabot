@@ -311,8 +311,8 @@ async function payPets() {
     const userId = value.id.slice(4)
     const myPet = await db.get('pet_' + userId)
     const curbal = await db.get(userId+'.a')
-    const helmet = await hasArtifact(playerID, 'emeraldhelmet')
-    const shield = await hasArtifact(playerID, 'impenetrableshield')
+    const helmet = await hasArtifact(userID, 'emeraldhelmet')
+    const shield = await hasArtifact(userID, 'impenetrableshield')
     if (helmet) {return}
 
     let toAdd = myPet.affection + myPet.hunger
@@ -570,7 +570,18 @@ return
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
     const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-    await exec('git fetch && git merge --strategy-option theirs && pm2 reload all', (error, stdout, stderr) => {
+    await exec('git fetch && git merge --strategy-option theirs', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    await exec('pm2 reload all', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
