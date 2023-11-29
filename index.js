@@ -565,12 +565,12 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    message.reply('it worketh')
+    message.reply('it worketh 2')
   }
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
-  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
-    exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
+    const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+    await exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
@@ -581,7 +581,7 @@ return
       }
       console.log(`stdout: ${stdout}`);
     });
-    exec('pm2 reload all', (error, stdout, stderr) => {
+    await exec('pm2 reload all', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
         return;
