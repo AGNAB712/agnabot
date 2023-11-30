@@ -1,4 +1,5 @@
-2023-11-30T04:24:24.697Z - Uncaught Exception: Cannot read properties of undefined (reading 'affection')
-TypeError: Cannot read properties of undefined (reading 'affection')
-    at deprivePets (C:\agnabot-main\agnabot-main\index.js:275:15)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2023-11-30T21:21:12.253Z - Uncaught Exception: Cannot read properties of undefined (reading 'members')
+TypeError: Cannot read properties of undefined (reading 'members')
+    at C:\agnabot-main\agnabot-main\index.js:218:19
+    at Array.forEach (<anonymous>)
+    at Timeout.doChildLabor [as _onTimeout] (C:\agnabot-main\agnabot-main\index.js:216:16)
