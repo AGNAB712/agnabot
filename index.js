@@ -165,7 +165,7 @@ if (!replit) {return}
 
 //load sqlite function
 async function loadSqlite() {
-if (!replit) {return}
+//if (!replit) {return}
 await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then(async (lastMessage) => {
     if (lastMessage.attachments.size > 0) {
       const attachment = lastMessage.attachments.first();
