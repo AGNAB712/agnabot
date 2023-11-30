@@ -568,6 +568,28 @@ return
         deprivePets(await db.get('pet_'+message.author.id), message.author.id);
   }
 
+  if (command === 'sudo' && message.author.id == '765581160755363840') {
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** executing...')
+  exec('git fetch', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        loadingMessage.delete()
+        message.reply('`**<<:AgnabotX:1153460434691698719> ||** error')
+        message.channel.send(error.message)
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        loadingMessage.delete()
+        message.reply('`**<<:AgnabotX:1153460434691698719> ||** stderror')
+        message.channel.send(stderr.message)
+        return;
+      }
+    loadingMessage.delete()
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** executed successfully')
+    });  
+    }
+
   if (command === 'fetch') {
   const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Fetching...')
   exec('git fetch', (error, stdout, stderr) => {
