@@ -565,7 +565,7 @@ return
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
   if (command === 'test') {
-    message.reply('it worketh FINAL hello time')
+    message.reply('it worketh FINAL hello time WOW')
   }
 
   if (command === 'fetch') {
@@ -594,6 +594,7 @@ return
       }
       console.log(stdout.trim())
       if (stdout.trim() === 'Already up to date.') {
+        loadingMessage.delete()
         return message.channel.send('already up to date')
       } 
     loadingMessage.delete()
