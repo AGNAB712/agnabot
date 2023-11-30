@@ -261,7 +261,7 @@ async function updatePets() {
 
 async function deprivePets(myPet, userId) {
 
-  const shield = hasArtifact(userId, 'impenetrableshield')
+  const shield = await hasArtifact(userId, 'impenetrableshield')
 
   if (getRandomInt(3) + 1 === 3) {
     if (myPet.hunger - 1 < 0) {
@@ -549,7 +549,7 @@ return
     message.author.send(`say that one more time again and you'll be sorry.`).catch(error => console.log('cant send messages to that user'));
     }
 
-    if (message.content.toLowerCase() === 'would' || message.content.toLowerCase() === 'smash' || message.content.toLowerCase() === 'would') {
+    if (message.content.toLowerCase() === 'would' || message.content.toLowerCase() === 'smash') {
     try {
     message.author.send(`you are a degenerate`).catch(error => console.log('cant send messages to that user'));
     } catch (error) {
@@ -564,6 +564,10 @@ return
  //actual commands
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
+  if (command === 'test') {
+        deprivePets(await db.get('pet_'+message.author.id), message.author.id);
+  }
+
   if (command === 'fetch') {
   const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Fetching...')
   exec('git fetch', (error, stdout, stderr) => {
@@ -576,7 +580,7 @@ return
         return;
       }
     loadingMessage.delete()
-    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** fetched successfully')
     });
   }
 
@@ -3606,7 +3610,9 @@ async function hasArtifact(id, artifactName) {
   if (typeof id === 'object') {
     outfitArray = Object.values(id)
   } else {
-    const me = await db.get(id)
+    if (!id) {return false}
+    console.log(id)
+    const me = await db.get(id.toString())
     if (!me?.outfit) {return false}
     outfitArray = Object.values(me.outfit)
   }
