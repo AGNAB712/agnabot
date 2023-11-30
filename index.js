@@ -564,11 +564,8 @@ return
  //actual commands
   if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 
-  if (command === 'test') {
-    message.reply('it worketh FINAL hello time WOW')
-  }
-
   if (command === 'fetch') {
+  const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Fetching...')
   exec('git fetch', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
@@ -578,11 +575,13 @@ return
         console.error(`stderr: ${stderr}`);
         return;
       }
+    loadingMessage.delete()
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
     });
   }
 
   if (command === 'pull' && message.author.id == '765581160755363840') {
-    const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Loading...')
+    const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** Pulling...')
     exec('git merge --strategy-option theirs', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error: ${error.message}`);
@@ -595,10 +594,10 @@ return
       console.log(stdout.trim())
       if (stdout.trim() === 'Already up to date.') {
         loadingMessage.delete()
-        return message.channel.send('already up to date')
+        return message.channel.send('**<:AgnabotX:1153460434691698719> ||** already up to date (did you push correctly/use a.fetch?)')
       } 
     loadingMessage.delete()
-    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully')
+    message.reply('`**<:AgnabotCheck:1153525610665214094> ||** pulled successfully (remember to use a.reload)')
     });
   }
 
