@@ -5,7 +5,7 @@ const { once } = require('events')
 module.exports = inject
 
 function inject (bot) {
-  const Item = require('prismarine-item')(bot.registry)
+  const Item = require('prismarine-item')(bot.version)
 
   const matchWindowType = window => /minecraft:(?:chipped_|damaged_)?anvil/.test(window.type)
 

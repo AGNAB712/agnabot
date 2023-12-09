@@ -20,7 +20,8 @@ const RANGE_GOAL = 1 // get within this radius of the player
 bot.loadPlugin(pathfinder)
 
 bot.once('spawn', () => {
-  const defaultMove = new Movements(bot)
+  const mcData = require('minecraft-data')(bot.version)
+  const defaultMove = new Movements(bot, mcData)
 
   bot.on('chat', (username, message) => {
     if (username === bot.username) return

@@ -20,6 +20,8 @@ const bot = mineflayer.createBot({
 bot.on('chat', async (username, message) => {
   if (username === bot.username) return
 
+  const mcData = require('minecraft-data')(bot.version)
+
   if (message === 'loaded') {
     console.log(bot.entity.position)
     await bot.waitForChunksToLoad()
@@ -28,11 +30,11 @@ bot.on('chat', async (username, message) => {
 
   if (message.startsWith('find')) {
     const name = message.split(' ')[1]
-    if (bot.registry.blocksByName[name] === undefined) {
+    if (mcData.blocksByName[name] === undefined) {
       bot.chat(`${name} is not a block name`)
       return
     }
-    const ids = [bot.registry.blocksByName[name].id]
+    const ids = [mcData.blocksByName[name].id]
 
     const startTime = performance.now()
     const blocks = bot.findBlocks({ matching: ids, maxDistance: 128, count: 10 })
