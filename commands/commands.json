@@ -1,0 +1,273 @@
+{
+  "commands": {
+    "sudo": {
+      "category": "git",
+      "description": "sudowoodo (executes command in 24/7 command prompt)",
+      "syntax": "a.sudo (command)"
+    },
+    "fetch": {
+      "category": "git",
+      "description": "fetches git status",
+      "syntax": "a.fetch"
+    },
+    "pull": {
+      "category": "git",
+      "description": "pulls from github! wow",
+      "syntax": "a.pull"
+    },
+    "giveartifact": {
+      "category": "admin",
+      "description": "gives an artifact of rarity uber",
+      "syntax": "a.giveartifact (artifact name)"
+    },
+    "lock": {
+      "category": "admin",
+      "description": "locks down or unlocks the bot",
+      "syntax": "a.lockdown"
+    },
+    "mcsudo": {
+      "category": "minecraft",
+      "description": "makes the minecraft bot say something",
+      "syntax": "a.mcsudo (text)"
+    },
+    "whitelist": {
+      "category": "minecraft",
+      "description": "makes a request to whitelist you on the minecraft server",
+      "syntax": "a.whitelist (minecraft username CASE SENSITIVE)"
+    },
+    "verify": {
+      "category": "minecraft",
+      "description": "links your minecraft account to agnabot",
+      "syntax": "a.verify"
+    },
+    "mc": {
+      "category": "minecraft",
+      "description": "gets the total amount of minecraft characters",
+      "syntax": "a.verify"
+    },
+    "lb": {
+      "category": "economy",
+      "description": "gives the current leaderboard",
+      "syntax": "a.lb"
+    },
+    "crashlog": {
+      "category": "utility",
+      "description": "gives the last unhandled crash's log",
+      "syntax": "a.crashlog"
+    },
+    "pet": {
+      "category": "pet",
+      "description": "with no arguments, this gives you your pet's image\nname renames your pet\ndisown deletes your pet\nimage sets the pet's image\nbackground sets the pet's background\n*color sets the pet's color*\n*subtitle sets the text under the pet's name*",
+      "syntax": "a.pet (args) (attach image or add text)"
+    },
+    "hotel": {
+      "category": "hotel",
+      "description": "custom channel you can buy in the shop\n\ndelete: deletes the hotel room\nname/rename: renames the channel name\ndescription: sets the channel description\nprivate: makes the channel private\npublic: undoes private\ninvite: invites someone to your hotel room if it is private so they can see it too\nremove: removes an invited person\nlock: makes it so that only you can talk in the hotel room but other people can see it\nunlock: undoes lock",
+      "syntax": "a.hotel (args) (add text or mention if needed)"
+    },
+    "work": {
+      "category": "economy",
+      "description": "gives you a random amount of agnabucks (50-100) with a 60 second cooldown",
+      "syntax": "a.work"
+    },
+    "setmoney": {
+      "category": "admin",
+      "description": "sets someone's agnabuck amount",
+      "syntax": "a.setmoney (user id/mention) (amount)"
+    },
+    "inventory": {
+      "category": "inventory",
+      "description": "views your inventory",
+      "syntax": "a.inventory"
+    },
+    "fish": {
+      "category": "economy",
+      "description": "fishes! wow\n(requires you to buy a fishing rod in the shop)",
+      "syntax": "a.fish"
+    },
+    "doubleornothing": {
+      "category": "economy",
+      "description": "has the chance to double your money or delete it",
+      "syntax": "a.doubleornothing (amount of money, 1-100)"
+    },
+    "donate": {
+      "category": "economy",
+      "description": "donates to someone",
+      "syntax": "a.donate (mention) (amount)"
+    },
+    "loot": {
+      "category": "economy",
+      "description": "gives you  agnabucks once every 10 minutes",
+      "syntax": "a.loot",
+      "artifactSpecific": true
+    },
+    "redeem": {
+      "category": "economy",
+      "description": "gives you agnabucks based on your server level (5 minute cooldown)",
+      "syntax": "a.redeem"
+    },
+    "ask": {
+      "category": "fun",
+      "description": "asks agnabot something (uses cleverbot ai)",
+      "syntax": "a.ask (message)"
+    },
+    "balbg": {
+      "category": "fun",
+      "description": "sets the image for your agnabot balance to something",
+      "syntax": "a.balbg (attachment/link)"
+    },
+    "impersonate": {
+      "category": "fun",
+      "description": "impersonates someone and makes them say something",
+      "syntax": "a.impersonate (mention/user id) (text)"
+    },
+    "buy": {
+      "category": "economy",
+      "description": "buys something from the shop",
+      "syntax": "a.buy"
+    },
+    "quote": {
+      "category": "fun",
+      "description": "quotes someone's message",
+      "syntax": "a.quote (while replying to a message)"
+    },
+    "setstatus": {
+      "category": "admin",
+      "description": "sets agnabot's status",
+      "syntax": "a.setstatus (watching/playing/competing/listening) (text)"
+    },
+    "balance": {
+      "category": "economy",
+      "description": "views your balance",
+      "syntax": "a.balance"
+    },
+    "addcategory": {
+      "category": "fun",
+      "description": "adds a possible category name to the general chat category if it gets 5 likes",
+      "syntax": "a.addcategory (category name)"
+    },
+    "forcecategory": {
+      "category": "admin",
+      "description": "force adds a category",
+      "syntax": "a.forcecategory (category name)"
+    },
+    "say": {
+      "category": "fun",
+      "description": "makes agnabot say something",
+      "syntax": "a.say (content)"
+    },
+    "reveal": {
+      "category": "fun",
+      "description": "reveals the a.say and a.impersonate commands",
+      "syntax": "a.reveal (replying to message)"
+    },
+    "showcategories": {
+      "category": "fun",
+      "description": "shows the possible category names",
+      "syntax": "a.showcategories"
+    },
+    "deletecategory": {
+      "category": "admin",
+      "description": "deletes a possible category name",
+      "syntax": "a.deletecategory (numerical index of name to delete)"
+    },
+    "speechbubble": {
+      "category": "fun",
+      "description": "gets a speechbubble from agnab's collection (why does he have so many)",
+      "syntax": "a.speechbubble"
+    },
+    "furry": {
+      "category": "fun",
+      "description": "gets a random furry image from a certain google drive",
+      "syntax": "a.furry"
+    },
+    "furryspeechbubble": {
+      "category": "fun",
+      "description": "gets a random furry image from a certain google drive and adds a speechbubble",
+      "syntax": "a.furryspeechbubble"
+    },
+    "calculator": {
+      "category": "utility",
+      "description": "parses an expression",
+      "syntax": "a.calculator (expression)"
+    },
+    "ban": {
+      "category": "fun",
+      "description": "bans someone FOR Real",
+      "syntax": "a.ban (mention)"
+    },
+    "fart": {
+      "category": "fun",
+      "description": "farts in vc Womp womp",
+      "syntax": "a.fart"
+    },
+    "stats": {
+      "category": "utility",
+      "description": "gets your agnabot stats",
+      "syntax": "a.stats"
+    },
+    "tts": {
+      "category": "fun",
+      "description": "sends a tts message (requires a tts pass)",
+      "syntax": "a.tts (message)"
+    },
+    "marry": {
+      "category": "fun",
+      "description": "proposes to someone (requires wedding ring)",
+      "syntax": "a.marry (mention)"
+    },
+    "equip": {
+      "category": "inventory",
+      "description": "equips an artifact",
+      "syntax": "a.equip"
+    },
+    "outfitreset": {
+      "category": "inventory",
+      "description": "unequips all your artifacts",
+      "syntax": "a.outfitreset"
+    },
+    "outfit": {
+      "category": "inventory",
+      "description": "shows you the artifacts you have equipped",
+      "syntax": "a.outfit"
+    },
+    "sell": {
+      "category": "inventory",
+      "description": "sells an item from your inventory",
+      "syntax": "a.sell (index in inventory) (amount)"
+    },
+    "trade": {
+      "category": "inventory",
+      "description": "trades something with another user",
+      "syntax": "a.trade"
+    },
+    "inspect": {
+      "category": "inventory",
+      "description": "inspect an artifact",
+      "syntax": "a.inspect (index of artifact in inventory)"
+    },
+    "help": {
+      "category": "utility",
+      "description": "gives the command list or guides",
+      "syntax": "a.help (command if applicable)"
+    }
+  },
+  "aliases": {
+    "leaderboard": "lb",
+    "minecraft": "mc",
+    "lockdown": "lock",
+    "inv": "inventory",
+    "don": "doubleornothing",
+    "balbackground": "balbg",
+    "balancebackground": "balbg",
+    "balimage": "balbg",
+    "balanceimage": "balbg",
+    "imp": "impersonate",
+    "shop": "buy",
+    "bal": "balance",
+    "forceaddcategory": "forcecategory",
+    "sb": "speechbubble",
+    "fsb": "furryspeechbubble",
+    "calc": "calculator"
+  }
+}

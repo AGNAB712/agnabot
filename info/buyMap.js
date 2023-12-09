@@ -1,7 +1,9 @@
 const buyArray = 
 [
 { label: 'Cancel', description: 'deletes this menu', value: 'cancel', emoji: '1153460434691698719' }, 
-{ label: 'HOTEL', description: '5,000 AGNABUCKS \n(buys a hotel, use a.hotel buy!)', value: 'hotel', emoji: '🏨' }, 
+{ label: 'HOTEL', description: '5,000 AGNABUCKS \n(buys a hotel, use a.hotel buy!)', value: 'hotel', emoji: '1180755217126543420' }, 
+{ label: 'Pet', description: '1,000 AGNABUCKS \n(buys a pet)', value: 'pet', emoji: '1180752541097668708' }, 
+{ label: 'Fishing Rod', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '1181067287889977425' },
 { label: 'Cocaina', description: '10,000 AGNABUCKS \n(high for one day)', value: 'cocaine', emoji: '1154570594797486100' }, 
 { label: 'Methamphetamin', description: '1,000 AGNABUCKS \n(high for one hour)', value: 'meth', emoji: '🍃' },
 { label: 'Alcohol', description: '100 AGNABUCKS \n(high for one minute)', value: 'alcohol', emoji: '🍺' }, 
@@ -12,7 +14,6 @@ const buyArray =
 { label: 'Speechbubble', description: '200 AGNABUCKS \n(buys a random speechbubble from the speechbubble pool', value: 'speechbubble', emoji: '🗨️' }, 
 { label: 'Child labor', description: '[money] AGNABUCKS \n(one agnabuck every 5 minuto per level)', value: 'child', emoji: '🚸' }, 
 { label: 'Wedding ring', description: '10,000 AGNABUCKS \n(you can propose to someone Yipee)', value: 'ring', emoji: '💍' },
-{ label: 'Fishing Rod', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '🎣' },
 { label: 'Avacado', description: '100,000 AGNABUCKS (literally just an avacado)', value: 'avacado', emoji: '1155948289305362542' },
 { label: 'Name color', description: '50,000 AGNABUCKS (colors your name in minecraft)', value: 'name', emoji: '🟥' },
 { label: 'Player head', description: '25,000 AGNABUCKS (gives you your player head in minecraft)', value: 'head', emoji: '1169665834315161741' },
