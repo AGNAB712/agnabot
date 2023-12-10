@@ -15,6 +15,11 @@
       "description": "pulls from github! wow",
       "syntax": "a.pull"
     },
+    "reload": {
+      "category": "git",
+      "description": "reloads the bot",
+      "syntax": "a.reload"
+    },
     "giveartifact": {
       "category": "admin",
       "description": "gives an artifact of rarity uber",

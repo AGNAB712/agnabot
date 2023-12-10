@@ -17,12 +17,12 @@ let fishingEmbed = new EmbedBuilder()
 
 async function fish(message, args, bot, client) {
  if (isFishing.has(message.author.id)) {return message.reply(`**<:AgnabotX:1153460434691698719> ||** youre already fishing bro`)}
-  isFishing.set(message.author.id, true)
   const me = await db.get(message.author.id)
   if (me.fish == null) {
   message.reply('**<:AgnabotX:1153460434691698719> ||** you cant FISH!!! (buy a fishing rod from the shop)')
   return
   }
+  isFishing.set(message.author.id, true)
 
   fishingEmbed.setTitle('Fishing...')
   fishingEmbed.setFooter({ text: `level ${me.fish.level} | ${me.fish.exp} exp | ${me.fish.expLevel - me.fish.exp} exp until next level` })

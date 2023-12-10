@@ -14,6 +14,7 @@ const { Image } = require('@napi-rs/canvas');
 
 async function furryspeechbubble(message, args, bot, client, drive) {
 
+  message.delete()
     const files = await drive.files.list({
       q: `'${folderId}' in parents and mimeType contains 'image/'`,
       fields: 'files(id, name)',

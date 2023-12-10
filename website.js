@@ -3,7 +3,6 @@ const app = express();
 const port = 3000; // you can change this to your preferred port
 const { QuickDB } = require("quick.db");
 
-// assuming you have a QuickDB instance
 const db = new QuickDB({ filePath: "./json.sqlite" });
 
 // set up the view engine
