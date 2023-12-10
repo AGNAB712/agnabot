@@ -3,7 +3,7 @@ const cuss = ['FUCK','SHIT','BITCH']
 
 function autoReact(message) {
 
-	if (message.author.bot) {return}
+	if (message.author.bot || message.author.id == '1107764918293372989') {return}
 
 	if(message.content.includes('<@907055124503994398>','<@!907055124503994398>')) {
     	message.reply('explode')

@@ -174,7 +174,7 @@ if (message.mentions.everyone || message.mentions.here) {return}
 
   try {
     if (command in commands) {
-      if (commands[command].category === 'git' && message.author.id !== '765581160755363840') {return message.reply('**<:AgnabotX:1153460434691698719> ||** only agnab can use git commands')}
+      if (commands[command].category === 'git' && message.author.id != '765581160755363840') {return message.reply('**<:AgnabotX:1153460434691698719> ||** only agnab can use git commands')}
 
         //command executor
         commands[command](message, args, bot, client, drive)
