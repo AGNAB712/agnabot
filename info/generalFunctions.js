@@ -294,6 +294,32 @@ async function giftArtifact(message) {
 
 }
 
+async function updateDatabase(client) {
+  const allKeys = await db.all(); // Get all keys in the database
+
+  allKeys.forEach(async (data, i) => {
+    if (isNaN(data.id)) {return}
+    const userID = data.id; // Assuming ID is the key
+    let member
+    try {
+      member = await client.users.fetch(userID); // Fetch the user object
+    } catch (e) {}
+
+    if (member) {
+      const user = {
+        username: member.username,
+        avatar: member.displayAvatarURL({ format: 'png', dynamic: true })
+      };
+
+      console.log(member.username, `${i}/${allKeys.length}`)
+
+      await db.set(userID+'.websiteData', user); // Update the user data in the database
+    } else {
+      console.log(`User ID ${userID} not found.`);
+    }
+  });
+}
+
 module.exports = {
-  getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify
+  getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase
 }

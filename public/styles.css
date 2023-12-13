@@ -1,36 +1,123 @@
-/* public/styles.css */
+@font-face {
+  font-family: 'Open Sans Bold'; /* Choose a name for your font family */
+  src: url('OpenSans-Bold.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
+
+@font-face {
+  font-family: 'Open Sans'; /* Choose a name for your font family */
+  src: url('OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #151c12;
   margin: 0;
   padding: 0;
-  color: #FFFFFF;
+  overflow-x: hidden;
 }
 
 .container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #235218;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-top: 50px;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-h1 {
-  color: #77F23C;
+.content {
+  position: absolute;
+  top: 40%;
+  right: 30%; /* Adjust distance from right */
+  transform: translate(50%, -50%);
+  background-color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 50px;
+  padding-right: 50px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  font-family: 'Open Sans';
+  font-size: 10px;
+  text-align: left;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.agnabuck-amount {
+  position: absolute;
+  top: 15%;
+  right: 30%; /* Adjust distance from right */
+  transform: translate(50%, -50%);
+  background-color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 50px;
+  padding-right: 50px;
+  border-radius: 3px;
+  border: 3px solid black;
+  z-index: 1;
+  font-family: 'Open Sans Bold';
+  font-size: 20px;
 }
 
-li {
+.background-image {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  animation: slide 100s linear infinite;
+  z-index: -1;
+}
+
+.clone {
+  animation: slideNumberTwo 100s linear infinite;
+  z-index: -2;
+}
+
+.avatar-container {
+  position: absolute;
+  top: calc(50% - 225px);
+  left: 10%; /* Adjust distance from right */
+  width: 350px;
+  height: 350px;
+  border: 6px solid black;
+  border-radius: 50%;
+  z-index: 1;
+  overflow: hidden;
+  /* You can add a background image or color here */
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated; /* Prevent antialiasing */
+}
+
+.leaderboard-place {
+  position: absolute;
+  top: calc(50% + 150px); /* Adjust distance from the circle */
+  left: calc(10% + 75px); /* Adjust distance from right */
+  text-align: center;
+  background-color: white;
   padding: 10px;
-  border-bottom: 1px solid #ddd;
+  border: 4px solid black;
+  border-radius: 5px;
+  z-index: 1;
 }
 
-li:last-child {
-  border-bottom: none;
+.leaderboard-place p {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+@keyframes slide {
+  from {left: 100%;}
+  to {left: -100%;}
+}
+
+@keyframes slideNumberTwo {
+  0% {left: 0%;}
+  50% {left: -100%;}
+  50.000001% {left: 100%;}
+  100% {left: 0%;}
 }

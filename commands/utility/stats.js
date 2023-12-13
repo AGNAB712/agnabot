@@ -11,8 +11,8 @@ const db = new QuickDB();
 
 const cooldowns = new Map()
 
-async function inventory(message, args, bot, client) {
-let hasBonus = '❌ \n*(get this with agnab premium, adds a +25% bonus to a.work)*'
+async function stats(message, args, bot, client) {
+/*let hasBonus = '❌ \n*(get this with agnab premium, adds a +25% bonus to a.work)*'
 if (message.member.roles.cache.some(role => role.name === 'AGNAB Premium')) {
 hasBonus = '✅'
 }
@@ -99,7 +99,10 @@ ${minecraftText}
 
 `)
 
-message.reply({ embeds: [statEmbed], content: 'this will soon be replaced with a website, so sorry for any bugs at the moment' })
+message.reply({ embeds: [statEmbed], content: 'this will soon be replaced with a website, so sorry for any bugs at the moment' })*/
+
+const url = await getGlobalVar('url')
+message.reply(`${url}/agnabot/${message.author.id}`)
 }
 
-module.exports = inventory
+module.exports = stats

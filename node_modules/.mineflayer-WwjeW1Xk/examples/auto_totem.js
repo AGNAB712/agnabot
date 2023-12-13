@@ -17,8 +17,9 @@ const bot = mineflayer.createBot({
 })
 
 bot.on('spawn', () => {
-  const totemId = bot.registry.itemsByName.totem_of_undying.id // Get the correct id
-  if (bot.registry.itemsByName.totem_of_undying) {
+  const mcData = require('minecraft-data')(bot.version) // You will know the version when the bot has spawned
+  const totemId = mcData.itemsByName.totem_of_undying.id // Get the correct id
+  if (mcData.itemsByName.totem_of_undying) {
     setInterval(() => {
       const totem = bot.inventory.findInventoryItem(totemId, null)
       if (totem) {

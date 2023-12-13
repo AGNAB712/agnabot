@@ -10,27 +10,14 @@ const db = new QuickDB();
 const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
 const { sendMinecraftChat, createMinecraftBot, checkMinecraftServer, isMinecraftOnline } = require('./info/minecraftFunctions.js')
-const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify } = require('./info/generalFunctions.js')
+const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase } = require('./info/generalFunctions.js')
 const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
 
-const cleverbot = require('cleverbot-free');
-const Canvas = require('@napi-rs/canvas');
-const cheerio = require('cheerio');
-const { readFile } = require('fs/promises');
-const { Image } = require('@napi-rs/canvas');
-const { funEmbed, utilityEmbed, bankEmbed, adminEmbed, hotelEmbed, petEmbed, statEmbed } = require('./info/embeds.js')
-const { buyArray, inventoryFormats, itemWorth } = require('./info/buyMap.js')
-const { workArray } = require('./info/agnabot_work_texts.js')
-const { fishingArray, fishingLootMap, artifacts, outfitFormats } = require('./info/fishing.js')
-//ignore this horrible coding practice idfk at this point
-const fishingJs = require('./info/fishing.js')
-const { promises } = require('fs')
-const { join } = require('path')
-const os = require('os');
-const Jimp = require('jimp')
+const ngrok = require('ngrok');
 const { google } = require('googleapis');
 const credentials = require('./info/googleServiceAccount.json')
+const os = require('os')
 
 //import commands
 const commands = {}
@@ -108,7 +95,8 @@ if (replit) {
 }
 console.log(`logged in as ${client.user.tag}`);
 
-  await loadSqlite(client, replit);
+  //await loadSqlite(client, replit);
+  //await updateDatabase(client);
   loadCurrentStatus(client);
   await updateCategoryName(client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(updateCategoryName, 600000, client.channels.cache.get('1092554907883683961'), replit); 
@@ -129,6 +117,8 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/drive.readonly']
 });
 drive = google.drive({ version: 'v3', auth: auth });
+
+await runNgrok()
  
 });
 
@@ -138,7 +128,6 @@ client.on('messageCreate', async (message) => {
 if (message.channel.type === 1) {return}
 if (replit && message.guild.id == '831714424658198529') {return}
 if (!message.author.bot) {lastmessage = message}
-
 
 if (message.channel.id === minecraftchat?.id && !message.author.bot && replit) {
   const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
@@ -168,10 +157,22 @@ autoReact(message);
 const args = message.content.slice(prefix.length).trim().split(' ');
 const command = args.shift().toLowerCase();
     
- //actual commands
 if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
 if (message.mentions.everyone || message.mentions.here) {return}
 
+//this is for updating website stuff
+const me = await db.get(message.author.id)
+if (!me?.a) {await db.set(message.author.id+'.a', 100)}
+const user = {
+  username: message.author.username,
+  avatar: message.author.displayAvatarURL({ format: 'png', dynamic: true }),
+  image: me?.websiteData?.image
+};
+if (me?.websiteData != user) {
+  db.set(message.author.id+'.websiteData', user);
+}
+
+//actual commands
   try {
     if (command in commands) {
       if (commands[command].category === 'git' && message.author.id != '765581160755363840') {return message.reply('**<:AgnabotX:1153460434691698719> ||** only agnab can use git commands')}
@@ -412,3 +413,16 @@ client.login(token);
 } else {
 client.login(backupToken);
 }
+
+async function runNgrok() {
+  require('./website.js');
+
+  const url = await ngrok.connect({ authtoken: process.env.NGROKAUTH, addr: 3000 });
+  setGlobalVar('url', url)
+  console.log(url)
+}
+
+module.exports = {
+  client,
+  db,
+};

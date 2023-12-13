@@ -5,21 +5,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inventory</title>
+  <title><%= username %>'s page - agnab.link</title>
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+
   <div class="container">
-    <h1>Inventory for User <%= userId %></h1>
-    <ul>
-      <% inventoryArray.forEach(item => { %>
-        <li><%= item %></li>
-      <% }) %>
-    </ul>
-    <h2>Amount of agnabucks for User <%= userId %></h2>
-    <ul>
-      <li><%= agnabuckAmount %></li>
-    </ul>
+    <div class="agnabuck-amount">
+      <h1><%= agnabuckAmount %> ꬰ</h1>
+    </div>
+    <div class="content">
+      <h1>Hello</h1>
+    </div>
+    <img class="corner" src="/corner.png" alt="Corner">
+    <img class="background-image" src="<%= bg %>" alt="Background Image">
+    <img class="background-image clone" src="<%= bg %>" alt="Background Image">
   </div>
+
+  <div class="avatar-container">
+    <img class="avatar" src="<%= avatar %>" alt="Avatar Image">
+  </div>
+  <div class="leaderboard-place">
+    <p>#<%= myPlace %> on the leaderboard</p>
+  </div>
+
 </body>
 </html>

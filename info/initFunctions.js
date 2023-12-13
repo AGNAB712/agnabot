@@ -7,6 +7,7 @@ const fs = require('fs');
 
 async function saveSqlite(replit) {
 if (!replit) {return}
+const lockdown = getGlobalVar("lockdown")
 if (lockdown !== false) {return}
 
 const saveCount = getGlobalVar("savecount")

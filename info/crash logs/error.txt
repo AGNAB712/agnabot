@@ -1,9 +1,7 @@
-2023-12-09T20:58:29.761Z - Uncaught Exception: Unknown Message
-DiscordAPIError[10008]: Unknown Message
-    at handleErrors (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:640:13)
+2023-12-13T01:56:55.910Z - Uncaught Exception: failed to start tunnel
+NgrokClientError: failed to start tunnel
+    at NgrokClient.request (C:\agnabot-main\agnabot-main\node_modules\ngrok\src\client.js:34:25)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SequentialHandler.runRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1021:23)
-    at async SequentialHandler.queueRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:862:14)
-    at async REST.request (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1387:22)
-    at async MessageManager.delete (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\managers\MessageManager.js:255:5)
-    at async Message.delete (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\Message.js:816:5)
+    at async connectRetry (C:\agnabot-main\agnabot-main\node_modules\ngrok\index.js:44:22)
+    at async runNgrok (C:\agnabot-main\agnabot-main\index.js:420:15)
+    at async Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:121:1)

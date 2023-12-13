@@ -121,6 +121,11 @@
       "description": "sets the image for your agnabot balance to something",
       "syntax": "a.balbg (attachment/link)"
     },
+    "websitebg": {
+      "category": "fun",
+      "description": "sets the image for your page on agnabot's website",
+      "syntax": "a.websitebg (attachment/link)"
+    },
     "impersonate": {
       "category": "fun",
       "description": "impersonates someone and makes them say something",
@@ -273,6 +278,7 @@
     "forceaddcategory": "forcecategory",
     "sb": "speechbubble",
     "fsb": "furryspeechbubble",
-    "calc": "calculator"
+    "calc": "calculator",
+    "websitebackground": "websitebg"
   }
 }
