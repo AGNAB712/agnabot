@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const app = express();
-const port = 3001;
+const port = 3000;
 const { QuickDB } = require("quick.db");
 const sizeOf = require('image-size')
 const url = require('url')
