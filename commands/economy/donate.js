@@ -24,7 +24,8 @@ async function donate(message, args, bot, client) {
   }
 
   if (curbal < parseInt(args[1])) {
-  	message.channel.send('stop being Poor');
+  	message.channel.send('**<:AgnabotX:1153460434691698719> ||** stop being Poor');
+    return
   }
 
     await db.sub(message.author.id+'.a', parseInt(args[1]));

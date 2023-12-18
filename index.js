@@ -11,7 +11,7 @@ const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
 const { sendMinecraftChat, createMinecraftBot, checkMinecraftServer, isMinecraftOnline } = require('./info/minecraftFunctions.js')
 const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase } = require('./info/generalFunctions.js')
-const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets } = require('./info/initFunctions.js')
+const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
 
 const ngrok = require('ngrok');
@@ -95,15 +95,15 @@ if (replit) {
 }
 console.log(`logged in as ${client.user.tag}`);
 
-  //await loadSqlite(client, replit);
-  //await updateDatabase(client);
+  await loadSqlite(client, replit);
+  await deleteNonNumericIds()
   loadCurrentStatus(client);
   await updateCategoryName(client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(updateCategoryName, 600000, client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(doChildLabor, 300000);
   setInterval(updatePets, 300000);
   setInterval(checkMinecraftServer, 300000)
-  setInterval(saveSqlite, 300000, replit);
+  setInterval(forceSaveSqlite, 300000, client);
   setInterval(function() {
   var now = new Date();
   var minutes = now.getMinutes();
@@ -118,7 +118,7 @@ const auth = new google.auth.GoogleAuth({
 });
 drive = google.drive({ version: 'v3', auth: auth });
 
-await runNgrok()
+//await runNgrok()
  
 });
 
@@ -199,7 +199,21 @@ if (me?.websiteData != user) {
 
 //test command
 if (command === 'test') {
-  deprivePets(await db.get('pet_'+message.author.id), message.author.id);
+  doChildLabor()
+}
+
+if (command === 'categoryupdate') {
+  const array = [];
+  const fileContents = fs.readFileSync('./categories.txt', 'utf8');
+  const lines = fileContents.split('\n');
+
+  lines.forEach(line => {
+    const processedLine = line.replace(/^\d+\.\s/, '');
+    array.push(processedLine);
+  });
+
+  await db.set('category', array)
+  message.reply('done')
 }
 
   //unfinished
@@ -310,14 +324,14 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
   const curbal = await db.get(id+'.a')
 
-  const myPet = await db.get(`pet_${id}`)
+  const myPet = await db.get(`${id}.pet`)
   if (!myPet || myPet === 'null') {return interaction.message.channel.send('you dont have a pet')}
 
   if (customId === 'feed') {
   if (myPet.hunger + 20 >= 100) {
-  await db.set(`pet_${id}.hunger`, 100) 
+  await db.set(`${id}.pet.hunger`, 100) 
   } else {
-  await db.set(`pet_${id}.hunger`, myPet.hunger + 20) 
+  await db.set(`${id}.pet.hunger`, myPet.hunger + 20) 
   }
   await db.set(id+'.a', parseInt(curbal) - 10) 
   await interaction.reply({
@@ -327,7 +341,7 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
   }
 
   if (customId === 'play') {
-  await db.set(`pet_${id}.affection`, 100) 
+  await db.set(`${id}.pet.affection`, 100) 
   await interaction.reply({
   content: `you played with ${myPet.name} CONGRATS!`,
   ephemeral: true
@@ -336,9 +350,9 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
   if (customId === 'heal') {
   if (myPet.health + 50 >= 100) {
-  await db.set(`pet_${id}.health`, 100) 
+  await db.set(`${id}.pet.health`, 100) 
   } else {
-  await db.set(`pet_${id}.health`, myPet.health + 50) 
+  await db.set(`${id}.pet.health`, myPet.health + 50) 
   }
   await interaction.reply({
   content: `you healed ${myPet.name} CONGRATS!`,
@@ -348,9 +362,9 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
   }
 
   if (customId === 'revive') {
-  await db.set(`pet_${id}.health`, 25) 
-  await db.set(`pet_${id}.hunger`, 25) 
-  await db.set(`pet_${id}.affection`, 25) 
+  await db.set(`${id}.pet.health`, 25) 
+  await db.set(`${id}.pet.hunger`, 25) 
+  await db.set(`${id}.pet.affection`, 25) 
   await interaction.reply({
   content: `i hope you die soon`,
   ephemeral: true
@@ -360,7 +374,7 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
   
 
-  const attachment = await petImage(await db.get(`pet_${id}`), id)
+  const attachment = await petImage(await db.get(`${id}.pet`), id)
   await interaction.message.edit({ files: [attachment] });
 
 } catch (e) {
@@ -408,6 +422,7 @@ async function shutdown() {
   console.log('Bot is shutting down...');
   process.exit(0);}
 
+//agnab if you dont remember to switch this back i swear to god
 if (replit) {
 client.login(token);
 } else {
@@ -415,7 +430,7 @@ client.login(backupToken);
 }
 
 async function runNgrok() {
-  require('./website.js');
+  require('./website/website.js');
 
   const url = await ngrok.connect({ authtoken: process.env.NGROKAUTH, addr: 3000 });
   setGlobalVar('url', url)

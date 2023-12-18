@@ -219,7 +219,7 @@ const applyText = (canvas, text, fontSize) => {
   const context = canvas.getContext('2d');
 
   do {
-    context.font = `bold ${fontSize -= 10}px Arial`;
+    context.font = `${fontSize -= 10}px Segoe UI Emoji`;
   } while (context.measureText(text).width > canvas.width - 300);
 
   return context.font;
@@ -262,7 +262,7 @@ async function petImage(pet, id) {
   if (pet.subtitle && caretaker) {
   context.strokeStyle = 'black';
   context.lineWidth = 5;
-  context.font = `bold 25px Arial`;
+  context.font = `25px fira`;
   context.fillStyle = '#939393';
   context.strokeText(pet.subtitle, 80, 130);
   context.fillText(pet.subtitle, 80, 130)

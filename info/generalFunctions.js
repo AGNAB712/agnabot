@@ -106,7 +106,7 @@ function formatDuration(duration) {
 
 async function updateCategoryName(channel, replit) {
 
-   if (!replit) {return}
+  if (!replit) {return}
         
   const categoryNames = await db.get('category')
 

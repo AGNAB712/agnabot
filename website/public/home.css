@@ -13,7 +13,8 @@
 body {
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* Enable vertical scrolling for the entire page */
+  overflow-x: hidden !important;
+  margin-left: auto; margin-right: auto;
 }
 
 h1 {
@@ -62,12 +63,21 @@ p {
   margin: 0 auto; /* Center the image horizontally */
 }
 
-.content a {
+.links {
+  position: relative;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 1; /* Ensure content appears above the image */
+}
+
+.links a {
   text-decoration: none;
   color: gray;
 }
 
-.content a i {
+.links a i {
   font-size: 1.5em;
 }
 
@@ -167,4 +177,143 @@ p {
 
 .second-image a {
   text-decoration: none; /* Remove underline from the link */
+}
+
+@media screen and (max-width: 600px) {
+  
+  .image-container {
+    position: absolute;
+    bottom: -350px; /* Adjust the initial position below the container */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 1s, bottom 1s; /* Transition properties */
+    z-index: 0; /* Ensure image is behind the content */
+  }
+
+  .image-container img {
+    width: auto; /* Increase the width of the image */
+    transform: scale(0.35, 0.4);
+    height: -20px;
+    margin: 0 auto; /* Center the image horizontally */
+  }
+
+  h1 {
+    font-size: 100px; /* Increase the font size of the main heading */
+    font-family: Open Sans Bold;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8); /* Apply drop shadow */
+  }
+
+  .links p {
+    bottom: -300px;
+    font-size: 10px;
+    font-family: Open Sans Bold;
+  }
+
+  .links {
+    position: relative;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    z-index: 1; /* Ensure content appears above the image */
+  }
+
+  .links a {
+    text-decoration: none;
+    color: gray;
+    font-size: 12px;
+  }
+
+  .links a i {
+    font-size: 5px;
+  }
+
+  .container {
+    position: relative;
+    height: 60vh;
+    background-color: #235218; /* Green background */
+    overflow: hidden;
+  }
+
+  .second-image {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    bottom: -600px;
+    opacity: 1;
+    right: 50%;
+    transform: translate(50%);
+    transition: opacity 1s ease; /* Transition for right property */
+  }
+
+  .second-image img {
+    position: absolute;
+    width: 200px; /* Adjust the image width */
+    height: 200px;
+    bottom: 150px;
+    border: 5px solid black; /* Black border */
+    border-radius: 10px; /* Optionally add rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Optional shadow */
+  }
+
+  .second-image .caption {
+    position: absolute;
+    bottom: 100px;
+    left: 35px;
+    font-size: 20px; /* Adjust the font size */
+    text-align: center; /* Center align the text */
+  }
+
+.overlay {
+  position: absolute;
+  bottom: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #225522; /* Dark green color */
+  color: white;
+  padding-bottom: 40px;
+  width: 50%;
+  transition: opacity 1s ease;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.overlay h2 {
+  font-size: 25px; /* Adjust the font size */
+  font-family: Open Sans Bold; /* Set the font to Arial */
+  color: #fff; /* Text color */
+  text-align: left; /* Center align the text */
+}
+
+.overlay p {
+  font-size: 15px; /* Adjust the font size */
+  font-family: Open Sans; /* Set the font to Arial */
+  color: #fff; /* Text color */
+  text-align: left; /* Center align the text */
+}
+
+.overlay p2 {
+  font-size: 10px; /* Adjust the font size */
+  font-family: Open Sans; /* Set the font to Arial */
+  color: #fff; /* Text color */
+  text-align: left; /* Center align the text */
+}
+
+.footer {
+  position: absolute;
+  bottom: -700px;
+  width: 50%;
+  text-align: center;
+  color: #777;
+}
+
+.footer p {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(50%);
+  font-size: 20px; /* Adjust the font size */
+  font-family: Open Sans;
+}
+
 }

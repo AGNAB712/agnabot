@@ -21,7 +21,7 @@ const defaultPet = {
 
 async function buy(message, args, bot, client) {
 
-    let children = await db.get('children_' + message.author.id)
+    let children = await db.get(message.author.id+".children")
   if (!children) {
     childrenPrice = 1000
   } else {
@@ -35,15 +35,15 @@ async function buy(message, args, bot, client) {
     const fishBought = await db.get(`${message.author.id}.fish`)
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
     const verified = await db.get(`${message.author.id}.mc`)
-    const hasPet = await db.get(`pet_${message.author.id}`)
+    const hasPet = await db.get(`${message.author.id}.pet`)
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
       .setPlaceholder('Click here to choose what to buy')
     
     buyArray.forEach((me, i) => {
-    if (me.value === 'premium' && message.member.roles.cache.has('1120808808655102035')) {return}
-    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member.roles.cache.has('1120830175114973215')) {return}
+    if (me.value === 'premium' && message.member?.roles.cache?.has('1120808808655102035')) {return}
+    if ((me.value === 'cocaine' || me.value === 'meth' || me.value === 'alcohol') && message.member?.roles.cache?.has('1120830175114973215')) {return}
     if (me.value === 'hotel' && hotelBought) {return}
     if (me.value === 'rigged' && riggedBought) {return}
     if (me.value === 'fish' && fishBought) {return}
@@ -84,12 +84,12 @@ message.reply('**<:AgnabotX:1153460434691698719> ||** oook bai bai :3')
 break;
 
 case 'pet':
-  const myPet = await db.get(`pet_${message.author.id}`)
+  const myPet = await db.get(`${message.author.id}.pet`)
   if (myPet && myPet !== 'null') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you already have a pet Lol')}
   if (curbal > 1000) {
-    await db.set(`pet_${message.author.id}`, defaultPet)
+    await db.set(`${message.author.id}.pet`, defaultPet)
     await db.set(message.author.id+'.a', parseInt(curbal) - 1000) 
-    return message.reply('**<:AgnabotPet:1180741316922048552> ||** pet bought! \nin order to get started with your pet, please use a.pet name (your pets name) and a.pet image (your image) \nwithout this your pet will not accrue agnabucks')
+    return message.reply('**<:AgnabotPet:1180752541097668708> ||** pet bought! \nin order to get started with your pet, please use a.pet name (your pets name) and a.pet image (your image) \nwithout this your pet will not accrue agnabucks')
   } else {
     message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
   }
@@ -276,15 +276,14 @@ break;
 case 'child':
     if (curbal > childrenPrice-1) {
 
-
     let newChildren = 0
     if (!children) {
       newChildren = 1
-      await db.set('children_'+message.author.id, 1);
+      await db.set(message.author.id+'.children', 1);
     } else {
       if (children === 10) {return message.reply('you have 10 already')}
       newChildren = children + 1
-      await db.set('children_'+message.author.id, children + 1);
+      await db.add(message.author.id+'.children', 1);
     }
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - childrenPrice));
 

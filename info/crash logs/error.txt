@@ -1,7 +1,6 @@
-2023-12-13T01:56:55.910Z - Uncaught Exception: failed to start tunnel
-NgrokClientError: failed to start tunnel
-    at NgrokClient.request (C:\agnabot-main\agnabot-main\node_modules\ngrok\src\client.js:34:25)
+2023-12-17T16:47:16.615Z - Uncaught Exception: Unexpected token h in JSON at position 64
+SyntaxError: Unexpected token h in JSON at position 64
+    at JSON.parse (<anonymous>)
+    at Object.setvalue (C:\agnabot-main\agnabot-main\commands\admin\setvalue.js:14:28)
+    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:181:26)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async connectRetry (C:\agnabot-main\agnabot-main\node_modules\ngrok\index.js:44:22)
-    at async runNgrok (C:\agnabot-main\agnabot-main\index.js:420:15)
-    at async Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:121:1)

@@ -260,6 +260,16 @@
       "category": "utility",
       "description": "gives the command list or guides",
       "syntax": "a.help (command if applicable)"
+    },
+    "savesqlite": {
+      "category": "admin",
+      "description": "forcibly saves the sqlite",
+      "syntax": "a.savesqlite"
+    },
+    "setvalue": {
+      "category": "admin",
+      "description": "sets a user's something to something\nDO NOT USE THIS IF YOU DO NOT KNOW WHAT YOU'RE DOING",
+      "syntax": "a.setvalue (user id)(.value) (item to set)"
     }
   },
   "aliases": {

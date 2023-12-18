@@ -4,11 +4,11 @@ const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const db = new QuickDB();
 const { petImage } = require('../../info/canvasFunctions.js')
-const { hasArtifact } = require('../../info/generalFunctions.js')
+const { hasArtifact, isvalidhexcode } = require('../../info/generalFunctions.js')
 
 async function pet(message, args, bot, client) {
 try {
-  const myPet = await db.get(`pet_${message.author.id}`)
+  const myPet = await db.get(`${message.author.id}.pet`)
   const command2 = args[0]
   const curbal = await db.get(message.author.id+'.a')
   const caretaker = await hasArtifact(message.author.id, 'auraofthecaretaker')
@@ -20,13 +20,13 @@ try {
   switch (command2) {
 
 case 'disown':
-  await db.set(`pet_${message.author.id}`, 'null')
+  await db.set(`${message.author.id}.pet`, 'null')
   message.channel.send('**<:AgnabotCheck:1153525610665214094> ||** ok goodbye :         (')
 break;
 
 case 'image':
   saveUrl = message.attachments.first().proxyURL
-  await db.set(('pet_' + message.author.id) + '.image', saveUrl)
+  await db.set(message.author.id+'.pet.image', saveUrl)
   message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
 
@@ -34,23 +34,23 @@ case 'name':
   const newName = args.join(' ')
   if (!newName) {return message.reply('**<:AgnabotX:1153460434691698719> ||** come on give me a name')}
   if (newName.length >= 25) {return message.reply('**<:AgnabotX:1153460434691698719> ||** shorter name please :       )')}
-  await db.set(('pet_' + message.author.id) + '.name', newName)
+  await db.set(message.author.id+'.pet.name', newName)
   
   message.reply(`**<:AgnabotCheck:1153525610665214094> ||** your pets new name is ${newName}`)
 break;
 
 case 'background':
     saveUrl = message.attachments.first().proxyURL
-    await db.set(('pet_' + message.author.id) + '.background', saveUrl)
+    await db.set(message.author.id+'.pet.background', saveUrl)
     message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
 
 case 'color':
   if (!caretaker) {return}
-  const hex = args[1]
+  const hex = args[0]
   if (!hex) {return message.reply('**<:AgnabotX:1153460434691698719> ||** come on give me a hex')}
   if (!isvalidhexcode(hex)) {return message.reply('**<:AgnabotX:1153460434691698719> ||** not a valid hex code')}
-  await db.set(('pet_' + message.author.id) + '.hex', hex)
+  await db.set(message.author.id+'.pet.hex', hex)
   
   message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
@@ -60,7 +60,7 @@ case 'subtitle':
   const subtitle = args.join(' ')
   if (!subtitle) {return message.reply('**<:AgnabotX:1153460434691698719> ||** come on give me a subtitle')}
   if (subtitle.length >= 25) {return message.reply('**<:AgnabotX:1153460434691698719> ||** shorter subtitle please :       )')}
-  await db.set(('pet_' + message.author.id) + '.subtitle', subtitle)
+  await db.set(message.author.id+'.pet.subtitle', subtitle)
   
   message.reply(`**<:AgnabotCheck:1153525610665214094> ||** your pets new subtitle is ${subtitle}`)
 break;

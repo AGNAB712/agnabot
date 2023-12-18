@@ -5,7 +5,42 @@ const { getGlobalVar, setGlobalVar } = require('./editGlobalJson.js')
 const { hasArtifact, getRandomInt } = require('./generalFunctions.js')
 const fs = require('fs');
 
-async function saveSqlite(replit) {
+async function deleteNonNumericIds() {
+  const allKeys = await db.all()
+  const mapKeys = allKeys.map(entry => entry.id);
+
+  mapKeys.forEach(async (key) => {
+    if (isNaN(key)) {
+    if (key.startsWith('children_')) {
+      const id = key.substring(9)
+      const childrenAmount = await db.get(key)
+      await db.set(id+'.children', childrenAmount)
+        await db.delete(key);
+      return;
+    }
+    if (key.startsWith('pet_')) {
+      const id = key.substring(4)
+      const childrenAmount = await db.get(key)
+      await db.set(id+'.pet', childrenAmount)
+      await db.delete(key);
+      return;
+    }
+    if (key.startsWith('hotel_')) {
+      const id = key.substring(6)
+      const childrenAmount = await db.get(key)
+      await db.set(id+'.hotel', childrenAmount)
+        await db.delete(key);
+      return;
+    }
+    if (key === 'category') {return}
+      await db.delete(key);
+      console.log(`Deleted non-numeric entry with key: ${key}`);
+    }
+  });
+
+}
+
+async function saveSqlite(replit, client) {
 if (!replit) {return}
 const lockdown = getGlobalVar("lockdown")
 if (lockdown !== false) {return}
@@ -17,24 +52,22 @@ console.log(`will save sqlite in ${5 - saveCount + 1} counts`)
 return
 }
 
-forceSaveSqlite()
+forceSaveSqlite(client)
 
 }
 
-async function forceSaveSqlite() {
-
-  if (!replit) {return}
+async function forceSaveSqlite(client) {
 
   setGlobalVar("savecount", 0)
   const fileName = 'json.sqlite';
   await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
       msg.edit({
-        content: `**${replitText}** || *${Date.now()}*`, 
+        content: `*${Date.now()}*`, 
         files: ['./json.sqlite']
       })
     )
     
-    console.log('saved sqlite', saveCount)
+    console.log('saved sqlite')
     
 }
 
@@ -83,14 +116,14 @@ async function loadCurrentStatus(client) {
 async function doChildLabor() {
 
   const allUserData = await db.all()
-  const toWork = allUserData.filter(data => data.id.startsWith('children_'))
+  const toWork = allUserData.filter(data => !isNaN(data.id))
   await toWork.forEach(async (value, index) => {
-    const userId = value.id.slice(9)
-    const curbal = await db.get(userId+'.a')
-    const laziness = await hasArtifact(userId, 'amuletoflaziness');
+    if (!value.value.children) {return}
+    console.log(value.value.children)
+    const laziness = await hasArtifact(value.id, 'amuletoflaziness');
     let multiplyValue = 1
     if (laziness) {multiplyValue = 0.5}
-    await db.set(userId+'.a', parseInt(parseInt(curbal) + (value.value * 0.5)));
+    await db.add(value.id+'.a', Math.floor(multiplyValue * parseInt(value.value.children)));
   })
 }
 
@@ -102,24 +135,24 @@ async function updatePets() {
   toUpdate.forEach(async (value, index) => {
 
     const userId = value.id.slice(4);
-    const myPet = await db.get('pet_' + userId);
+    const myPet = await db.get(userId+'.pet');
 
     const laziness = await hasArtifact(userId, 'amuletoflaziness');
     if (!laziness) {
-      await db.set('pet_' + userId + '.lazy', false);
+      await db.set(userId+'.pet.lazy', false);
       await deprivePets(myPet, userId)
     } else {
 
       if (myPet.lazy) {
         if (myPet.hunger === 100 && myPet.health === 100 && myPet.affection === 100) {
-          await db.set('pet_' + userId + '.lazy', false);
+          await db.set(userId+'.pet.lazy', false);
         }
         if (myPet.health + laziness[1] > 100) {await db.set('pet_' + userId + '.health', 100);} else {await db.add('pet_' + userId + '.health', laziness[1]);}
         if (myPet.affection + laziness[1] > 100) {await db.set('pet_' + userId + '.affection', 100);} else {await db.add('pet_' + userId + '.affection', laziness[1]);}
         if (myPet.hunger + laziness[1] > 100) {await db.set('pet_' + userId + '.hunger', 100);} else {await db.add('pet_' + userId + '.hunger', laziness[1]);}
       } else {
         if (myPet.hunger - 1 < 25 || myPet.health - 1 < 25 || myPet.affection - 1 < 25) {
-          await db.set('pet_' + userId + '.lazy', true);
+          await db.set(userId+'.pet.lazy', true);
         }
 
         await deprivePets(myPet, userId)
@@ -135,51 +168,51 @@ async function deprivePets(myPet, userId) {
 
   if (getRandomInt(3) + 1 === 3) {
     if (myPet.hunger - 1 < 0) {
-      await db.set('pet_' + userId + '.hunger', 0);
+      await db.set(userId+'.pet.hunger', 0);
       return;
     }
-    await db.set('pet_' + userId + '.hunger', myPet.hunger - 1);
+    await db.set(userId+'.pet.hunger', myPet.hunger - 1);
   }
 
   if (getRandomInt(2) + 1 === 2) {
     if (myPet.affection - 1 < 0) {
-      await db.set('pet_' + userId + '.affection', 0);
+      await db.set(userId+'.pet.affection', 0);
       return;
     }
-    await db.set('pet_' + userId + '.affection', myPet.affection - 1);
+    await db.set(userId+'.pet.affection', myPet.affection - 1);
   }
 
   if (shield) {
   
-    await db.set('pet_' + userId + '.shielded', true);
+    await db.set(userId+'.pet.shielded', true);
 
   if (myPet.hunger == 0 && myPet.affection) {
     if (myPet.health - 3 < 0) {
-      await db.set('pet_' + userId + '.health', 0);
+      await db.set(userId+'.pet.health', 0);
       return;
     }
-    await db.set('pet_' + userId + '.health', myPet.health - 3);
+    await db.set(userId+'.pet.health', myPet.health - 3);
   }
 
   } else {
 
-    await db.set('pet_' + userId + '.shielded', false);
+    await db.set(userId+'.pet.shielded', false);
     if (getRandomInt(5) + 1 === 5) {
       if (myPet.health - 1 < 0) {
-        await db.set('pet_' + userId + '.health', 0);
+        await db.set(userId+'.pet.health', 0);
         return;
       }
-      await db.set('pet_' + userId + '.health', myPet.health - 1);
+      await db.set(userId+'.pet.health', myPet.health - 1);
     }
   }
 }
 
 async function payPets() {
   const allUserData = await db.all()
-  const toUpdate = allUserData.filter(data => data.id.startsWith('pet_'))
-  await toUpdate.forEach(async (value, index) => {
-    const userId = value.id.slice(4)
-    const myPet = await db.get('pet_' + userId)
+  await allUserData.forEach(async (value, index) => {
+    const userId = value
+    const myPet = await db.get(userId+'.pet')
+    if (!myPet) {return}
     const curbal = await db.get(userId+'.a')
     const helmet = await hasArtifact(userId, 'emeraldhelmet')
     const shield = await hasArtifact(userId, 'impenetrableshield')
@@ -204,5 +237,5 @@ async function fetchAttachment(url) {
 }
 
 module.exports = {
-  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets
+  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds
 }
