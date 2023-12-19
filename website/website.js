@@ -6,25 +6,18 @@ const { QuickDB } = require("quick.db");
 const sizeOf = require('image-size')
 const url = require('url')
 const http = require('http')
-const Discord = require('discord.js');
-const fs = require('fs')
+const fetch = require('node-fetch');
+const fs = require('fs');
 const favicon = require('serve-favicon');
 const path = require('path')
-
-const client = new Discord.Client({ intents: [
-  Discord.GatewayIntentBits.Guilds,
-  Discord.GatewayIntentBits.GuildMessages,
-  Discord.GatewayIntentBits.MessageContent,
-  Discord.GatewayIntentBits.GuildMembers,
-  Discord.GatewayIntentBits.GuildMessageReactions,
-  Discord.GatewayIntentBits.GuildVoiceStates,
-  Discord.GatewayIntentBits.DirectMessageTyping,
-  Discord.GatewayIntentBits.DirectMessages,
-  ],
-  partials: [Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction],
-})
+const axios = require('axios');
 
 const token = process.env.WEBSITETOKEN;
+const channelId = '1156302752218091530';
+const messageId = '1156302916873900032';
+
+main()
+
 
 const defaultRead = {
   username: '(404)',
@@ -35,6 +28,10 @@ const defaultRead = {
 }
 
 async function main() {
+
+await loadSqlite()
+setInterval(loadSqlite, 60000)
+
 const db = new QuickDB({ filePath: "./website/json.sqlite" });
 const all = await db.all()
 const filtertop = all.filter(data => !isNaN(data.id))
@@ -90,27 +87,26 @@ app.listen(port, () => {
 });
 }
 
-client.on('ready', async () => {
-
-  await loadSqlite()
-  setInterval(loadSqlite, 60000)
-  main()
-
-})
-
 async function loadSqlite() {
-  await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then(async (lastMessage) => {
-    if (lastMessage.attachments.size > 0) {
-      const attachment = lastMessage.attachments.first();
-      const fileName = attachment.name;
-      if (fileName.endsWith('.sqlite')) {
-        const file = await fetchAttachment(attachment.url);
-        fs.writeFileSync(`./website/json.sqlite`, file);
-        console.log(`sqlite loaded`);
-      }
-    }
-}
-  )
+fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${messageId}`, {
+  headers: {
+    Authorization: `Bot ${token}`
+  }
+})
+  .then(response => response.json())
+  .then(data => {
+    const attachment = data.attachments[0];
+    const fileUrl = attachment.url;
+
+    fetch(fileUrl)
+      .then(res => res.buffer())
+      .then(buffer => {
+        fs.writeFileSync('./website/json.sqlite', buffer); // change the file name and extension accordingly
+        console.log('File downloaded successfully!');
+      })
+      .catch(err => console.error('Error downloading file:', err));
+  })
+  .catch(err => console.error('Error fetching message:', err));
 }
 
 async function fetchAttachment(url) {
@@ -119,7 +115,5 @@ async function fetchAttachment(url) {
   const buffer = Buffer.from(arrayBuffer);
   return buffer;
 }
-
-client.login(token)
 
 module.exports = main

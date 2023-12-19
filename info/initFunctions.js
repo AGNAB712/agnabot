@@ -33,6 +33,7 @@ async function deleteNonNumericIds() {
       return;
     }
     if (key === 'category') {return}
+    if (key === 'furryIndex') {return}
       await db.delete(key);
       console.log(`Deleted non-numeric entry with key: ${key}`);
     }
@@ -119,7 +120,6 @@ async function doChildLabor() {
   const toWork = allUserData.filter(data => !isNaN(data.id))
   await toWork.forEach(async (value, index) => {
     if (!value.value.children) {return}
-    console.log(value.value.children)
     const laziness = await hasArtifact(value.id, 'amuletoflaziness');
     let multiplyValue = 1
     if (laziness) {multiplyValue = 0.5}

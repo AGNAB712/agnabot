@@ -15,6 +15,10 @@ try {
   const shift = args.shift()
 
   //console.log(myPet)
+
+  if (command2 === 'buy') {
+    return message.reply('**<:AgnabotX:1153460434691698719> ||** deprecated command, use the shop instead')
+  }
   if (!myPet || myPet === 'null') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have a pet')}
 
   switch (command2) {
