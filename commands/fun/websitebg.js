@@ -31,7 +31,7 @@ if (args[0] === 'reset') {
 
   await db.set(message.author.id+'.websiteData.image', saveUrl)
   
-  message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
+  message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )\nit may take a while for the website to update because it has to Save and then get Loaded by the website so')
 
 }
 

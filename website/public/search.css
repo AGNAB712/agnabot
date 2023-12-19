@@ -1,0 +1,83 @@
+/* styles.css */
+
+@font-face {
+  font-family: 'Open Sans Bold'; /* Choose a name for your font family */
+  src: url('OpenSans-Bold.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
+
+@font-face {
+  font-family: 'Open Sans'; /* Choose a name for your font family */
+  src: url('OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
+
+body {
+  background-color: #235218;
+  font-family: Open Sans, sans-serif;
+}
+
+#userList {
+  padding: 20px;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* For other browsers (except Firefox) */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.searchInfo {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 10px;
+  align-items: center; /* Align items vertically */
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 30px;
+}
+
+p {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 10px;
+  align-items: center; /* Align items vertically */
+  margin-left: 20px;
+  margin-right: 20px;
+  font-size: 30px;
+}
+
+.userResult {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  display: flex; /* Use flexbox for layout */
+  align-items: center; /* Align items vertically */
+  transition: transform 0.2s ease-in-out; /* Transition for hover effect */
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  border: 5px solid black;
+}
+
+.userDetails {
+  flex: 1; /* Take remaining space */
+}
+
+/* Hover effect */
+.userResult:hover {
+  transform: scale(1.01); /* Increase scale on hover */
+}

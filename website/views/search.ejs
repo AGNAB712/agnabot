@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>search - agnab.site</title>
+  <link rel="stylesheet" href="search.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="agnab.site - search" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://agnab.onrender.com/agnabot" />
+  <meta property="og:image" content="/agnabot.png" />
+  <meta property="og:description" content="searching for <%= query %>
+<%= users.length %> results" />
+  <meta name="theme-color" content="#235218">
+</head>
+<body>
+
+  <% if (users.length > 0) { %>
+  <% if (users.length > 1) { %>
+    <div class="searchInfo">
+      <%= users.length %> search results
+    </div>
+  <% } else { %>
+    <div class="searchInfo">
+      1 search result
+    </div>
+  <% } %>
+    <div id="userList">
+      <% users.forEach(user => { %>
+        <div class="userResult" onclick="redirectToUser('<%= user.id %>')">
+          <% if (user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="Avatar" class="avatar">
+          <% } %>
+          <div class="userDetails">
+            <span><strong>Username:</strong> <%= user.username %></span><br>
+            <span><i><%= user.agnabuckAmount %> agnabucks</i></span>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p>No search results</p>
+  <% } %>
+
+  <script>
+    function redirectToUser(userId) {
+      window.location.href = `/agnabot/${userId}`;
+    }
+  </script>
+
+</body>
+</html>

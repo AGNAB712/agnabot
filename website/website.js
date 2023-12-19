@@ -16,8 +16,8 @@ const token = process.env.WEBSITETOKEN;
 const channelId = '1156302752218091530';
 const messageId = '1156302916873900032';
 
+const db = new QuickDB({ filePath: "./website/json.sqlite" });
 main()
-
 
 const defaultRead = {
   username: '(404)',
@@ -32,9 +32,8 @@ async function main() {
 await loadSqlite()
 setInterval(loadSqlite, 60000)
 
-const db = new QuickDB({ filePath: "./website/json.sqlite" });
-const all = await db.all()
-const filtertop = all.filter(data => !isNaN(data.id))
+let all = await db.all()
+let filtertop = await all.filter(data => !isNaN(data.id))
 await filtertop.sort((a, b) => b.value.a - a.value.a);
 
 // set up the view engine
@@ -81,6 +80,24 @@ app.get('/', async (req, res) => {
   res.render('home');
 });
 
+app.get('/agnabot', async (req, res) => {
+  res.render('agnabot');
+});
+
+app.get('/search', async (req, res) => {
+  const query = req.query.query; // assuming the search query is passed as a query parameter
+
+  // Perform the search in the Quick.db database
+  const all = await db.all()
+  const searchResult = all.filter(item => item.value.websiteData?.username.includes(query));
+  let users = []
+  searchResult.forEach((key) => {
+    users.push({ username: key.value.websiteData.username, id: key.id, avatar: key.value.websiteData.avatar, agnabuckAmount: key.value.a })
+  })
+
+  res.render('search', { users, query });
+});
+
 // start the server
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
@@ -107,6 +124,9 @@ fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${messageId}`, 
       .catch(err => console.error('Error downloading file:', err));
   })
   .catch(err => console.error('Error fetching message:', err));
+
+  all = await db.all()
+  filtertop = await all.filter(data => !isNaN(data.id))
 }
 
 async function fetchAttachment(url) {
