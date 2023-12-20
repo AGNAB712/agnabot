@@ -131,11 +131,12 @@ async function doChildLabor() {
 async function updatePets() {
 
   const allUserData = await db.all()
-  const toUpdate = allUserData.filter(data => data.id.startsWith('pet_'))
+  const toUpdate = allUserData.filter(data => !isNaN(data.id))
   toUpdate.forEach(async (value, index) => {
 
-    const userId = value.id.slice(4);
+    const userId = value.id
     const myPet = await db.get(userId+'.pet');
+    if (!myPet) {return}
 
     const laziness = await hasArtifact(userId, 'amuletoflaziness');
     if (!laziness) {
@@ -237,5 +238,5 @@ async function fetchAttachment(url) {
 }
 
 module.exports = {
-  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds
+  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets
 }

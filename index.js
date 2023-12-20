@@ -11,7 +11,7 @@ const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
 const { sendMinecraftChat, createMinecraftBot, checkMinecraftServer, isMinecraftOnline } = require('./info/minecraftFunctions.js')
 const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase } = require('./info/generalFunctions.js')
-const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds } = require('./info/initFunctions.js')
+const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
 
 const ngrok = require('ngrok');
@@ -199,7 +199,7 @@ if (me?.websiteData != user) {
 
 //test command
 if (command === 'test') {
-  doChildLabor()
+  updatePets()
 }
 
 if (command === 'categoryupdate') {
