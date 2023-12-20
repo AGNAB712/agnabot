@@ -30,7 +30,7 @@ const defaultRead = {
 async function main() {
 
 await loadSqlite()
-setInterval(loadSqlite, 60000)
+setInterval(loadSqlite, 300000)
 
 let all = await db.all()
 let filtertop = await all.filter(data => !isNaN(data.id))
@@ -112,6 +112,7 @@ fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${messageId}`, 
 })
   .then(response => response.json())
   .then(data => {
+    console.log(data)
     const attachment = data.attachments[0];
     const fileUrl = attachment.url;
 
