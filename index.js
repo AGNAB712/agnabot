@@ -71,7 +71,7 @@ setGlobalVar('lockdown', false)
 let minecraftchat
 let replit = true;
 let replitText = 'error';
-if ((os.hostname() === 'agnabs-computer')) {
+if (!(os.hostname() === 'agnabs-computer')) {
 replit = true;
 replitText = 'strats sent this'
 } else {

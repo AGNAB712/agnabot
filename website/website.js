@@ -113,7 +113,10 @@ fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${messageId}`, 
   .then(response => response.json())
   .then(data => {
     console.log(data)
-    const attachment = data.attachments[0];
+    const attachment = data?.attachments[0];
+    if (!attachment) {
+      console.error('why cant i get the sqlite Grrrrrrr')
+    }
     const fileUrl = attachment.url;
 
     fetch(fileUrl)
