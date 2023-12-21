@@ -14,15 +14,54 @@
 </head>
 <body>
 
+
+<div class="sidebar">
+  <div class="leaderboard">
+    <h2>Leaderboard</h2>
+    <div class="leaderboard-list">
+      <% toParse.forEach((item, index) => { %>
+          <div class="leaderboard-item">
+          <div class="avatar">
+            <img src="<%= item.avatar %>" alt="Avatar">
+          </div>
+        <% if (index === 0) { %>
+          <div class="leaderboard-info gold">
+        <% } else if (index === 1) { %>
+          <div class="leaderboard-info silver">
+        <% } else if (index === 2) { %>
+          <div class="leaderboard-info bronze">
+        <% } else { %>
+          <div class="leaderboard-info">
+        <% } %>
+            <p><strong><%= index + 1 %>.</strong> <%= item.username %>: <%= item.agnabuckAmount %></p>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<div class="background-shape"></div>
+
  <div class="search-container">
-  <input type="text" id="searchInput" placeholder="Search...">
-  <button onclick="search()">Search</button>
+  <div class="search-wrapper">
+    <input type="text" id="searchInput" placeholder="Search by username..." onkeydown="handleKey(event)">
+    <button onclick="search()">
+      <img src="search.png" alt="Search Icon">
+    </button>
+  </div>
 </div>
 
 <script>
   function search() {
     const query = document.getElementById('searchInput').value;
     window.location.href = `/search?query=${query}`;
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter') {
+      search();
+    }
   }
 </script>
 

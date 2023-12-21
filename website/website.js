@@ -9,6 +9,7 @@ const http = require('http')
 const fetch = require('node-fetch');
 const fs = require('fs');
 const favicon = require('serve-favicon');
+const bodyParser = require('body-parser');
 const path = require('path')
 const axios = require('axios');
 
@@ -27,10 +28,22 @@ const defaultRead = {
   myPlace: '(404)'
 }
 
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || authHeader !== `Bearer ${token}`) {
+    res.status(401).send('Unauthorized');
+    console.log('look at this loser')
+    return 
+  }
+
+  // Authentication successful, proceed to the next middleware or route handler
+  next();
+};
+
 async function main() {
 
 await loadSqlite()
-setInterval(loadSqlite, 300000)
 
 let all = await db.all()
 let filtertop = await all.filter(data => !isNaN(data.id))
@@ -48,12 +61,13 @@ app.get('/agnabot/:userId', async (req, res) => {
   if (await db.has(userId)) {
 
     const me = await db.get(userId);
+    const myPlace = await filtertop.findIndex(obj => obj.id === userId) + 1
     let toRead = {
       username: me?.websiteData?.username,
       avatar: me?.websiteData?.avatar,
       bg: me?.websiteData?.image,
       agnabuckAmount: me?.a,
-      myPlace: filtertop.findIndex(obj => obj.id === userId) + 1
+      myPlace: myPlace
     }
     const toReadKeys = Object.keys(toRead)
     toReadKeys.forEach((key) => {
@@ -81,7 +95,28 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/agnabot', async (req, res) => {
-  res.render('agnabot');
+  const all = await db.all()
+  const myFiltertop = await all.filter(data => !isNaN(data.id))
+  await myFiltertop.sort((a, b) => b.value.a - a.value.a);
+  const top = Object.values(myFiltertop).slice(0, 10);
+  let toParse = []
+  top.forEach((key, i) => {
+    console.log(key)
+    let toPush = {
+      username: myFiltertop[i].value.websiteData?.username,
+      avatar: myFiltertop[i].value.websiteData?.avatar,
+      agnabuckAmount: myFiltertop[i].value?.a,
+    }
+    const toPushKeys = Object.keys(toPush)
+    toPushKeys.forEach((key) => {
+      if (!toPush[key]) {
+        toPush[key] = defaultRead[key]
+      }
+    })
+
+    toParse.push(toPush)
+  })
+  res.render('agnabot', { toParse });
 });
 
 app.get('/search', async (req, res) => {
@@ -89,7 +124,7 @@ app.get('/search', async (req, res) => {
 
   // Perform the search in the Quick.db database
   const all = await db.all()
-  const searchResult = all.filter(item => item.value.websiteData?.username.includes(query));
+  const searchResult = all.filter(item => item.value.websiteData?.username.includes(query.toLowerCase()));
   let users = []
   searchResult.forEach((key) => {
     users.push({ username: key.value.websiteData.username, id: key.id, avatar: key.value.websiteData.avatar, agnabuckAmount: key.value.a })
@@ -112,11 +147,10 @@ fetch(`https://discord.com/api/v9/channels/${channelId}/messages/${messageId}`, 
 })
   .then(response => response.json())
   .then(data => {
-    console.log(data)
-    const attachment = data?.attachments[0];
-    if (!attachment) {
-      console.error('why cant i get the sqlite Grrrrrrr')
+    if (data.code) {
+      return console.log(`error code from discord: ${data.code}`, data?.message)
     }
+    const attachment = data?.attachments[0];
     const fileUrl = attachment.url;
 
     fetch(fileUrl)
@@ -140,4 +174,20 @@ async function fetchAttachment(url) {
   return buffer;
 }
 
-module.exports = main
+//UNDERNEATH THIS IS BODYPARSER
+
+app.use(bodyParser.json());
+
+app.post('/api/loadsqlite', authenticate, async (req, res) => {
+  console.log('hi')
+  const receivedData = req.body;
+  for (const key in receivedData) {
+    if (Object.hasOwnProperty.call(receivedData, key)) {
+      const myData = receivedData[key]
+      await db.set(receivedData[key].id, receivedData[key].value);
+    }
+  }
+  res.send('yup')
+  console.log('loaded new sqlite')
+  console.log(await db.get('1'))
+});

@@ -17,7 +17,7 @@ async function setmoney(message, args) {
 
   if (isNumeric(amountToSet)) {
     await db.set(idToSet+'.a', amountToSet);
-    message('temp confirmation command')
+    message.reply('temp confirmation command')
   } else {
     message.channel.send('**<:AgnabotX:1153460434691698719> ||** not a number');
   }

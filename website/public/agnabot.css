@@ -1,30 +1,156 @@
-/* styles.css */
+@font-face {
+  font-family: 'Open Sans'; /* Choose a name for your font family */
+  src: url('OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #235218; /* Background color for the page */
+  position: absolute;
+  overflow: hidden;
+}
+
+.background-shape {
+  position: fixed;
+  left: 30%;
+  width: 100%;
+  height: 300%;
+  bottom: -150%;
+  background: linear-gradient(110deg, #fff, #f0f0f0); /* White tilted rectangle */
+  transform: rotate(10deg); /* Opposite direction tilt */
+  z-index: -1;
+}
+
+.background-shape::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: -4%;
+  width: 5%;
+  height: 100%;
+  background-color: #e0e0e0; /* Slightly darker variation */
+  z-index: 1;
 }
 
 .search-container {
-  text-align: center;
-  margin-top: 50px;
+  width: 490px;
+  z-index: 2;
+  left: calc(100% - 530px);
+  top: 5%;
+  position: absolute;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 50px;
+  border: 2px solid black;
+  background-color: lightgray;
 }
 
 input[type="text"] {
-  padding: 10px;
-  width: 200px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  width: 400px; /* Larger search bar */
+  height: 50px;
+  border: none;
+  outline: none; /* Remove the outline when focused */
+  font-family: 'Open Sans', sans-serif; /* Different font */
+  border-radius: 50px;
+  background-color: lightgray;
+  font-size: 30px;
 }
 
 button {
-  padding: 10px 20px;
-  margin-left: 10px;
-  border-radius: 5px;
+  padding: 12px;
+  border-radius: 50px;
   border: none;
-  background-color: #007bff;
+  background-color: #235218; /* Dark green background */
   color: white;
   cursor: pointer;
+  width: 70px;
+  height: 75px;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #1a4014; /* Darker green on hover */
+}
+
+/* Styling for the search icon image */
+button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* styles.css */
+/* ... your existing styles ... */
+
+.sidebar {
+  position: fixed;
+  left: 5%;
+  top: calc(0% + 20px);
+  height: calc(100% - 80px);
+  width: 300px; /* Width of the sidebar */
+  background-color: #111; /* Almost black */
+  border-radius: 15px;
+  color: white;
+  padding: 20px;
+}
+
+.leaderboard-list {
+  padding: 0;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 40px; /* Adjust size of the avatar */
+  height: 40px; /* Adjust size of the avatar */
+  overflow: hidden;
+  border-radius: 50%; /* Circular shape */
+  margin-right: 10px;
+  border: ;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.leaderboard-info p {
+  margin: 0;
+}
+
+/* Adjust padding and margin as needed */
+.leaderboard-info {
+  padding: 10px;
+  background-color: #070707; /* Black box */
+  border-radius: 8px; /* Rounded edges */
+  border: 2px solid black;
+}
+
+.gold {
+  color: black;
+  background-image: linear-gradient(45deg, #ffd700, #ffa500); /* Gold gradient */
+  border: 2px solid black;
+}
+
+.silver {
+  color: black;
+  background-image: linear-gradient(45deg, #c0c0c0, #808080); /* Silver gradient */
+  border: 2px solid black;
+}
+
+.bronze {
+  color: black;
+  background-image: linear-gradient(45deg, #cd7f32, #8b4513); /* Bronze gradient */
+  border: 2px solid black;
 }

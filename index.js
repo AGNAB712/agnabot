@@ -11,7 +11,7 @@ const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
 const { sendMinecraftChat, createMinecraftBot, checkMinecraftServer, isMinecraftOnline } = require('./info/minecraftFunctions.js')
 const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase } = require('./info/generalFunctions.js')
-const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets } = require('./info/initFunctions.js')
+const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets, loadWebsite } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
 
 const ngrok = require('ngrok');
@@ -96,6 +96,7 @@ if (replit) {
 console.log(`logged in as ${client.user.tag}`);
 
   await loadSqlite(client, replit);
+  await loadWebsite()
   await deleteNonNumericIds()
   loadCurrentStatus(client);
   await updateCategoryName(client.channels.cache.get('1092554907883683961'), replit); 
@@ -103,7 +104,8 @@ console.log(`logged in as ${client.user.tag}`);
   setInterval(doChildLabor, 300000);
   setInterval(updatePets, 300000);
   setInterval(checkMinecraftServer, 300000)
-  setInterval(forceSaveSqlite, 300000, client);
+  setInterval(forceSaveSqlite, 300000, client, replit);
+  setInterval(loadWebsite, 300000);
   setInterval(function() {
   var now = new Date();
   var minutes = now.getMinutes();

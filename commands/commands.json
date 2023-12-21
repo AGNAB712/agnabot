@@ -270,6 +270,11 @@
       "category": "admin",
       "description": "sets a user's something to something\nDO NOT USE THIS IF YOU DO NOT KNOW WHAT YOU'RE DOING",
       "syntax": "a.setvalue (user id)(.value) (item to set)"
+    },
+    "loadwebsite": {
+      "category": "admin",
+      "description": "loads the sqlite for agnabot's website manually",
+      "syntax": "a.loadwebsite"
     }
   },
   "aliases": {

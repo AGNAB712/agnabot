@@ -4,6 +4,7 @@ const db = new QuickDB();
 const { getGlobalVar, setGlobalVar } = require('./editGlobalJson.js')
 const { hasArtifact, getRandomInt } = require('./generalFunctions.js')
 const fs = require('fs');
+const token = process.env.WEBSITEAUTH;
 
 async function deleteNonNumericIds() {
   const allKeys = await db.all()
@@ -57,8 +58,26 @@ forceSaveSqlite(client)
 
 }
 
-async function forceSaveSqlite(client) {
+async function loadWebsite() {
 
+    fetch('https://agnab.onrender.com/api/loadsqlite', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(await db.all()),
+    })
+      .then(response => {
+        console.log('sent file over to the website successfuly')
+      })
+      .catch(error => {
+        console.error(error)
+      });
+}
+
+async function forceSaveSqlite(client, replit) {
+if (!replit) {return}
   setGlobalVar("savecount", 0)
   const fileName = 'json.sqlite';
   await client.channels.cache.get('1156302752218091530').messages.fetch('1156302916873900032').then((msg) => 
@@ -238,5 +257,5 @@ async function fetchAttachment(url) {
 }
 
 module.exports = {
-  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets
+  saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets, loadWebsite
 }
