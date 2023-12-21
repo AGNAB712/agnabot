@@ -14,6 +14,7 @@ const path = require('path')
 const axios = require('axios');
 
 const token = process.env.WEBSITETOKEN;
+const websiteauth = process.env.WEBSITEAUTH;
 const channelId = '1156302752218091530';
 const messageId = '1156302916873900032';
 
@@ -31,7 +32,7 @@ const defaultRead = {
 const authenticate = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || authHeader !== `Bearer ${token}`) {
+  if (!authHeader || authHeader !== `Bearer ${websiteauth}`) {
     res.status(401).send('Unauthorized');
     console.log('look at this loser')
     return 
