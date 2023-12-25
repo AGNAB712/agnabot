@@ -73,7 +73,7 @@ await filtertop.sort((a, b) => b.value.a - a.value.a);
 passport.use(new DiscordStrategy({
     clientID: process.env.CLIENTID,
     clientSecret: process.env.CLIENTSECRET,
-    callbackURL: 'http://localhost:3000/auth/discord/callback',
+    callbackURL: 'https://agnab.onrender.com/auth/discord/callback',
     scope: ['identify']
 }, (accessToken, refreshToken, profile, done) => {
     if (profile) {
