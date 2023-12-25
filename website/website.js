@@ -12,6 +12,9 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const path = require('path')
 const axios = require('axios');
+const passport = require('passport');
+const DiscordStrategy = require('passport-discord').Strategy;
+const crypto = require('crypto');
 
 const token = process.env.WEBSITETOKEN;
 const websiteauth = process.env.WEBSITEAUTH;
@@ -19,6 +22,23 @@ const channelId = '1156302752218091530';
 const messageId = '1156302916873900032';
 
 const db = new QuickDB({ filePath: "./website/json.sqlite" });
+
+app.set('view engine', 'ejs');
+app.set('views', './website/views');
+app.use(favicon(path.join(__dirname, 'public', 'logo.ico')));
+app.use(express.static('./website/public'));
+
+//this is for sign in stuff
+app.use(require('cookie-parser')());
+app.use(require('body-parser').urlencoded({ extended: true }));
+  app.use(require('express-session')({
+      secret: crypto.randomBytes(32).toString('hex'), // Replace with a secret key for session encryption
+      resave: false,
+      saveUninitialized: false
+  }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 main()
 
 const defaultRead = {
@@ -50,11 +70,26 @@ let all = await db.all()
 let filtertop = await all.filter(data => !isNaN(data.id))
 await filtertop.sort((a, b) => b.value.a - a.value.a);
 
-// set up the view engine
-app.set('view engine', 'ejs');
-app.set('views', './website/views');
-app.use(favicon(path.join(__dirname, 'public', 'logo.ico')));
-app.use(express.static('./website/public'));
+passport.use(new DiscordStrategy({
+    clientID: process.env.CLIENTID,
+    clientSecret: process.env.CLIENTSECRET,
+    callbackURL: 'http://localhost:3000/auth/discord/callback',
+    scope: ['identify']
+}, (accessToken, refreshToken, profile, done) => {
+    if (profile) {
+        return done(null, profile);
+    } else {
+        return done(null, false);
+    }
+}));
+
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
 
 app.get('/agnabot/:userId', async (req, res) => {
   const userId = req.params.userId;
@@ -82,8 +117,6 @@ app.get('/agnabot/:userId', async (req, res) => {
     } else {
       inventoryArray = []
     }
-
-    console.log(me.websiteData)
     res.render('inventory', toRead);
   } else {
     res.render('notfound', { userId });
@@ -102,11 +135,11 @@ app.get('/agnabot', async (req, res) => {
   const top = Object.values(myFiltertop).slice(0, 10);
   let toParse = []
   top.forEach((key, i) => {
-    console.log(key)
     let toPush = {
       username: myFiltertop[i].value.websiteData?.username,
       avatar: myFiltertop[i].value.websiteData?.avatar,
       agnabuckAmount: myFiltertop[i].value?.a,
+      id: myFiltertop[i].id
     }
     const toPushKeys = Object.keys(toPush)
     toPushKeys.forEach((key) => {
@@ -175,12 +208,39 @@ async function fetchAttachment(url) {
   return buffer;
 }
 
-//UNDERNEATH THIS IS BODYPARSER
+//LOGIN things
+
+app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord/callback', passport.authenticate('discord', {
+    failureRedirect: '/', // redirect if authentication fails
+}), (req, res) => {
+    res.redirect('/agnabot');
+});
+
+app.get('/checkAuth', (req, res) => {
+    if (req.user) { //if the user exists
+        res.status(200).send(req.user);
+    } else {
+        res.status(401).send('User is not logged in');
+    }
+});
+
+//API things
+
+app.get('/api/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  if (await db.has(userId)) {
+    const me = await db.get(userId)
+    res.send(me)
+  } else {
+    res.send({ code: 404, message: 'user not found Womp womp' });
+  }
+});
 
 app.use(bodyParser.json());
 
 app.post('/api/loadsqlite', authenticate, async (req, res) => {
-  console.log('hi')
   const receivedData = req.body;
   for (const key in receivedData) {
     if (Object.hasOwnProperty.call(receivedData, key)) {
@@ -190,5 +250,4 @@ app.post('/api/loadsqlite', authenticate, async (req, res) => {
   }
   res.send('yup')
   console.log('loaded new sqlite')
-  console.log(await db.get('1'))
 });

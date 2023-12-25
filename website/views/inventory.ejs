@@ -15,7 +15,6 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-
   <div class="container">
     <div class="agnabuck-amount">
       <h1><%= agnabuckAmount %> ꬰ</h1>
@@ -28,6 +27,7 @@
     <img class="background-image clone" src="<%= bg %>" alt="Background Image">
   </div>
 
+  <div class="notif">bob</div>
   <div class="avatar-container">
     <img class="avatar" src="<%= avatar %>" alt="Avatar Image">
   </div>
@@ -35,5 +35,32 @@
     <p>#<%= myPlace %> on the leaderboard</p>
   </div>
 
+  <script>
+  const notif = document.querySelector('.notif');
+  const currentURL = window.location.href;
+  const urlParts = currentURL.split('/');
+  const userIDIndex = urlParts.indexOf('agnabot') + 1; // cause the id happens after agnabot
+  const myUserID = urlParts[userIDIndex];
+
+    fetch('/checkAuth')
+      .then(response => {
+      console.log(response)
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('User is not logged in');
+        }
+      })
+    .then(data => {
+      if (data.id == myUserID) {
+        notif.textContent = 'why are you on your own page'
+      } else {
+        notif.style.display = 'none'
+      }
+    })
+    .catch(error => {
+        notif.style.display = 'none'
+    });
+  </script>
 </body>
 </html>

@@ -14,15 +14,23 @@
 </head>
 <body>
 
+<button id="authButton" class="user-button" onclick="redirectToAuth()">
+  <!-- Content will be dynamically updated -->
+</button>
+
+<div class="leaderboard-header">
+  <i>Leaderboard</i>
+</div>
 
 <div class="sidebar">
   <div class="leaderboard">
-    <h2>Leaderboard</h2>
     <div class="leaderboard-list">
       <% toParse.forEach((item, index) => { %>
           <div class="leaderboard-item">
           <div class="avatar">
+          <a href="/agnabot/<%= item.id %>">
             <img src="<%= item.avatar %>" alt="Avatar">
+          </a>
           </div>
         <% if (index === 0) { %>
           <div class="leaderboard-info gold">
@@ -33,13 +41,24 @@
         <% } else { %>
           <div class="leaderboard-info">
         <% } %>
+          <a href="/agnabot/<%= item.id %>">
             <p><strong><%= index + 1 %>.</strong> <%= item.username %>: <%= item.agnabuckAmount %></p>
+          </a>
           </div>
         </div>
       <% }); %>
     </div>
   </div>
 </div>
+
+  <div class="github">
+      <p class="subheading">
+        <a href="https://github.com/AGNAB712/agnabot" target="_blank">
+          <img src="github.png" alt="Github Logo" style="width: 75px; height: 75px; vertical-align: middle;">
+          Github Repository
+        </a>
+      </p>
+  </div>
 
 <div class="background-shape"></div>
 
@@ -53,17 +72,13 @@
 </div>
 
 <script>
-  function search() {
-    const query = document.getElementById('searchInput').value;
-    window.location.href = `/search?query=${query}`;
+  
+  function redirectToAuth() {
+    red('/auth/discord');
   }
 
-  function handleKey(e) {
-    if (e.key === 'Enter') {
-      search();
-    }
-  }
 </script>
+<script src="agnabot.js"></script>
 
 </body>
 </html>

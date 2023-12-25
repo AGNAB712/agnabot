@@ -14,7 +14,6 @@ const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, dura
 const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets, loadWebsite } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
 
-const ngrok = require('ngrok');
 const { google } = require('googleapis');
 const credentials = require('./info/googleServiceAccount.json')
 const os = require('os')
@@ -429,14 +428,6 @@ if (replit) {
 client.login(token);
 } else {
 client.login(backupToken);
-}
-
-async function runNgrok() {
-  require('./website/website.js');
-
-  const url = await ngrok.connect({ authtoken: process.env.NGROKAUTH, addr: 3000 });
-  setGlobalVar('url', url)
-  console.log(url)
 }
 
 module.exports = {

@@ -3,13 +3,22 @@
   src: url('OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
   /* Add other font properties if needed, like font-weight or font-style */
 }
+@font-face {
+  font-family: 'Open Sans Bold'; /* Choose a name for your font family */
+  src: url('OpenSans-Bold.ttf') format('truetype'), /* Replace with your font file path */
+  /* Add other font properties if needed, like font-weight or font-style */
+}
+
+:root {
+  --distance-outward: 50px;
+}
 
 body {
   font-family: 'Open Sans', sans-serif;
   margin: 0;
   height: 100%;
   width: 100%;
-  background-color: #235218; /* Background color for the page */
+  background-color: #1f441f; /* Background color for the page */
   position: absolute;
   overflow: hidden;
 }
@@ -39,8 +48,8 @@ body {
 .search-container {
   width: 490px;
   z-index: 2;
-  left: calc(100% - 530px);
-  top: 5%;
+  left: calc(75% - 245px - 50px);
+  top: calc(40% - var(--distance-outward));
   position: absolute;
 }
 
@@ -68,7 +77,7 @@ button {
   padding: 12px;
   border-radius: 50px;
   border: none;
-  background-color: #235218; /* Dark green background */
+  background-color: #225522; /* Dark green background */
   color: white;
   cursor: pointer;
   width: 70px;
@@ -85,19 +94,48 @@ button img {
   height: 20px;
 }
 
-/* styles.css */
-/* ... your existing styles ... */
-
 .sidebar {
   position: fixed;
-  left: 5%;
-  top: calc(0% + 20px);
-  height: calc(100% - 80px);
-  width: 300px; /* Width of the sidebar */
+  left: -50%;
+  top: calc(50% - 330px);
+  height: 650px;
+  width: 400px; /* Width of the sidebar */
   background-color: #111; /* Almost black */
   border-radius: 15px;
   color: white;
   padding: 20px;
+  border: 2px solid black;
+  transition: all 1.6s cubic-bezier(.24,0,0,.99);
+}
+
+
+.leaderboard-header {
+  top: calc(50% - 380px);
+  left: -50%;
+  width: fit-content;
+  padding: 10px;
+  background-color: transparent;
+  position: relative;
+  display: inline-block;
+  font-family: 'Open Sans Bold';
+  font-size: 60px;
+  color: white;
+  transition: all 1s cubic-bezier(.24,0,0,.99);
+  z-index: 1;
+}
+
+.leaderboard-header::before {
+  position: fixed;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 110%;
+  height: 75%;
+  background-color: #225522;
+  transform: skew(-20deg) translateY(calc(25% / 2)) translateX(-10px);
+  z-index: -1; /* Places the parallelogram behind the text */
+  border: 4px solid white;
 }
 
 .leaderboard-list {
@@ -105,6 +143,7 @@ button img {
 }
 
 .leaderboard-item {
+  transform: translateY(40px);
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -116,13 +155,18 @@ button img {
   overflow: hidden;
   border-radius: 50%; /* Circular shape */
   margin-right: 10px;
-  border: ;
+  border: 2px solid black;
 }
 
 .avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.leaderboard-info a {
+  text-decoration: none;
+  color: white;
 }
 
 .leaderboard-info p {
@@ -138,19 +182,63 @@ button img {
 }
 
 .gold {
-  color: black;
   background-image: linear-gradient(45deg, #ffd700, #ffa500); /* Gold gradient */
-  border: 2px solid black;
+}
+.gold a {
+  color: black;
 }
 
 .silver {
-  color: black;
   background-image: linear-gradient(45deg, #c0c0c0, #808080); /* Silver gradient */
-  border: 2px solid black;
+}
+.silver a {
+  color: black;
 }
 
 .bronze {
-  color: black;
   background-image: linear-gradient(45deg, #cd7f32, #8b4513); /* Bronze gradient */
-  border: 2px solid black;
+}
+.bronze a {
+  color: black;
+}
+
+.github {
+  position: fixed;
+  top: calc(40% + var(--distance-outward));
+  left: calc(75% - 50px);
+  width: 550px;
+  text-align: center;
+  transform: translateX(-50%);
+  color: white;
+  z-index: 1; /* Ensure content appears above the image */
+}
+
+.github a {
+  text-decoration: none;
+  color: gray;
+  font-family: Open Sans;
+  font-size: 40px;
+}
+
+.user-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  width: 300px;
+  border: none;
+  border-radius: 20px;
+  background-color: #225522;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: 'Open Sans Bold';
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 8px;
 }

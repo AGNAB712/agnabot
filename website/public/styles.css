@@ -23,6 +23,24 @@ body {
   overflow: hidden;
 }
 
+.notif {
+  position: absolute;
+  top: 50%;
+  right: 30%; /* Adjust distance from right */
+  transform: translate(50%, -50%);
+  background-color: white;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  padding-left: 50px;
+  padding-right: 50px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  font-family: 'Open Sans';
+  font-size: 10px;
+  text-align: left;
+}
+
 .content {
   position: absolute;
   top: 40%;
