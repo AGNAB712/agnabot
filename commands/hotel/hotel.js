@@ -9,7 +9,7 @@ const { hasArtifact } = require('../../info/generalFunctions.js')
 async function hotel(message, args, bot, client) {
 try {
 
-  const myHotel = await db.get(`hotel_${message.author.id}`)
+  const myHotel = await db.get(`${message.author.id}.hotel`)
   const command2 = args[0]
 
   if (!command2) {return message.reply('**<:AgnabotX:1153460434691698719> ||** read the syntax please :   )')}
@@ -21,23 +21,18 @@ try {
 
   switch (command2) {
 
+  case: "buy":
+    message.reply('**<:AgnabotX:1153460434691698719> ||** this is a deprecated command, please buy one from the shop instead')
+  break;
+
   case "delete":
-  await db.set(`hotel_${message.author.id}`, 'undefined')
+  await db.set(`${message.author.id}.hotel`, 'undefined')
   client.channels.fetch(myHotel)
   .then( async channel => {
     channel.delete();
     message.reply('**<:AgnabotCheck:1153525610665214094> ||** '+channel.name+' has been deleted')
   })
   .catch(error => console.error('error deleting channel', error))
-  break;
-    if (!newName) {
-      return message.reply('**<:AgnabotX:1153460434691698719> ||** gimme a thing to rename it to')
-    }
-    if (isValidCategoryName(newName)) {
-    client.channels.cache.get(myHotel).setName(newName);
-    } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** thats not a valid category name')
-    }
   break;
 
   case "name":

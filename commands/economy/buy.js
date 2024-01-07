@@ -30,7 +30,7 @@ async function buy(message, args, bot, client) {
 
 
     const curbal = await db.get(message.author.id+'.a');
-    const hotelBought = await db.get(`hotel_${message.author.id}`) 
+    const hotelBought = await db.get(`${message.author.id}.hotel`) 
     const riggedBought = await db.get(`${message.author.id}.slotMachine`)
     const fishBought = await db.get(`${message.author.id}.fish`)
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
@@ -108,7 +108,7 @@ case 'hotel':
     });
   channel.setTopic(`owned by ${message.author.username}`);
   channel.permissionOverwrites.edit(message.author.id, { ManageMessages: true });
-  await db.set(`hotel_${message.author.id}`, channel.id)
+  await db.set(`${message.author.id}.hotel`, channel.id)
   await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000))
   await channel.send(`<@${message.author.id}>`)
 } else {
