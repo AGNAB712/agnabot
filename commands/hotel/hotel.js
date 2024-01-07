@@ -21,7 +21,7 @@ try {
 
   switch (command2) {
 
-  case: "buy":
+  case "buy":
     message.reply('**<:AgnabotX:1153460434691698719> ||** this is a deprecated command, please buy one from the shop instead')
   break;
 

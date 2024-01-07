@@ -1,5 +1,16 @@
-2023-12-21T23:36:19.124Z - Uncaught Exception: token is not defined
-ReferenceError: token is not defined
-    at loadWebsite (C:\agnabot-main\agnabot-main\info\initFunctions.js:65:34)
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:99:9)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-01-07T14:36:35.580Z - Uncaught Exception: Unexpected token ':'
+C:\agnabot-main\agnabot-main\commands\hotel\hotel.js:24
+  case: "buy":
+      ^
+
+SyntaxError: Unexpected token ':'
+    at internalCompileFunction (node:internal/vm:77:18)
+    at wrapSafe (node:internal/modules/cjs/loader:1288:20)
+    at Module._compile (node:internal/modules/cjs/loader:1340:27)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at C:\agnabot-main\agnabot-main\index.js:35:26
+    at C:\agnabot-main\agnabot-main\info\generalFunctions.js:68:5
