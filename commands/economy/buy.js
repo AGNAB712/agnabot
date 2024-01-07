@@ -96,27 +96,29 @@ case 'pet':
 break;
 
 case 'hotel':
+  const myHotel = await db.get(message.author.id+'.hotel')
   curbal = await db.get(message.author.id+'.a')
   if (!myHotel || myHotel === 'undefined') {
-  if (curbal > 5000) {
-  const categoryId = '1130959364073717801';
-  const channelName = `${message.author.username.toLowerCase()}s-room`;
-    const channel = await message.guild.channels.create({
-      name: channelName,
-      type: 0,
-      parent: categoryId,
-    });
-  channel.setTopic(`owned by ${message.author.username}`);
-  channel.permissionOverwrites.edit(message.author.id, { ManageMessages: true });
-  await db.set(`${message.author.id}.hotel`, channel.id)
-  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000))
-  await channel.send(`<@${message.author.id}>`)
+    if (curbal > 5000) {
+    const categoryId = '1130959364073717801';
+    const channelName = `${message.author.username.toLowerCase()}s-room`;
+      const channel = await message.guild.channels.create({
+        name: channelName,
+        type: 0,
+        parent: categoryId,
+      });
+    channel.setTopic(`owned by ${message.author.username}`);
+    channel.permissionOverwrites.edit(message.author.id, { ManageMessages: true });
+    await db.set(`${message.author.id}.hotel`, channel.id)
+    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000))
+    await channel.send(`<@${message.author.id}>`)
+  } else {
+    message.reply('**<:AgnabotX:1153460434691698719> ||** stop being Poor')
+  }
 } else {
-  message.reply('stop being Poor')
+  message.reply('**<:AgnabotX:1153460434691698719> ||**you already have a room dude')
 }
-} else {
-  message.reply('you already have a room dude')
-}break;
+break;
   
 case 'cocaine':
 if (curbal > 10000) {
