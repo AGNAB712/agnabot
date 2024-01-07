@@ -97,7 +97,6 @@ break;
 
 case 'hotel':
   const myHotel = await db.get(message.author.id+'.hotel')
-  curbal = await db.get(message.author.id+'.a')
   if (!myHotel || myHotel === 'undefined') {
     if (curbal > 5000) {
     const categoryId = '1130959364073717801';
