@@ -206,7 +206,7 @@ async function deprivePets(myPet, userId) {
   
     await db.set(userId+'.pet.shielded', true);
 
-  if (myPet.hunger == 0 && myPet.affection) {
+  if (myPet.hunger == 0 && myPet.affection == 0) {
     if (myPet.health - 3 < 0) {
       await db.set(userId+'.pet.health', 0);
       return;

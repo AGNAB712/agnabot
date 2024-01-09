@@ -9,14 +9,17 @@ const db = new QuickDB();
 
 async function addcategory(message, args, bot, client) {
 
-    if (args.length === 0) {
-      message.channel.send('**<:AgnabotX:1153460434691698719> ||** gimme a category name.');
-      return;
-    }
+
 
     message.delete();
 
-    const categoryName = args.join(' ');
+    const repliedMessage = await message.channel.messages.fetch(message.reference?.messageId)
+    let categoryName = args.join(' ');
+    if (repliedMessage.content) {categoryName = repliedMessage.content}
+    if (!categoryName) {
+      message.channel.send('**<:AgnabotX:1153460434691698719> ||** gimme a category name.');
+      return;
+    }
 
     if (categoryName.length > 100) {
       message.reply('**<:AgnabotX:1153460434691698719> ||** category too long');

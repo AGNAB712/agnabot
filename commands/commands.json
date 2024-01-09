@@ -275,6 +275,11 @@
       "category": "admin",
       "description": "loads the sqlite for agnabot's website manually",
       "syntax": "a.loadwebsite"
+    },
+    "badtranslate": {
+      "category": "fun",
+      "description": "translates something 100 times and then gives back the answer\nits kinda slow (sorry)",
+      "syntax": "a.badtranslate (text)"
     }
   },
   "aliases": {
@@ -294,6 +299,7 @@
     "sb": "speechbubble",
     "fsb": "furryspeechbubble",
     "calc": "calculator",
-    "websitebackground": "websitebg"
+    "websitebackground": "websitebg",
+    "bt": "badtranslate"
   }
 }

@@ -13,7 +13,7 @@ try {
   const command2 = args[0]
 
   if (!command2) {return message.reply('**<:AgnabotX:1153460434691698719> ||** read the syntax please :   )')}
-  if (!myHotel || myHotel === 'undefined') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have a room')}
+  if (!myHotel || myHotel === 'undefined' && command2 !== 'buy') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have a room')}
 
   const command2shifted = args.shift()
   const newName = args.join('-');
@@ -50,7 +50,7 @@ try {
   if (!newName) {
     return message.reply('**<:AgnabotX:1153460434691698719> ||** gimme a thing to set the description to')
   }
-  client.channels.cache.get(myHotel).setTopic(`${newName} (owned by ${message.author.username})`);
+  client.channels.cache.get(myHotel).setTopic(`${args.join(' ')} (owned by ${message.author.username})`);
   break;
 
   case "private":
