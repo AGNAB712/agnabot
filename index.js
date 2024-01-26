@@ -85,7 +85,7 @@ client.on('ready', async () => {
 
 minecraftchat = await client.channels.cache.get('1159952276882997309')
 if (await isMinecraftOnline()) {
-  await createMinecraftBot(bot);
+  bot = await createMinecraftBot(bot);
 }
 if (replit) {
     console.log("hi strats");
