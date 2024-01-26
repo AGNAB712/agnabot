@@ -3,6 +3,12 @@ const mineflayer = require('mineflayer');
 const deathEvent = require("mineflayer-death-event")
 const mcs = require('node-mcstatus');
 
+const botArgs = {
+  host: 'localhost',
+  port: 25565, 
+  username: 'AGNABOT',
+}
+
 async function sendMinecraftChat(message, bot) {
   if (message.content.length >= 150) {return message.reply('that message is too long Loooool')}
   if (message.content.includes('\n')) {return message.reply('cant have a message with a linebreak')}
