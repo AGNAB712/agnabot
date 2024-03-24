@@ -18,6 +18,7 @@ const crypto = require('crypto');
 const gTTS = require('gtts');
 const ffmpeg = require('fluent-ffmpeg');
 const lanugages = require('./languages.json')
+const { exec } = require('child_process');
 
 const token = process.env.WEBSITETOKEN;
 const websiteauth = process.env.WEBSITEAUTH;
@@ -160,36 +161,7 @@ app.get('/agnabot', async (req, res) => {
   res.render('agnabot', { toParse });
 });
 
-app.get('/api/tts', async (req, res) => {
-    console.log(req.query?.text, req.query?.voice)
-    let output
-    if (req.query.text) {
-      let voice = req.query?.voice || 'en'
-      req.query?.voice in lanugages ? voice : voice = 'en'
-    const gtts = await new gTTS(req.query.text, voice);
-    const buffer = gtts.save('temp.mp3', async function (err, result) {
-      if(err) { throw new Error(err) }
-      console.log('Finished TTS');
-      convertMp3ToDFPWM('temp.mp3', res)
-    });
-    }
-})
 
-
-async function convertMp3ToDFPWM(inputFile, res) {
-  ffmpeg(inputFile)
-    .audioCodec('dfpwm')
-    .audioFrequency(48000)
-    .audioChannels(1)
-    .format('dfpwm')
-    .save('./output.dfpwm')
-    .on('end', () => {
-      fs.readFile('./output.dfpwm', (err, data) => {
-        res.send(data)
-        //console.log('Raw data:', data.toString());
-      });
-    })
-}
 
 
 app.get('/search', async (req, res) => {
@@ -289,3 +261,49 @@ app.post('/api/loadsqlite', authenticate, async (req, res) => {
   res.send('yup')
   console.log('loaded new sqlite')
 });
+
+app.get('/api/tts', async (req, res) => {
+    console.log(req.query?.text, req.query?.voice)
+    let output
+    if (req.query.text) {
+      let voice = req.query?.voice || 'en'
+      req.query?.voice in lanugages ? voice : voice = 'en'
+    const gtts = await new gTTS(req.query.text, voice);
+    const buffer = gtts.save('temp.mp3', async function (err, result) {
+      if(err) { throw new Error(err) }
+      console.log('Finished TTS');
+      convertMp3ToDFPWM('temp.mp3', res)
+    });
+    }
+})
+
+async function convertMp3ToDFPWM(inputFile, res) {
+  ffmpeg(inputFile)
+    .audioCodec('dfpwm')
+    .audioFrequency(48000)
+    .audioChannels(1)
+    .format('dfpwm')
+    .save('./output.dfpwm')
+    .on('end', () => {
+      fs.readFile('./output.dfpwm', (err, data) => {
+        res.send(data)
+        //console.log('Raw data:', data.toString());
+      });
+    })
+}
+
+app.get('/api/test', async (req, res) => {
+  exec('ffmpeg -version', (error, stdout, stderr) => {
+  if (error) {
+    res.send("no")
+    return;
+  }
+
+  if (stderr) {
+    res.send("no")
+    return;
+  }
+
+  res.send(stdout)
+});
+})
