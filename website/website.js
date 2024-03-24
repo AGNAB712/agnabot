@@ -15,6 +15,9 @@ const axios = require('axios');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const crypto = require('crypto');
+const gTTS = require('gtts');
+const ffmpeg = require('fluent-ffmpeg');
+const lanugages = require('./languages.json')
 
 const token = process.env.WEBSITETOKEN;
 const websiteauth = process.env.WEBSITEAUTH;
@@ -128,6 +131,10 @@ app.get('/', async (req, res) => {
   res.render('home');
 });
 
+app.get('/wiadn', async (req, res) => {
+  res.render('wiadn');
+});
+
 app.get('/agnabot', async (req, res) => {
   const all = await db.all()
   const myFiltertop = await all.filter(data => !isNaN(data.id))
@@ -153,10 +160,41 @@ app.get('/agnabot', async (req, res) => {
   res.render('agnabot', { toParse });
 });
 
+app.get('/api/tts', async (req, res) => {
+    console.log(req.query?.text, req.query?.voice)
+    let output
+    if (req.query.text) {
+      let voice = req.query?.voice || 'en'
+      req.query?.voice in lanugages ? voice : voice = 'en'
+    const gtts = await new gTTS(req.query.text, voice);
+    const buffer = gtts.save('temp.mp3', async function (err, result) {
+      if(err) { throw new Error(err) }
+      console.log('Finished TTS');
+      convertMp3ToDFPWM('temp.mp3', res)
+    });
+    }
+})
+
+
+async function convertMp3ToDFPWM(inputFile, res) {
+  ffmpeg(inputFile)
+    .audioCodec('dfpwm')
+    .audioFrequency(48000)
+    .audioChannels(1)
+    .format('dfpwm')
+    .save('./output.dfpwm')
+    .on('end', () => {
+      fs.readFile('./output.dfpwm', (err, data) => {
+        res.send(data)
+        //console.log('Raw data:', data.toString());
+      });
+    })
+}
+
+
 app.get('/search', async (req, res) => {
   const query = req.query.query; // assuming the search query is passed as a query parameter
 
-  // Perform the search in the Quick.db database
   const all = await db.all()
   const searchResult = all.filter(item => item.value.websiteData?.username.includes(query.toLowerCase()));
   let users = []
@@ -227,7 +265,7 @@ app.get('/checkAuth', (req, res) => {
 
 //API things
 
-app.get('/api/:userId', async (req, res) => {
+app.get('/api/user/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   if (await db.has(userId)) {

@@ -45,6 +45,9 @@ function autoReact(message) {
     if (message.content.toLowerCase() === 'a.vbucks') {
         message.reply(`https://media.discordapp.net/attachments/1092555277049528400/1183130044202225665/latest.png?ex=658736b8&is=6574c1b8&hm=67e834df2f164cd6f94990895f712a5b1f77877928f1068e36916ca2f27a3288&=&format=webp&quality=lossless&width=269&height=269`)
     }
+    if (message.content.toLowerCase().trim() === 'wawoo') {
+        message.channel.send(`:/()`)
+    }
 
 }
 

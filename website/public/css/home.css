@@ -1,12 +1,12 @@
 @font-face {
   font-family: 'Open Sans Bold'; /* Choose a name for your font family */
-  src: url('fonts/OpenSans-Bold.ttf') format('truetype'), /* Replace with your font file path */
+  src: url('/fonts/OpenSans-Bold.ttf') format('truetype'), /* Replace with your font file path */
   /* Add other font properties if needed, like font-weight or font-style */
 }
 
 @font-face {
   font-family: 'Open Sans'; /* Choose a name for your font family */
-  src: url('fonts/OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
+  src: url('/fonts/OpenSans-Regular.ttf') format('truetype'), /* Replace with your font file path */
   /* Add other font properties if needed, like font-weight or font-style */
 }
 

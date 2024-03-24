@@ -1,5 +1,9 @@
-2024-01-09T04:31:06.473Z - Uncaught Exception: Cannot read properties of null (reading 'messageId')
-TypeError: Cannot read properties of null (reading 'messageId')
-    at Object.addcategory (C:\agnabot-main\agnabot-main\commands\fun\addcategory.js:16:83)
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:182:26)
+2024-02-24T04:53:30.411Z - Uncaught Exception: Cannot read properties of undefined (reading 'description')
+TypeError: Cannot read properties of undefined (reading 'description')
+    at C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\MessagePayload.js:190:25
+    at Array.map (<anonymous>)
+    at MessagePayload.resolveBody (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\MessagePayload.js:188:45)
+    at TextChannel.send (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\interfaces\TextBasedChannel.js:149:32)
+    at Message.reply (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\Message.js:864:25)
+    at Object.balance (C:\agnabot-main\agnabot-main\commands\economy\balance.js:65:11)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

@@ -1,0 +1,112 @@
+@font-face {
+  font-family: 'Open Sans Bold';
+  src: url('../fonts/OpenSans-Bold.ttf') format('truetype'),
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src: url('../fonts/OpenSans-Regular.ttf') format('truetype'),
+}
+
+body {
+	background-color: var(--6);
+	display: flex;
+	margin: 0;
+	flex-direction: column;
+	box-sizing: border-box;
+	overflow-x: hidden;
+	color: var(--4);
+}
+
+:root {
+	--0: #151d17;
+	--1: #013222;
+	--2: #004D14;
+	--3: #046200;
+	--4: #F6F7F2;
+	--5: #E9EDE4;
+	--6: #E1E5DC;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+
+
+
+
+.container {
+	flex-direction: column;
+	display: flex;
+	align-items: center;
+}
+
+.top-container {
+	background-color: var(--2);
+	padding: 20px;
+}
+.title {
+	font-family: "Open Sans Bold";
+	margin: 10px;
+	text-align: center;
+	font-size: 150px;
+}
+.subtitle {
+	font-family: "Open Sans";
+	margin: 5px;
+	text-align: center;
+	font-size: 35px;
+}
+
+
+
+.wiadn-container {
+	background-color: var(--1);
+	display: flex;
+	align-items: center;
+	font-family: "Open Sans Bold";
+	width: 75vw;
+	margin: 50px;
+	padding: 25px;
+	border-radius: 20px;
+	box-shadow: 10px 10px 1px var(--2);
+}
+.wiadn-text {
+	display: flex;
+	flex-direction: column;
+	font-family: "Open Sans Bold";
+}
+#wiadnImage {
+	width: 250px;
+	background-color: var(--0);
+	border: 10px solid var(--2);
+	border-radius: 25%;
+}
+#wiadnHeader {
+	font-size: 130px;
+	margin: 0;
+	margin-left: 2vw;
+}
+#wiadnDescriptor {
+	font-size: 30px;
+	margin: 0;
+	margin-left: 2vw;
+}
+
+
+
+
+@media screen and (max-device-width: 800px) {
+
+.top-container {
+	background-color: var(--2);
+}
+
+}
