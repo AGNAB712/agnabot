@@ -19,6 +19,7 @@ const gTTS = require('gtts');
 const ffmpeg = require('fluent-ffmpeg');
 const lanugages = require('./languages.json')
 const { exec } = require('child_process');
+const dfpwm = require('dfpwm')
 
 const token = process.env.WEBSITETOKEN;
 const websiteauth = process.env.WEBSITEAUTH;
@@ -277,31 +278,18 @@ app.get('/api/tts', async (req, res) => {
     }
 })
 
+const encoder = new dfpwm.Encoder()
 async function convertMp3ToDFPWM(inputFile, res) {
-exec(`ffmpeg -y -i temp.mp3 -ac 1 -c:a dfpwm output.dfpwm -ar 48k`, (error, stdout, stderr) => {
-  console.log(error)
-  console.log(stderr)
-  if (error || stderr) return
-  console.log(stdout)
-  fs.readFile('./output.dfpwm', (err, data) => {
-    res.send(data)
-    console.log('Raw data:', data.toString());
-  });
-});
+ffmpeg(inputFile)
+  .outputOptions('-f s8') // specify 8-bit signed PCM format
+  .output('temp.pcm')
+  .on('end', () => {
+    const pcmData = fs.readFileSync('temp.pcm');
+    const dfpwmData = encoder.encode(pcmData)
+    res.send(dfpwmData)
+  })
+  .on('error', (err) => {
+    console.error('Error during conversion:', err);
+  })
+  .run();
 }
-
-app.get('/api/test', async (req, res) => {
-  exec('ffmpeg -version', (error, stdout, stderr) => {
-  if (error) {
-    res.send("no")
-    return;
-  }
-
-  if (stderr) {
-    res.send("no")
-    return;
-  }
-
-  res.send(stdout)
-});
-})
