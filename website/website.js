@@ -282,6 +282,9 @@ const encoder = new dfpwm.Encoder()
 async function convertMp3ToDFPWM(inputFile, res) {
 ffmpeg(inputFile)
   .outputOptions('-f s8') // specify 8-bit signed PCM format
+  .outputOptions('-ar 44100')
+  .outputOptions('-ac 1')
+  .outputOptions('-acodec pcm_s8')
   .output('temp.pcm')
   .on('end', () => {
     const pcmData = fs.readFileSync('temp.pcm');
