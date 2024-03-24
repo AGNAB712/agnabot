@@ -278,18 +278,16 @@ app.get('/api/tts', async (req, res) => {
 })
 
 async function convertMp3ToDFPWM(inputFile, res) {
-  ffmpeg(inputFile)
-    .audioCodec('dfpwm')
-    .audioFrequency(48000)
-    .audioChannels(1)
-    .format('dfpwm')
-    .save('./output.dfpwm')
-    .on('end', () => {
-      fs.readFile('./output.dfpwm', (err, data) => {
-        res.send(data)
-        //console.log('Raw data:', data.toString());
-      });
-    })
+exec(`ffmpeg -y -i temp.mp3 -ac 1 -c:a dfpwm output.dfpwm -ar 48k`, (error, stdout, stderr) => {
+  console.log(error)
+  console.log(stderr)
+  if (error || stderr) return
+  console.log(stdout)
+  fs.readFile('./output.dfpwm', (err, data) => {
+    res.send(data)
+    console.log('Raw data:', data.toString());
+  });
+});
 }
 
 app.get('/api/test', async (req, res) => {
