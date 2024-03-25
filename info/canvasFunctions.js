@@ -243,8 +243,12 @@ async function petImage(pet, id) {
   if (!pet.name) {return 'name'}
 
   //pet background
-  const background = await Canvas.loadImage(pet.background);
-  context.drawImage(background, 0, 0, canvas.width, canvas.height);
+  try {
+    const background = await Canvas.loadImage(pet.background);
+    context.drawImage(background, 0, 0, canvas.width, canvas.height);
+  } catch (e) {
+    return 'background'
+  }
 
   //pet marker thing
   const petMarker = await Canvas.loadImage('./images/petmarker.png');
@@ -269,8 +273,12 @@ async function petImage(pet, id) {
   }
 
   //pet image
-  const petImage = await Canvas.loadImage(pet.image);
-  context.drawImage(petImage, canvas.width / 1.99, canvas.height / 2.2, 200, 200);
+  try {
+    const petImage = await Canvas.loadImage(pet.image);
+    context.drawImage(petImage, canvas.width / 1.99, canvas.height / 2.2, 200, 200);
+  } catch (e) {
+    return 'image'
+  }
 
   //hunger bar text
   context.strokeStyle = 'black';

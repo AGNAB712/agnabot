@@ -351,9 +351,9 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
 
   if (customId === 'heal') {
   if (myPet.health + 50 >= 100) {
-  await db.set(`${id}.pet.health`, 100) 
+    await db.set(`${id}.pet.health`, 100) 
   } else {
-  await db.set(`${id}.pet.health`, myPet.health + 50) 
+    await db.set(`${id}.pet.health`, myPet.health + 50) 
   }
   await interaction.reply({
   content: `you healed ${myPet.name} CONGRATS!`,
@@ -363,14 +363,36 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
   }
 
   if (customId === 'revive') {
-  await db.set(`${id}.pet.health`, 25) 
-  await db.set(`${id}.pet.hunger`, 25) 
-  await db.set(`${id}.pet.affection`, 25) 
-  await interaction.reply({
-  content: `i hope you die soon`,
-  ephemeral: true
-  });
-  await db.set(id+'.a', parseInt(curbal) - 1000) 
+    await db.set(`${id}.pet.health`, 25) 
+    await db.set(`${id}.pet.hunger`, 25) 
+    await db.set(`${id}.pet.affection`, 25) 
+    await interaction.reply({
+      content: `i hope you die soon`,
+      ephemeral: true
+    });
+    await db.set(id+'.a', parseInt(curbal) - 1000)
+
+    let row = new ActionRowBuilder()
+
+    const feed = new ButtonBuilder()
+          .setCustomId('feed')
+          .setLabel('Feed (10 agnabucks)')
+          .setStyle(ButtonStyle.Secondary)
+          .setEmoji('1180752541097668708');
+
+    const play = new ButtonBuilder()
+          .setCustomId('play')
+          .setLabel('Play (Free)')
+          .setStyle(ButtonStyle.Secondary)
+          .setEmoji('1180752541097668708');
+
+    const heal = new ButtonBuilder()
+          .setCustomId('heal')
+          .setLabel('Give medicine (50 agnabucks)')
+          .setStyle(ButtonStyle.Secondary)
+          .setEmoji('1180752541097668708');
+    row.addComponents(feed, play, heal);
+    interaction.message.edit({ components: [row] })
   }
 
   

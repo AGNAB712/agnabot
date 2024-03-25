@@ -3,8 +3,19 @@ const { PermissionsBitField, EmbedBuilder, ButtonStyle, ButtonBuilder, ActionRow
 const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const db = new QuickDB();
+const fs = require("fs")
 const { petImage } = require('../../info/canvasFunctions.js')
 const { hasArtifact, isvalidhexcode } = require('../../info/generalFunctions.js')
+const { ImgurClient } = require('imgur');
+const imgurClient = new ImgurClient({ accessToken: process.env.IMGURTOKEN });
+
+async function uploadImage(url, username, type) {
+  const imgurResponse = await imgurClient.upload({
+    image: url,
+    title: `${username}'s pet ${type}`,
+  });
+  return imgurResponse.data.link
+}
 
 async function pet(message, args, bot, client) {
 try {
@@ -14,14 +25,20 @@ try {
   const caretaker = await hasArtifact(message.author.id, 'auraofthecaretaker')
   const shift = args.shift()
 
-  //console.log(myPet)
-
   if (command2 === 'buy') {
     return message.reply('**<:AgnabotX:1153460434691698719> ||** deprecated command, use the shop instead')
   }
   if (!myPet || myPet === 'null') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have a pet')}
 
   switch (command2) {
+
+case 'test':
+const imgurResponse = await imgurClient.upload({
+  image: fs.createReadStream('./images/balance.png'),
+  type: 'stream',
+});
+console.log(imgurResponse.data);
+break;
 
 case 'disown':
   await db.set(`${message.author.id}.pet`, 'null')
@@ -30,7 +47,8 @@ break;
 
 case 'image':
   saveUrl = message.attachments.first().proxyURL
-  await db.set(message.author.id+'.pet.image', saveUrl)
+  imgurLink = await uploadImage(saveUrl, message.author.username)
+  await db.set(message.author.id+'.pet.image', imgurLink, 'image')
   message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
 
@@ -45,7 +63,8 @@ break;
 
 case 'background':
     saveUrl = message.attachments.first().proxyURL
-    await db.set(message.author.id+'.pet.background', saveUrl)
+    imgurLink = await uploadImage(saveUrl, message.author.username)
+    await db.set(message.author.id+'.pet.background', imgurLink, 'background')
     message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
 
@@ -106,6 +125,7 @@ row.addComponents(revive);
   loadingMessage.delete()
   if (attachment === 'image') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you need to set an image for the pet first (a.pet image)')}
   if (attachment === 'name') {return message.reply('**<:AgnabotX:1153460434691698719> ||** you need to set an name for the pet first (a.pet name)')}
+  if (attachment === 'background') {return message.reply('**<:AgnabotX:1153460434691698719> ||** looks like your custom background got corrupted, you need to reset it')}
   const response = await message.reply({ content: `<:AgnabotPet:1180752541097668708> **||** ${message.author.username}'s pet`, files: [attachment], components: [row] })
 
 break;
