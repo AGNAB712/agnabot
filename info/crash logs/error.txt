@@ -1,11 +1,3 @@
-2024-03-25T15:26:25.753Z - Uncaught Exception: Invalid Form Body
-message_reference[REPLIES_UNKNOWN_MESSAGE]: Unknown message
-DiscordAPIError[50035]: Invalid Form Body
-message_reference[REPLIES_UNKNOWN_MESSAGE]: Unknown message
-    at handleErrors (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:722:13)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SequentialHandler.runRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1120:23)
-    at async SequentialHandler.queueRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:953:14)
-    at async _REST.request (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1266:22)
-    at async TextChannel.send (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\interfaces\TextBasedChannel.js:155:15)
-    at async Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:385:1)
+2024-03-29T20:32:36.061Z - Uncaught Exception: AttachmentBuilder is not defined
+ReferenceError: AttachmentBuilder is not defined
+    at PassThrough.<anonymous> (C:\agnabot-main\agnabot-main\commands\fun\furryspeechbubble.js:51:28)

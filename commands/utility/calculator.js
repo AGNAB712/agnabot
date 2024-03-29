@@ -5,6 +5,7 @@ const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const { hasArtifact, getRandomInt, isNumeric, validUserId } = require('../../info/generalFunctions.js')
 const { workArray } = require('../../info/agnabot_work_texts.js')
+const { evaluate } = require('mathjs')
 const db = new QuickDB();
 
 async function calculator(message, args, bot, client) {
@@ -16,7 +17,7 @@ async function calculator(message, args, bot, client) {
     let result = '';
 
     try {
-      result = eval(expression);
+      result = evaluate(expression);
       if (expression === '9 + 10' || expression === '9+10') {
         result = 21
       }

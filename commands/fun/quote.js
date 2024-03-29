@@ -103,10 +103,9 @@ try {
 
   const pngData = await canvas.encode('png')
   const image = await Jimp.read(pngData)
-  await image.color([{apply:'greyscale', params: [10]}])
-  .writeAsync('./images/quote.png');
+  const imageBuffer = await image.color([{apply:'greyscale', params: [10]}]).getBufferAsync(Jimp.MIME_PNG);
 
-  const attachment = new AttachmentBuilder('./images/quote.png', { name: 'quote.png' });
+  const attachment = new AttachmentBuilder(imageBuffer, { name: 'quote.png' });
   loadingMessage.delete()
   message.reply({ files: [attachment] });
     } catch (err) {

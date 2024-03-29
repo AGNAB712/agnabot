@@ -51,7 +51,8 @@ const client = new Discord.Client({ intents: [
   Discord.GatewayIntentBits.DirectMessages,
   ],
   partials: [Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction],
-  })
+  disableMentions: 'everyone'
+})
 
 const botArgs = {
   host: 'localhost',

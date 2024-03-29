@@ -1,3 +1,4 @@
+const { getRandomInt } = require('./generalFunctions.js')
 const cuss = ['FUCK','SHIT','BITCH']
 
 

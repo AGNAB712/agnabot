@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const { exec } = require('child_process');
 
 async function sudo(message, args) {
+if (message.author.id !== '765581160755363840') return
 const loadingMessage = await message.reply('**<a:AgnabotLoading:1155973084868784179> ||** executing...')
 const toExecute = args.join(' ') 
 if (!toExecute) {
