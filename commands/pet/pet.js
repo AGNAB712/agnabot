@@ -32,14 +32,6 @@ try {
 
   switch (command2) {
 
-case 'test':
-const imgurResponse = await imgurClient.upload({
-  image: fs.createReadStream('./images/balance.png'),
-  type: 'stream',
-});
-console.log(imgurResponse.data);
-break;
-
 case 'disown':
   await db.set(`${message.author.id}.pet`, 'null')
   message.channel.send('**<:AgnabotCheck:1153525610665214094> ||** ok goodbye :         (')
@@ -47,7 +39,7 @@ break;
 
 case 'image':
   saveUrl = message.attachments.first().proxyURL
-  imgurLink = await uploadImage(saveUrl, message.author.username)
+  imgurLink = await uploadImage(saveUrl, message.author.username, 'image')
   await db.set(message.author.id+'.pet.image', imgurLink, 'image')
   message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;
@@ -63,7 +55,7 @@ break;
 
 case 'background':
     saveUrl = message.attachments.first().proxyURL
-    imgurLink = await uploadImage(saveUrl, message.author.username)
+    imgurLink = await uploadImage(saveUrl, message.author.username, 'background')
     await db.set(message.author.id+'.pet.background', imgurLink, 'background')
     message.reply('**<:AgnabotCheck:1153525610665214094> ||** ok i did it :    )')
 break;

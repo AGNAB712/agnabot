@@ -32,12 +32,16 @@ async function balance(message, args, bot, client) {
   const variableValue = await db.get(userId+'.a');
   //message.reply(`their money is ${variableValue} agnabucks`);
 
-    } else { 
-  const attachment = await balanceImage(targetUser) 
-  const curbal = await db.get(targetUser.id+'.a')
-  balEmbed.setFooter({ text: `${curbal}` })
-  balEmbed.setTitle(`>---=${targetUser.username}'s balance=---<`)
-  message.reply({ embeds: [balEmbed], files: [attachment] })
+  } else { 
+    const attachment = await balanceImage(targetUser) 
+    if (attachment = "background") {
+      message.reply('Nuh uh buckaroo')
+      return
+    }
+    const curbal = await db.get(targetUser.id+'.a')
+    balEmbed.setFooter({ text: `${curbal}` })
+    balEmbed.setTitle(`>---=${targetUser.username}'s balance=---<`)
+    message.reply({ embeds: [balEmbed], files: [attachment] })
   }
 
   } else {

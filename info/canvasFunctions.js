@@ -175,7 +175,13 @@ async function balanceImage(mention) {
   let background = await Canvas.loadImage('./images/balance.png');
   
   if (!(!customBackground || customBackground === null)) {
-  background = await Canvas.loadImage(customBackground);
+
+  try {
+    background = await Canvas.loadImage(customBackground);
+  } catch (e) {
+    return 'background'
+  }
+
   }
   context.drawImage(background, 0, 0, canvas.width, canvas.height);
 
