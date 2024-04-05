@@ -34,10 +34,6 @@ async function balance(message, args, bot, client) {
 
   } else { 
     const attachment = await balanceImage(targetUser) 
-    if (attachment = "background") {
-      message.reply('Nuh uh buckaroo')
-      return
-    }
     const curbal = await db.get(targetUser.id+'.a')
     balEmbed.setFooter({ text: `${curbal}` })
     balEmbed.setTitle(`>---=${targetUser.username}'s balance=---<`)

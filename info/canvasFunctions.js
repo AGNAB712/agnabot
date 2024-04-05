@@ -165,25 +165,28 @@ function simplifyInteger(number) {
 
 async function balanceImage(mention) {
 
-    try {
 
   const customBackground = await db.get(mention.id+'.balimage')
 
   const canvas = Canvas.createCanvas(700, 250);
   const context = canvas.getContext('2d');
 
-  let background = await Canvas.loadImage('./images/balance.png');
+  let background
   
   if (!(!customBackground || customBackground === null)) {
 
   try {
     background = await Canvas.loadImage(customBackground);
+    context.drawImage(background, 0, 0, canvas.width, canvas.height);
   } catch (e) {
-    return 'background'
+    let background = await Canvas.loadImage('./images/balance.png');
+    context.drawImage(background, 0, 0, canvas.width, canvas.height);
   }
 
+  } else {
+    let background = await Canvas.loadImage('./images/balance.png');
+    context.drawImage(background, 0, 0, canvas.width, canvas.height);
   }
-  context.drawImage(background, 0, 0, canvas.width, canvas.height);
 
   context.strokeStyle = 'black';
   context.lineWidth = 10;
@@ -216,9 +219,8 @@ async function balanceImage(mention) {
   const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'balance.png' });
 
   return attachment;
-    } catch (err) {
-      console.error('Error occurred:', err);
-    }}
+
+}
 
 const applyText = (canvas, text, fontSize) => {
   //console.log(canvas)
