@@ -97,7 +97,7 @@ console.log(`logged in as ${client.user.tag}`);
 
   await loadSqlite(client, replit);
   await loadWebsite()
-  await deleteNonNumericIds()
+  //await deleteNonNumericIds()
   loadCurrentStatus(client);
   await updateCategoryName(client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(updateCategoryName, 600000, client.channels.cache.get('1092554907883683961'), replit); 
