@@ -16,6 +16,7 @@ trash: ['./images/fishing/fishables/plastic bag.png', './images/fishing/fishable
 common: ['./images/fishing/fishables/bass.png', './images/fishing/fishables/bluegill.png', './images/fishing/fishables/guppy.png'],
 rare: ['./images/fishing/fishables/axolotl.png', './images/fishing/fishables/dab.png', './images/fishing/fishables/starfish.png'],
 legendary: ['./images/fishing/fishables/banded shark.png', './images/fishing/fishables/golden tench.png', './images/fishing/fishables/sea spider.png'],
+artifacts: ['./images/fishing/artifacts/amuletofaquaboon.png', './images/fishing/artifacts/emeraldhelmet.png', './images/fishing/artifacts/elixiroftears.png']
 }
 
 const artifacts = {

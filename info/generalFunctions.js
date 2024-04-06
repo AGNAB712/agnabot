@@ -128,6 +128,13 @@ function isNumeric(str) {
          !isNaN(parseFloat(str)) 
 }
 
+const getSpaces = (text, spaces) => {
+  const howManySpaces = spaces - text.length
+  console.log(howManySpaces)
+  return "\ ".repeat(howManySpaces)
+}
+
+
 function objectPage(testmap, page) {
   let testEmbed = new EmbedBuilder()
     .setTitle('placeholder')
@@ -147,17 +154,10 @@ function objectPage(testmap, page) {
     if (!inventoryArray[i]) {description += ''} else {
 
     if (inventoryFormats.hasOwnProperty(inventoryArray[i])) {
-      if (typeof testmap[inventoryArray[i]] === 'object') {
-      description += inventoryArray.indexOf(inventoryArray[i]) + 1 + '. ' + inventoryFormats[inventoryArray[i]].replace("[count]", `${testmap[inventoryArray[i]].count} (${testmap[inventoryArray[i]].rarity})`);
-      } else {
-      description += inventoryArray.indexOf(inventoryArray[i]) + 1 + '. ' + inventoryFormats[inventoryArray[i]].replace("[count]", testmap[inventoryArray[i]]);
-    }
+      const myFormat = inventoryFormats[inventoryArray[i]]
+      description += `${(inventoryArray.indexOf(inventoryArray[i]) + 1)}. ${myFormat.emoji} \`${myFormat.title}:${getSpaces(myFormat.title, 20)+testmap[inventoryArray[i]]} - ${itemWorth[inventoryArray[i]]}ꬰ\`\n`;
     } else {
-      if (typeof testmap[inventoryArray[i]] === 'object') {
-        description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown Artifact (${inventoryArray[i]}):     ${testmap[inventoryArray[i]].count} (${testmap[inventoryArray[i]].rarity})\` \n`
-      } else {
-        description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
-      }
+      description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
     }
 
     }
@@ -180,6 +180,7 @@ const randomNum = getRandomInt(99) + 1
 
 let sum = 0;
 let index = 0;
+if (message.author.id === "765581160755363840") {index = 1000}
 while (sum + percents[index] < randomNum) {
   sum += percents[index];
   index++;
@@ -211,10 +212,10 @@ lootToDraw = fishingLootMap.legendary[getRandomInt(3)]
 color = '#fffc39'
 exp = 500
 } else {
-const newMessage = await giftArtifact(message)
-collected.update(newMessage)
-
-return
+type = 'artifacts';
+lootToDraw = fishingLootMap.artifacts[getRandomInt(3)]
+color = '#4c1b4c'
+exp = 1000
 }
 
 

@@ -24,15 +24,14 @@ async function sell(message, args, bot, client) {
       }
     }) 
     inventoryArray = inventoryArray.filter(n => n)
-    console.log(inventoryArray.filter(n => n))
+    console.log(inventoryArray)
     if (!inventory) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you have literally no shit you are poor as FUCK.')}
 
 
     if (isNaN(args[0])) {return message.reply('**<:AgnabotX:1153460434691698719> ||** thats not a Cool Number!')}
     const indexToSell = parseInt(args[0]) - 1
-    console.log(inventoryArray.length, indexToSell > inventoryArray.length)
     if (!indexToSell && !indexToSell == 0) {return message.reply('**<:AgnabotX:1153460434691698719> ||** i cant sell nothing stupid')}
-    if (indexToSell > inventoryArray.length) {return message.reply('**<:AgnabotX:1153460434691698719> ||** Womp womp')}
+    if (indexToSell > (inventoryArray.length - 1)) {return message.reply('**<:AgnabotX:1153460434691698719> ||** Womp womp')}
     if (indexToSell + 1 <= 0 ) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you are stupid')}
     if (typeof inventory[inventoryArray[indexToSell]] === 'object') {return message.reply('**<:AgnabotX:1153460434691698719> ||** cant sell artifacts')}
 

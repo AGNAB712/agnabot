@@ -13,16 +13,10 @@ async function loot(message, args, bot, client) {
 
     const playerID = message.author.id;
 
-    const helmet = await hasArtifact(playerID, 'emeraldhelmet')
-
     if (cooldowns3.has(playerID)) {
       const expirationTime = cooldowns3.get(playerID);
       const remainingTime = (expirationTime - Date.now()) / 1000;
       return message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
-    }
-
-    if (!helmet) {
-      return message.reply(`**<:AgnabotX:1153460434691698719> ARTIFACT ||** you don't have an emerald helmet equipped`);
     }
 
     await db.add(playerID+'.a', helmet[1]);

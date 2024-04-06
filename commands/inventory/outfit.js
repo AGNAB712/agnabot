@@ -1,3 +1,13 @@
+
+
+
+
+
+//DEPRECATED COMMAND
+
+
+
+
 const Discord = require('discord.js');
 const { PermissionsBitField, EmbedBuilder, AttachmentBuilder, ButtonStyle, ButtonBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js')
 const { exec } = require('child_process');

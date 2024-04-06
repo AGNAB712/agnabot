@@ -1,2 +1,6 @@
-2024-04-05T22:23:54.971Z - Uncaught Exception: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\background'
-Error: ENOENT: no such file or directory, stat 'C:\agnabot-main\agnabot-main\background'
+2024-04-05T23:03:39.383Z - Uncaught Exception: UNIQUE constraint failed: json.ID
+SqliteError: UNIQUE constraint failed: json.ID
+    at SqliteDriver.setRowByKey (C:\agnabot-main\agnabot-main\node_modules\quick.db\out\drivers\SqliteDriver.js:50:18)
+    at QuickDB.set (C:\agnabot-main\agnabot-main\node_modules\quick.db\out\index.js:111:32)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async C:\agnabot-main\agnabot-main\info\initFunctions.js:28:13

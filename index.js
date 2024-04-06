@@ -135,12 +135,7 @@ if (message.channel.id === minecraftchat?.id && !message.author.bot && replit) {
   const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
 }
 
-  const content = message.content.trim();
-  if (!isNaN(content) && parseInt(content) < 13 && parseInt(content) > 3) {
-    message.delete()
-      .then(() => console.log(`Deleted message: "${message.content}"`))
-      .catch((error) => console.error('Error while deleting message:', error));
-  }
+const content = message.content.trim();
 
 const lockdown = getGlobalVar("lockdown")
 
@@ -447,6 +442,7 @@ async function shutdown() {
   process.exit(0);}
 
 //agnab if you dont remember to switch this back i swear to god
+//who tf wrote this did i write this???? was it pirate??? was it me???? -agnab
 if (replit) {
 client.login(token);
 } else {

@@ -11,33 +11,33 @@ async function deleteNonNumericIds() {
   const mapKeys = allKeys.map(entry => entry.id);
 
   mapKeys.forEach(async (key) => {
-    if (isNaN(key)) {
-    if (key.startsWith('children_')) {
-      const id = key.substring(9)
-      const childrenAmount = await db.get(key)
-      await db.set(id+'.children', childrenAmount)
-        await db.delete(key);
-      return;
+    console.log(key)
+    const theGuyStuff = await db.get(key)
+    let compensation = 0;
+
+    if (theGuyStuff?.inv) {
+      const inventoryStuff = Object.keys(theGuyStuff?.inv) 
+      inventoryStuff.forEach(async (me, i) => {
+
+        const theThingToCheck = theGuyStuff.inv[me]
+        if (typeof theThingToCheck === "object") {
+          console.log("Deleted:", me)
+          if (theThingToCheck?.rarity) {
+            compensation = compensation + theThingToCheck.rarity.length
+            console.log("compensation", compensation)
+          }
+          delete theGuyStuff.inv[me]
+        }
+
+      })
+
+      theGuyStuff.inv.artifacts = compensation
+    };
+
+    if (theGuyStuff?.outfit) {
+      delete theGuyStuff.outfit
     }
-    if (key.startsWith('pet_')) {
-      const id = key.substring(4)
-      const childrenAmount = await db.get(key)
-      await db.set(id+'.pet', childrenAmount)
-      await db.delete(key);
-      return;
-    }
-    if (key.startsWith('hotel_')) {
-      const id = key.substring(6)
-      const childrenAmount = await db.get(key)
-      await db.set(id+'.hotel', childrenAmount)
-        await db.delete(key);
-      return;
-    }
-    if (key === 'category') {return}
-    if (key === 'furryIndex') {return}
-      await db.delete(key);
-      console.log(`Deleted non-numeric entry with key: ${key}`);
-    }
+    await db.set(key, theGuyStuff)
   });
 
 }

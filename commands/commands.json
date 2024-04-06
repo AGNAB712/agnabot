@@ -226,35 +226,10 @@
       "description": "proposes to someone (requires wedding ring)",
       "syntax": "a.marry (mention)"
     },
-    "equip": {
-      "category": "inventory",
-      "description": "equips an artifact",
-      "syntax": "a.equip"
-    },
-    "outfitreset": {
-      "category": "inventory",
-      "description": "unequips all your artifacts",
-      "syntax": "a.outfitreset"
-    },
-    "outfit": {
-      "category": "inventory",
-      "description": "shows you the artifacts you have equipped",
-      "syntax": "a.outfit"
-    },
     "sell": {
       "category": "inventory",
       "description": "sells an item from your inventory",
       "syntax": "a.sell (index in inventory) (amount)"
-    },
-    "trade": {
-      "category": "inventory",
-      "description": "trades something with another user",
-      "syntax": "a.trade"
-    },
-    "inspect": {
-      "category": "inventory",
-      "description": "inspect an artifact",
-      "syntax": "a.inspect (index of artifact in inventory)"
     },
     "help": {
       "category": "utility",

@@ -22,7 +22,6 @@ try {
   const myPet = await db.get(`${message.author.id}.pet`)
   const command2 = args[0]
   const curbal = await db.get(message.author.id+'.a')
-  const caretaker = await hasArtifact(message.author.id, 'auraofthecaretaker')
   const shift = args.shift()
 
   if (command2 === 'buy') {
@@ -61,7 +60,6 @@ case 'background':
 break;
 
 case 'color':
-  if (!caretaker) {return}
   const hex = args[0]
   if (!hex) {return message.reply('**<:AgnabotX:1153460434691698719> ||** come on give me a hex')}
   if (!isvalidhexcode(hex)) {return message.reply('**<:AgnabotX:1153460434691698719> ||** not a valid hex code')}
@@ -71,7 +69,6 @@ case 'color':
 break;
 
 case 'subtitle':
-  if (!caretaker) {return}
   const subtitle = args.join(' ')
   if (!subtitle) {return message.reply('**<:AgnabotX:1153460434691698719> ||** come on give me a subtitle')}
   if (subtitle.length >= 25) {return message.reply('**<:AgnabotX:1153460434691698719> ||** shorter subtitle please :       )')}
