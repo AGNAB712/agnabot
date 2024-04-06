@@ -240,7 +240,7 @@ async function petImage(pet, id) {
 
   const canvas = Canvas.createCanvas(600, 400);
   const context = canvas.getContext('2d');
-  const caretaker = await hasArtifact(id, 'auraofthecaretaker')
+  const caretaker = true
   let color = '#235218'
   if (pet.hex && caretaker) {
   color = '#'+pet.hex
