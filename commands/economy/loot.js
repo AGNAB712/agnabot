@@ -19,13 +19,13 @@ async function loot(message, args, bot, client) {
       return message.reply(`**<:AgnabotX:1153460434691698719> COOLDOWN ||** ${remainingTime.toFixed(1)} seconds left`);
     }
 
-    await db.add(playerID+'.a', helmet[1]);
+    await db.add(playerID+'.a', 200);
 
     const embed = new EmbedBuilder()
       .setColor('#235218')
       .setTitle('>---=**LOOT**=---<')
       .setDescription(`
-      **<:AgnabotCheck:1153525610665214094> +${helmet[1]} ||**  Lootylicious`)
+      **<:AgnabotCheck:1153525610665214094> +${200} ||**  Lootylicious`)
       .setFooter({ text: `your money is now ${await db.get(playerID+'.a')}`})
 
       message.reply({ embeds: [embed] })
