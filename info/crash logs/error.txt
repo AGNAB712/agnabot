@@ -1,5 +1,16 @@
-2024-04-06T00:21:23.972Z - Uncaught Exception: helmet is not defined
-ReferenceError: helmet is not defined
-    at Object.loot (C:\agnabot-main\agnabot-main\commands\economy\loot.js:22:33)
-    at Client.<anonymous> (C:\agnabot-main\agnabot-main\index.js:178:26)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-04-11T19:08:00.854Z - Uncaught Exception: Unexpected end of input
+C:\agnabot-main\agnabot-main\commands\economy\donate.js:44
+module.exports = donate
+                       
+
+SyntaxError: Unexpected end of input
+    at internalCompileFunction (node:internal/vm:77:18)
+    at wrapSafe (node:internal/modules/cjs/loader:1288:20)
+    at Module._compile (node:internal/modules/cjs/loader:1340:27)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+    at Module.load (node:internal/modules/cjs/loader:1207:32)
+    at Module._load (node:internal/modules/cjs/loader:1023:12)
+    at Module.require (node:internal/modules/cjs/loader:1235:19)
+    at require (node:internal/modules/helpers:176:18)
+    at C:\agnabot-main\agnabot-main\index.js:35:26
+    at C:\agnabot-main\agnabot-main\info\generalFunctions.js:68:5

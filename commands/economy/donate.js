@@ -35,7 +35,7 @@ async function donate(message, args, bot, client) {
         .setColor('#235218')
         .setTitle('>---=**DONATION**=---<')
         .setDescription(`**<:AgnabotCheck:1153525610665214094> ||** donated ${args[1]} to ${targetUser.username}`)
-        .setFooter({ text: `your money is now ${await db.get(message.author.id+'.a')}` })
+        .setFooter({ text: `your money is now ${await db.get(message.author.id+'.a')} || their money is now ${await db.get(userId+'.a')}` })
 
 	message.channel.send({ embeds: [embed] });
 

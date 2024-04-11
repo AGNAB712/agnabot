@@ -281,7 +281,7 @@ app.get('/api/tts', async (req, res) => {
 const encoder = new dfpwm.Encoder()
 async function convertMp3ToDFPWM(inputFile, res) {
 ffmpeg(inputFile)
-  .outputOptions('-f s8') // specify 8-bit signed PCM format
+  .outputOptions('-f s8')
   .outputOptions('-ar 44100')
   .outputOptions('-ac 1')
   .outputOptions('-acodec pcm_s8')
