@@ -7,3 +7,5 @@ data.json
 /temp.mp3
 /output.dfpwm
 /.vs
+.replit
+replit.nix
