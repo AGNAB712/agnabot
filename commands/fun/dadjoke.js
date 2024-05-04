@@ -39,7 +39,7 @@ if (dadjoke.status !== 200) {
 dadEmbed.setDescription(`${dadjoke.joke}`)
 dadEmbed.setFooter({ text: `joke id: ${dadjoke.id}` })
 
-let jokeScore = await db.get(`jokes.${dadjoke.id}`) 
+let jokeScore = await db.get(`scores.${dadjoke.id}`) 
 if (!jokeScore) {
   await db.set(`jokes.${dadjoke.id}`, { 
     score: 0,

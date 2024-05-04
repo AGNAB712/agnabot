@@ -1,10 +1,7 @@
-2024-05-04T02:25:04.637Z - Uncaught Exception: Invalid Form Body
-components[0].components[BASE_TYPE_BAD_LENGTH]: Must be between 1 and 5 in length.
-DiscordAPIError[50035]: Invalid Form Body
-components[0].components[BASE_TYPE_BAD_LENGTH]: Must be between 1 and 5 in length.
-    at handleErrors (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:722:13)
+2024-05-04T03:04:26.119Z - Uncaught Exception: Received one or more errors
+Error: Received one or more errors
+    at _UnionValidator.handle (C:\agnabot-main\agnabot-main\node_modules\@sapphire\shapeshift\dist\cjs\index.cjs:1854:23)
+    at _UnionValidator.parse (C:\agnabot-main\agnabot-main\node_modules\@sapphire\shapeshift\dist\cjs\index.cjs:939:90)
+    at EmbedBuilder.setImage (C:\agnabot-main\agnabot-main\node_modules\@discordjs\builders\dist\index.js:343:23)
+    at Object.inspiro (C:\agnabot-main\agnabot-main\commands\fun\inspiro.js:17:14)
     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async SequentialHandler.runRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1120:23)
-    at async SequentialHandler.queueRequest (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:953:14)
-    at async _REST.request (C:\agnabot-main\agnabot-main\node_modules\@discordjs\rest\dist\index.js:1266:22)
-    at async TextChannel.send (C:\agnabot-main\agnabot-main\node_modules\discord.js\src\structures\interfaces\TextBasedChannel.js:155:15)

@@ -265,6 +265,11 @@
       "category": "fun",
       "description": "gets a random dad joke from icanhazdadjoke.com's api",
       "syntax": "a.dadjoke"
+    },
+    "inspiro": {
+      "category": "fun",
+      "description": "generates a VERY inspiring image",
+      "syntax": "a.inspiro"
     }
   },
   "aliases": {
@@ -285,6 +290,9 @@
     "fsb": "furryspeechbubble",
     "calc": "calculator",
     "websitebackground": "websitebg",
-    "bt": "badtranslate"
+    "bt": "badtranslate",
+    "inspirobot": "inspiro",
+    "inspire": "inspiro",
+    "inspirational": "inspiro"
   }
 }
