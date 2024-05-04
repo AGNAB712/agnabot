@@ -321,6 +321,10 @@ async function updateDatabase(client) {
   });
 }
 
+function commas(n) {
+    return n.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") //thanks stack overflow
+}
+
 module.exports = {
-  getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase
+  getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase, commas
 }

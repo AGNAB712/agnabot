@@ -71,7 +71,7 @@ setGlobalVar('lockdown', false)
 let minecraftchat
 let replit = true;
 let replitText = 'error';
-if (!(os.hostname() === 'agnabs-computer')) {
+if (process.env.PM2_HOME) {
 replit = true;
 replitText = 'strats sent this'
 } else {
@@ -84,10 +84,6 @@ let drive
 //ready stuff
 client.on('ready', async () => {
 
-minecraftchat = await client.channels.cache.get('1159952276882997309')
-if (await isMinecraftOnline()) {
-  bot = await createMinecraftBot(bot);
-}
 if (replit) {
     console.log("hi strats");
 } else {
@@ -96,8 +92,7 @@ if (replit) {
 console.log(`logged in as ${client.user.tag}`);
 
   await loadSqlite(client, replit);
-  await loadWebsite()
-  //await deleteNonNumericIds()
+  //await loadWebsite()
   loadCurrentStatus(client);
   await updateCategoryName(client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(updateCategoryName, 600000, client.channels.cache.get('1092554907883683961'), replit); 
@@ -105,13 +100,13 @@ console.log(`logged in as ${client.user.tag}`);
   setInterval(updatePets, 300000);
   setInterval(checkMinecraftServer, 300000)
   setInterval(forceSaveSqlite, 300000, client, replit);
-  setInterval(loadWebsite, 300000);
+  //setInterval(loadWebsite, 300000);
   setInterval(function() {
-  var now = new Date();
-  var minutes = now.getMinutes();
-  if (minutes === 30) {
-  payPets();
-  }
+    const now = new Date();
+    const minutes = now.getMinutes();
+    if (minutes === 30) {
+      payPets();
+    }
   }, 60000);
 
 const auth = new google.auth.GoogleAuth({
@@ -119,8 +114,6 @@ const auth = new google.auth.GoogleAuth({
   scopes: ['https://www.googleapis.com/auth/drive.readonly']
 });
 drive = google.drive({ version: 'v3', auth: auth });
-
-//await runNgrok()
  
 });
 
@@ -308,6 +301,60 @@ interaction.update({ embeds: [updatedWhitelistEmbed], components: [] })
     interaction.update({ embeds: [newEmbed], components: [row] })
     }
   }
+  if (customId === 'dadgood') {
+    const repliedMessage = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId)
+    const embeds = interaction.message.embeds
+    const theGoodEmbed = embeds[0]
+    const jokeId = theGoodEmbed.footer.text.substr(9)
+    
+    const joke = await db.get(`jokes.${jokeId}`)
+    if (!joke) return
+    if (joke.gooded.includes(interaction.user.id)) return await interaction.reply({
+      content: 'you are cooked little bro',
+      ephemeral: true
+    });
+    joke.score++
+    joke.gooded.push(interaction.user.id)
+    if (joke.baded.includes(interaction.user.id)) {
+      const index = joke.baded.indexOf(interaction.user.id)
+      joke.baded.splice(index, 1)
+      joke.score++
+    }
+    await db.set(`jokes.${jokeId}`, joke)
+    await interaction.reply({
+      content: `the joke's score is now ${joke.score}`,
+      ephemeral: true
+    });
+
+    interaction.message.edit({ content: `**<:AgnabotCheck:1153525610665214094> ||** joke score: ${joke.score}` })
+  }
+  if (customId === 'dadsucks') {
+    const repliedMessage = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId)
+    const embeds = interaction.message.embeds
+    const theGoodEmbed = embeds[0]
+    const jokeId = theGoodEmbed.footer.text.substr(9)
+    
+    const joke = await db.get(`jokes.${jokeId}`)
+    if (!joke) return
+    if (joke.baded.includes(interaction.user.id)) return await interaction.reply({
+      content: 'you are cooked little bro',
+      ephemeral: true
+    });
+    joke.score--
+    joke.baded.push(interaction.user.id)
+    if (joke.gooded.includes(interaction.user.id)) {
+      const index = joke.gooded.indexOf(interaction.user.id)
+      joke.gooded.splice(index, 1)
+      joke.score--
+    }
+    await db.set(`jokes.${jokeId}`, joke)
+    await interaction.reply({
+      content: `the joke's score is now ${joke.score}`,
+      ephemeral: true
+    });
+
+    interaction.message.edit({ content: `**<:AgnabotCheck:1153525610665214094> ||** joke score: ${joke.score}` })
+  }
   if (!(customId === 'feed' || customId === 'play' || customId === 'heal' || customId === 'revive') || !interaction.message.mentions.users.first().id) {return}
   //console.log(interaction.message.mentions.users.first().id)
   const id = interaction.user.id
@@ -420,21 +467,18 @@ process.on('uncaughtException', async (err) => {
   if (lastmessage) {
     lastmessage.channel.send({ content: '**<:AgnabotError:1179991823352090644> || error occured**', embeds: [errorEmbed] })
   }
-  //process.exit(1);
 });
 
 process.on('SIGINT', () => {
-  // Call the async shutdown function and handle any errors
   shutdown().catch(err => {
     console.error('Error during shutdown:', err);
-    process.exit(1); // Exit with a non-zero status code to indicate an error
+    process.exit(1);
   });});
 
 process.on('SIGTERM', () => {
-  // Call the async shutdown function and handle any errors
   shutdown().catch(err => {
     console.error('Error during shutdown:', err);
-    process.exit(1); // Exit with a non-zero status code to indicate an error
+    process.exit(1);
   });});
 
 async function shutdown() {

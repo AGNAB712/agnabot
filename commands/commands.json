@@ -246,6 +246,11 @@
       "description": "sets a user's something to something\nDO NOT USE THIS IF YOU DO NOT KNOW WHAT YOU'RE DOING",
       "syntax": "a.setvalue (user id)(.value) (item to set)"
     },
+    "getvalue": {
+      "category": "admin",
+      "description": "gets a value from the db",
+      "syntax": "a.getvalue (value)"
+    },
     "loadwebsite": {
       "category": "admin",
       "description": "loads the sqlite for agnabot's website manually",
@@ -255,6 +260,11 @@
       "category": "fun",
       "description": "translates something 100 times and then gives back the answer\nits kinda slow (sorry)",
       "syntax": "a.badtranslate (text)"
+    },
+    "dadjoke": {
+      "category": "fun",
+      "description": "gets a random dad joke from icanhazdadjoke.com's api",
+      "syntax": "a.dadjoke"
     }
   },
   "aliases": {

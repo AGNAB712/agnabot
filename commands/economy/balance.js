@@ -3,7 +3,7 @@ const { PermissionsBitField, EmbedBuilder, AttachmentBuilder } = require('discor
 const { exec } = require('child_process');
 const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
-const { hasArtifact, getRandomInt } = require('../../info/generalFunctions.js')
+const { hasArtifact, getRandomInt, commas } = require('../../info/generalFunctions.js')
 const { balanceImage } = require('../../info/canvasFunctions.js')
 const { workArray } = require('../../info/agnabot_work_texts.js')
 const db = new QuickDB();
@@ -60,7 +60,7 @@ async function balance(message, args, bot, client) {
     } else { 
   const attachment = await balanceImage(targetUser) 
   const curbal = await db.get(targetUser.id+'.a')
-  balEmbed.setFooter({ text: `${curbal}` })
+  balEmbed.setFooter({ text: `${commas(curbal)}` })
   balEmbed.setTitle(`>---=<  ${targetUser.username}'s balance  >=---<`)
   message.reply({ embeds: [balEmbed], files: [attachment] })
   }

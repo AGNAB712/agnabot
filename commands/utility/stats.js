@@ -12,7 +12,7 @@ const db = new QuickDB();
 const cooldowns = new Map()
 
 async function stats(message, args, bot, client) {
-/*let hasBonus = '❌ \n*(get this with agnab premium, adds a +25% bonus to a.work)*'
+let hasBonus = '❌ \n*(get this with agnab premium, adds a +25% bonus to a.work)*'
 if (message.member.roles.cache.some(role => role.name === 'AGNAB Premium')) {
 hasBonus = '✅'
 }
@@ -26,7 +26,7 @@ isMarried = `✅ (married to ${client.users.fetch(await db.get(message.author.id
 }
 
 let petText = 'you dont have a pet'
-const myPet = await db.get('pet_' + message.author.id)
+const myPet = await db.get(message.author.id+'.pet')
 if (myPet && myPet !== 'null') {
 var now = new Date();
 petText = 
@@ -99,10 +99,7 @@ ${minecraftText}
 
 `)
 
-message.reply({ embeds: [statEmbed], content: 'this will soon be replaced with a website, so sorry for any bugs at the moment' })*/
-
-const url = await getGlobalVar('url')
-message.reply(`${url}/agnabot/${message.author.id}`)
+message.reply({ embeds: [statEmbed], content: 'this will "soon" be replaced with a website, so sorry for any bugs/innacuracies at the moment' })
 }
 
 module.exports = stats
