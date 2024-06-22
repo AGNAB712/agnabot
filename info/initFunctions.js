@@ -5,6 +5,8 @@ const { getGlobalVar, setGlobalVar } = require('./editGlobalJson.js')
 const { hasArtifact, getRandomInt } = require('./generalFunctions.js')
 const fs = require('fs');
 const token = process.env.WEBSITEAUTH;
+const CharacterAI = require("node_characterai");
+const characterAI = new CharacterAI();
 
 async function deleteNonNumericIds() {
   const allKeys = await db.all()

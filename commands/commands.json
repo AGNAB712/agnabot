@@ -270,6 +270,26 @@
       "category": "fun",
       "description": "generates a VERY inspiring image",
       "syntax": "a.inspiro"
+    },
+    "chai": {
+      "category": "fun",
+      "description": "character ai for agnabot",
+      "syntax": "a.chai (text)"
+    },
+    "resetchai": {
+      "category": "admin",
+      "description": "resets character ai just in case it gets freaky",
+      "syntax": "a.resetchai"
+    },
+    "switchchai": {
+      "category": "admin",
+      "description": "switches current chai personality",
+      "syntax": "a.switchchai"
+    },
+    "addchai": {
+      "category": "admin",
+      "description": "adds a custom chai personality from id",
+      "syntax": "a.addchai"
     }
   },
   "aliases": {
@@ -293,6 +313,9 @@
     "bt": "badtranslate",
     "inspirobot": "inspiro",
     "inspire": "inspiro",
-    "inspirational": "inspiro"
+    "inspirational": "inspiro",
+    "chaireset": "resetchai",
+    "chaiswitch": "switchchai",
+    "chaiadd": "addchai"
   }
 }

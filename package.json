@@ -34,6 +34,8 @@
     "mathjs": "^12.4.1",
     "mineflayer": "^4.14.0",
     "mineflayer-death-event": "^1.0.0",
+    "node_characterai": "^1.2.7",
+    "node-character.ai-2": "^1.2.0",
     "node-fetch": "^2.7.0",
     "node-mcstatus": "^1.1.0",
     "passport": "^0.4.0",

@@ -1,7 +1,0 @@
-2024-05-04T03:04:26.119Z - Uncaught Exception: Received one or more errors
-Error: Received one or more errors
-    at _UnionValidator.handle (C:\agnabot-main\agnabot-main\node_modules\@sapphire\shapeshift\dist\cjs\index.cjs:1854:23)
-    at _UnionValidator.parse (C:\agnabot-main\agnabot-main\node_modules\@sapphire\shapeshift\dist\cjs\index.cjs:939:90)
-    at EmbedBuilder.setImage (C:\agnabot-main\agnabot-main\node_modules\@discordjs\builders\dist\index.js:343:23)
-    at Object.inspiro (C:\agnabot-main\agnabot-main\commands\fun\inspiro.js:17:14)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)

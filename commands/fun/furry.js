@@ -27,38 +27,26 @@ async function furry(message, args, bot, client, drive) {
     const randomFile = files.data.files[currentIndex];
 
     const waitMessage = await message.channel.send('**<a:AgnabotLoading:1155973084868784179> ||** Downloading...')
-    const filePath = `./info/furryTemp/${randomFile.name}`;
-    const dest = fs.createWriteStream(filePath);
-    await drive.files.get(
-      { fileId: randomFile.id, alt: 'media' },
-      { responseType: 'stream' }
-    ).then(res => {
-      return new Promise((resolve, reject) => {
-        res.data
-          .on('end', () => {
-            console.log(`downloaded ${randomFile.name} from Google Drive.`);
-            resolve();
-          })
-          .on('error', err => {
-            console.error(`error downloading file from Google Drive: ${err}`);
-            reject(err);
-          })
-          .pipe(dest);
-      });
+    const response = await drive.files.get({ fileId: randomFile.id, alt: "media" }, { responseType: "stream" });
+    const buffers = [];
+    response.data.on("data", chunk => buffers.push(chunk));
+    response.data.on("end", async () => {
+      waitMessage.delete();
+      const furryBuffer = Buffer.concat(buffers);
+
+      const attachment = new AttachmentBuilder(furryBuffer, { name: 'furry.png' })
+
+      const embed = new EmbedBuilder()
+        .setURL(`https://drive.google.com/file/d/${randomFile.id}/view`)
+        .setTitle(`-= FURRY =-`)
+        .setImage(`attachment://furry.png`)
+        .setColor('#235218')
+        .setFooter({ text: `index: ${currentIndex}` });
+
+      await message.channel.send({ files: [attachment], embeds: [embed] });
     });
 
-    const attachment = new AttachmentBuilder(`./info/furryTemp/${randomFile.name}`, { name: 'furry.png' })
 
-    const embed = new EmbedBuilder()
-      .setURL(`https://drive.google.com/file/d/${randomFile.id}/view`)
-      .setTitle(`-= FURRY =-`)
-      .setImage(`attachment://furry.png`)
-      .setColor('#235218')
-      .setFooter({ text: `index: ${currentIndex}` });
-
-    waitMessage.delete()
-    await message.channel.send({ files: [attachment], embeds: [embed] });
-    fs.unlinkSync(filePath);
 }
 
 module.exports = furry

@@ -34,15 +34,24 @@ async function addcategory(message, args, bot, client) {
 
     const sentMessage = await message.channel.send({ embeds: [categoryEmbed] });
     await sentMessage.react('1153525610665214094');
+    await sentMessage.react('1153460434691698719');
 
-    const filter = (reaction, user) => reaction.emoji.name === '1153525610665214094' && !user.bot;
+    const filter = (reaction, user) => !user.bot;
     const collector = sentMessage.createReactionCollector(filter, { time: 60000 });
 
     collector.on('collect', async (reaction) => {
-      if (reaction.count === 5) {
+      if (reaction.count === 5 && reaction.id === '1153525610665214094') {
         await db.push('category', categoryName);
-        message.channel.send(`**<:AgnabotCheck:1153525610665214094> ||** category "${categoryName}" has been added.`);
+        const categories = await db.get('category')
+        message.channel.send(`**<:AgnabotCheck:1153525610665214094> ||** category "${categoryName}" has been added. (category number **${categories.length+1}**)`);
         collector.stop();
+        sentMessage.delete();
+      }
+      if (reaction.count === 5 && reaction.id === '1153460434691698719') {
+        await db.push('category', categoryName);
+        message.channel.send(`**<:AgnabotCheck:1153460434691698719> ||** category "${categoryName}" has NOT. been added.`);
+        collector.stop();
+        sentMessage.delete()
       }
     });
 }
