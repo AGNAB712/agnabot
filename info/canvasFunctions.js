@@ -6,6 +6,7 @@ const { request } = require('undici');
 const fishingJs = require('./fishing.js')
 
 Canvas.GlobalFonts.registerFromPath('./fonts/FiraSansCondensed-Bold.ttf', 'fira')
+Canvas.GlobalFonts.registerFromPath('./fonts/segoe-ui-emoji.ttf', 'Segoe UI Emoji')
 
 //canvasfunctions wouldn't recognize these two functions in general functions for some reason????? thanks node js
 function getRandomInt(max) {
