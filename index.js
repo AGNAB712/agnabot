@@ -9,7 +9,6 @@ const db = new QuickDB();
 //require misc functions
 const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
-const { sendMinecraftChat, createMinecraftBot, checkMinecraftServer, isMinecraftOnline } = require('./info/minecraftFunctions.js')
 const { getTextUntilDelimiter, isvalidhexcode, readJSONFile, parseDuration, durationToMilliseconds, formatDuration, updateCategoryName, hasArtifact, getRandomInt, validUserId, isNumeric, objectPage, fishingLoot, percentify, updateDatabase } = require('./info/generalFunctions.js')
 const { saveSqlite, forceSaveSqlite, loadSqlite, loadCurrentStatus, doChildLabor, updatePets, payPets, deleteNonNumericIds, deprivePets, loadWebsite } = require('./info/initFunctions.js')
 const { marriageImage, podium, fetchProfilePicture, balance, petImage } = require('./info/canvasFunctions.js')
@@ -98,7 +97,6 @@ console.log(`logged in as ${client.user.tag}`);
   setInterval(updateCategoryName, 600000, client.channels.cache.get('1092554907883683961'), replit); 
   setInterval(doChildLabor, 300000);
   setInterval(updatePets, 300000);
-  setInterval(checkMinecraftServer, 300000)
   setInterval(forceSaveSqlite, 300000, client, replit);
   //setInterval(loadWebsite, 300000);
   setInterval(function() {

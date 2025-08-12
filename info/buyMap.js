@@ -12,6 +12,7 @@ const buyArray =
 { label: 'Child labor', description: '[money] AGNABUCKS \n(one agnabuck every 5 minuto per level)', value: 'child', emoji: '🚸' }, 
 { label: 'Wedding ring', description: '10,000 AGNABUCKS \n(you can propose to someone Yipee)', value: 'ring', emoji: '💍' },
 { label: 'Avacado', description: '100,000 AGNABUCKS (literally just an avacado)', value: 'avacado', emoji: '1155948289305362542' },
+{ label: 'Dungeon Key', description: '5,000 AGNABUCKS \n(allows one dungeon run)', value: 'dungeonkey', emoji: '1254915382129590362' }
 ]
 
 const inventoryFormats = {
@@ -22,6 +23,10 @@ const inventoryFormats = {
 	rare: { emoji: "\<:rare:1165126462622416937>", title: "Rare fish" },
 	legendary: { emoji: "\<:legendary:1165126464782487632>", title: "Legendary fish" },
 	artifacts: { emoji: "\<:legendary:1165126464782487632>", title: "Artifacts" },
+	gold: { emoji: "\<:gold_treasure:1258133707043373076>", title: "Gold Treasure" },
+	copper: { emoji: "\<:copper_treasure:1258133703742193756>", title: "Copper Treasure" },
+	silver: { emoji: "\<:silver_treasure:1258133709517750354>", title: "Silver Treasure" },
+	dungeonkeys: { emoji: "\<:dungeonkey:1254915382129590362>", title: "Dungeon Key" },
 }
 
 const itemWorth = {
@@ -31,7 +36,11 @@ const itemWorth = {
 	common: 500,
 	rare: 2500,
 	legendary: 5000,
-	artifacts: 10000
+	artifacts: 10000,
+	gold: 2500,
+	copper: 100,
+	silver: 1000,
+	dungeonkeys: 5000
 }
 
 module.exports = {

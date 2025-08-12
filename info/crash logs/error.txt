@@ -1,0 +1,5 @@
+2025-08-12T20:49:29.231Z - Uncaught Exception: Authentication token is invalid
+Error: Authentication token is invalid
+    at Client.authenticateWithToken (C:\agnabot\node_modules\node_characterai\client.js:235:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async createClient (C:\agnabot\commands\chaiMaster.js:21:2)

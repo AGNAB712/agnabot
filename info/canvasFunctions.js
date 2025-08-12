@@ -208,8 +208,10 @@ async function balanceImage(mention) {
 
   context.strokeRect(25, 25, 200, 200);
 
+  console.log(mention.displayAvatarURL({ extension: 'png' }))
+
   const { body } = await request(mention.displayAvatarURL({ extension: 'png' }));
-  const avatar = await Canvas.loadImage(await body.arrayBuffer());
+  const avatar = await Canvas.loadImage(mention.displayAvatarURL({ extension: 'png' }));
   context.drawImage(avatar, 25, 25, 200, 200);
 
   context.strokeStyle = 'white';

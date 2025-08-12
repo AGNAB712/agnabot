@@ -6,17 +6,16 @@ const { getGlobalVar, setGlobalVar } = require('../info/editGlobalJson.js')
 const { hasArtifact, getRandomInt, isNumeric } = require('../info/generalFunctions.js')
 const { workArray } = require('../info/agnabot_work_texts.js')
 const db = new QuickDB();
-const CharacterAI = require("node_characterai");
+/*const CharacterAI = require("node_characterai");
 
 const hotelChats = {
 	'1158209246706532432': null
 }
 
-console.log('why is this not working')
-
 let chat;
+let characterAI
 async function createClient(hotelId) {
-	const characterAI = new CharacterAI();
+	characterAI = new CharacterAI();
 	await characterAI.authenticateWithToken(process.env.CHAITOKEN);
 	if (!hotelId) {
 		chat = await characterAI.createOrContinueChat('Ak08oJrzr9zQy5901bKpVbeIv68HEEM5mj9uLMk9rCw');
@@ -34,20 +33,20 @@ async function createClient(hotelId) {
 
 
 
-createClient(false)
-createClient('1158209246706532432')
+createClient(false)*/
 
 
 async function chai(message, args, bot, client) {
-	console.log('please help')
+	message.reply('sorry, character AI updated their policies and now this doesnt work anymore. i might add a gpt thing here eventually')
+	/*console.log('please help')
 	message.channel.sendTyping()
 	const chatToSend = hotelChats[`${message.channel.id}`] || chat
 	console.log(chatToSend)
 	const response = await chatToSend.sendAndAwaitResponse(args.join(), true);
-	message.reply(response.text)
+	message.reply(response.text)*/
 }
 
-async function resetchai(message, args, bot, client) {
+/*async function resetchai(message, args, bot, client) {
 	if (!message.member.permissions.has(PermissionsBitField.Flags.Administrator)) return
 	chat.saveAndStartNewChat()
 	message.reply(`**<:AgnabotCheck:1153525610665214094> ||** reset chai`)
@@ -106,5 +105,5 @@ async function userInput(message, question) {
 	const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
 	return collected.first().content
 }
-
-module.exports = { chai, resetchai, switchchai, addchai }
+*/
+module.exports = { chai }

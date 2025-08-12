@@ -343,6 +343,17 @@ case 'avacado':
     }
 break;
 
+case 'dungeonkey':
+    if (curbal > 5000) {
+      message.reply({ content: '**<:AgnabotCheck:1153525610665214094> ||** Key bought! Use a.dungeon and enter a dungeon to use it Oooooo fancy' })
+      await db.add(message.author.id+'.inv.dungeonkeys', 1);
+      await db.sub(message.author.id+'.a', 5000);
+    
+    } else {
+      message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
+    }
+break;
+
 case 'head':
     if (curbal > 25000) {
     try {

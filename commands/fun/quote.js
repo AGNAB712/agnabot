@@ -5,7 +5,7 @@ const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const { hasArtifact, getRandomInt, isNumeric } = require('../../info/generalFunctions.js')
 const { workArray } = require('../../info/agnabot_work_texts.js')
-const Jimp = require('jimp')
+const { Jimp } = require('jimp')
 const Canvas = require('@napi-rs/canvas');
 const db = new QuickDB();
 const { request } = require('undici');
@@ -36,8 +36,7 @@ try {
   // Draw a rectangle with the dimensions of the entire canvas
   context.strokeRect(50, 50, canvas.height - 100, canvas.height - 100);
 
-  const { body } = await request(repliedMessage.author.displayAvatarURL({ extension: 'jpg' }));
-  const avatar = await Canvas.loadImage(await body.arrayBuffer());
+  const avatar = await Canvas.loadImage(repliedMessage.author.displayAvatarURL({ extension: 'png' }));
   context.drawImage(avatar, 50, 50, canvas.height - 100, canvas.height - 100);
   
   const gradient = await Canvas.loadImage('./images/gradient.png');
@@ -103,9 +102,9 @@ try {
 
   const pngData = await canvas.encode('png')
   const image = await Jimp.read(pngData)
-  const imageBuffer = await image.color([{apply:'greyscale', params: [10]}]).getBufferAsync(Jimp.MIME_PNG);
+  const imageBuffer = await image.color([{apply:'greyscale', params: []}])
 
-  const attachment = new AttachmentBuilder(imageBuffer, { name: 'quote.png' });
+  const attachment = new AttachmentBuilder(await imageBuffer.getBuffer('image/png'), { name: 'quote.png' });
   loadingMessage.delete()
   message.reply({ files: [attachment] });
     } catch (err) {

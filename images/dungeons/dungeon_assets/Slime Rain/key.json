@@ -1,0 +1,9 @@
+{
+	"basic": "Blue Slime",
+	"distributor": "Yellow Slime",
+	"healer": "Purple Slime",
+	"tank": "Pinky",
+	"boss": "King Slime",
+	"yOffset": 350,
+	"level": 1
+} 

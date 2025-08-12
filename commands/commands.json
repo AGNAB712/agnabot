@@ -206,11 +206,6 @@
       "description": "bans someone FOR Real",
       "syntax": "a.ban (mention)"
     },
-    "fart": {
-      "category": "fun",
-      "description": "farts in vc Womp womp",
-      "syntax": "a.fart"
-    },
     "stats": {
       "category": "utility",
       "description": "gets your agnabot stats",
@@ -251,6 +246,11 @@
       "description": "gets a value from the db",
       "syntax": "a.getvalue (value)"
     },
+    "deletevalue": {
+      "category": "admin",
+      "description": "deletes a value in the db\nDO NOT USE THIS IF YOU DO NOT KNOW WHAT YOU'RE DOING",
+      "syntax": "a.deletevalue (value in db)"
+    },
     "loadwebsite": {
       "category": "admin",
       "description": "loads the sqlite for agnabot's website manually",
@@ -260,16 +260,6 @@
       "category": "fun",
       "description": "translates something 100 times and then gives back the answer\nits kinda slow (sorry)",
       "syntax": "a.badtranslate (text)"
-    },
-    "dadjoke": {
-      "category": "fun",
-      "description": "gets a random dad joke from icanhazdadjoke.com's api",
-      "syntax": "a.dadjoke"
-    },
-    "inspiro": {
-      "category": "fun",
-      "description": "generates a VERY inspiring image",
-      "syntax": "a.inspiro"
     },
     "chai": {
       "category": "fun",
@@ -290,6 +280,26 @@
       "category": "admin",
       "description": "adds a custom chai personality from id",
       "syntax": "a.addchai"
+    },
+    "chairegister": {
+      "category": "admin",
+      "description": "gives the channel it's run in it's own chai client (like a.hotel chai but for any channel)",
+      "syntax": "a.chairegister"
+    },
+    "chaiconversation": {
+      "category": "admin",
+      "description": "switches chai to conversation by id",
+      "syntax": "a.chaiconversation (conversation id)"
+    },
+    "chaitest": {
+      "category": "admin",
+      "description": "general purpose test command",
+      "syntax": "a.chaitest"
+    },
+    "dungeons": {
+      "category": "fun",
+      "description": "AGNABOT dungeons ui",
+      "syntax": "a.dungeons"
     }
   },
   "aliases": {
@@ -316,6 +326,9 @@
     "inspirational": "inspiro",
     "chaireset": "resetchai",
     "chaiswitch": "switchchai",
-    "chaiadd": "addchai"
+    "chaiadd": "addchai",
+    "registerchai": "chairegister",
+    "conversationchai": "chaiconversation",
+    "dungeon": "dungeons"
   }
 }

@@ -1,0 +1,9 @@
+{
+	"basic": "Seahorse Swarm",
+	"distributor": "Electric Eel",
+	"healer": "Jellyfish",
+	"tank": "Crab",
+	"boss": "Stygiomedusa",
+	"yOffset": 350,
+	"level": 1
+} 

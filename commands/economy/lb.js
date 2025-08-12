@@ -8,12 +8,13 @@ const db = new QuickDB();
 async function lb(message, args, bot, client) {
   const allUserData = await db.all()
 
-  const filtertop = allUserData.filter(data => !isNaN(data.id))
+  const filtertop = allUserData
   await filtertop.sort((a, b) => b.value.a - a.value.a);
 
   const topUsers = filtertop.slice(0, 10);
 
   let descText = ''
+  console.log(filtertop)
 
   for (let i = 0; i !== 10; i++) {
     const user = await client.users.fetch(topUsers[i].id)
