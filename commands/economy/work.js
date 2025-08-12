@@ -22,11 +22,7 @@ async function work(message, args, bot, client) {
     let curbal = me.a;
 
     let moneyEarned = getRandomInt(50) + 50
-
-    if (message.member.roles.cache.some(role => role.name === 'high as shit brah')) {
-      moneyEarned += 100
-    }
-
+    
     if (message.member.roles.cache.some(role => role.name === 'AGNAB premium')) {
       moneyEarned = math.floor(moneyEarned * 1.25)
     }
@@ -42,7 +38,7 @@ async function work(message, args, bot, client) {
         **<:AgnabotCheck:1153525610665214094> + ${moneyEarned} ||** ${coolAssDescription}`)
         .setFooter({ text: `your money is now ${curbal} || work text ${workArrayIndex}` })
 
-      let file
+      /*let file
       if (workArrayIndex !== 38) {
         file = new AttachmentBuilder(`./images/work/${workArrayIndex + 1}.png`, { name: 'workimage.png' })
       } else {
@@ -53,7 +49,7 @@ async function work(message, args, bot, client) {
       }
       }
 
-      embed.setImage(`attachment://workimage.png`)
+      embed.setImage(`attachment://workimage.png`)*/
       
       message.reply({ embeds: [embed], files: [file] });
       const cooldownDuration = 60000;
@@ -65,14 +61,6 @@ async function work(message, args, bot, client) {
       }, cooldownDuration);
 
     await db.add(playerID+'.a', moneyEarned);
-    if (me.married) {
-      const auraOfDevotion = await hasArtifact(message.author.id, 'auraofdevotion')
-      if (!auraOfDevotion) return;
-      const percentage = (auraOfDevotion[1] / 100)
-      const marriedUserId = me.married
-      console.log(percentage, moneyEarned * percentage)
-      await db.add(marriedUserId+'.a', Math.round(moneyEarned * percentage))
-    }
 }
 
 module.exports = work

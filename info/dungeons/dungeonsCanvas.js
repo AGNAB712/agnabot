@@ -120,7 +120,7 @@ async function statsRoomImage(room) {
   context.fillRect(playerPosition[0], playerPosition[1], (750/2)-50, 250-25)
   context.strokeRect(playerPosition[0], playerPosition[1], (750/2)-50, 250-25)
 
-  context.font = 'bold 20px Arial';
+  context.font = 'bold 20px fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -133,7 +133,7 @@ async function statsRoomImage(room) {
   context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[0].health/room.players[0].maxHealth)*((750/3)-100), 15)
   context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-  context.font = 'bold 15px Arial';
+  context.font = 'bold 15px fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -143,7 +143,7 @@ async function statsRoomImage(room) {
   if (room.players[1]) {
     playerPosition = [25, 75]
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -156,7 +156,7 @@ async function statsRoomImage(room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[1].health/room.players[1].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -167,7 +167,7 @@ async function statsRoomImage(room) {
   if (room.players[2]) {
     playerPosition = [25, 125]
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -180,7 +180,7 @@ async function statsRoomImage(room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[1].health/room.players[1].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -209,7 +209,7 @@ async function lootRoomImage(dungeon, loot) {
   context.fillRect(playerPosition[0], playerPosition[1], 750-50, 500-50)
   context.strokeRect(playerPosition[0], playerPosition[1], 750-50, 500-50)
 
-  context.font = 'bold 20px Arial';
+  context.font = 'bold 20px Fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -274,7 +274,7 @@ function drawInformation(context, room) {
   context.fillRect(playerPosition[0], playerPosition[1], (750/2)-25, 175)
   context.strokeRect(playerPosition[0], playerPosition[1], (750/2)-25, 175)
 
-  context.font = 'bold 20px Arial';
+  context.font = 'bold 20px Fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -287,7 +287,7 @@ function drawInformation(context, room) {
   context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[0].health/room.players[0].maxHealth)*((750/3)-100), 15)
   context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-  context.font = 'bold 15px Arial';
+  context.font = 'bold 15px Fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -297,7 +297,7 @@ function drawInformation(context, room) {
   if (room.players[1]) {
     playerPosition = [750/2, 75]
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -310,7 +310,7 @@ function drawInformation(context, room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[1].health/room.players[1].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -321,7 +321,7 @@ function drawInformation(context, room) {
   if (room.players[2]) {
     playerPosition = [750/2, 125]
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -334,7 +334,7 @@ function drawInformation(context, room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.players[1].health/room.players[1].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -360,7 +360,7 @@ function drawInformation(context, room) {
   context.fillRect(playerPosition[0], playerPosition[1], (750/2)-25, 175)
   context.strokeRect(playerPosition[0], playerPosition[1], (750/2)-25, 175)
 
-  context.font = 'bold 20px Arial';
+  context.font = 'bold 20px Fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -373,7 +373,7 @@ function drawInformation(context, room) {
   context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.enemies[0].health/room.enemies[0].maxHealth)*((750/3)-100), 15)
   context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-  context.font = 'bold 15px Arial';
+  context.font = 'bold 15px Fira';
   context.fillStyle = 'white'
   context.lineWidth = 2;
   context.strokeStyle = 'black'
@@ -384,7 +384,7 @@ function drawInformation(context, room) {
     playerPosition = [25, 75]
 
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -397,7 +397,7 @@ function drawInformation(context, room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.enemies[1].health/room.enemies[1].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -408,7 +408,7 @@ function drawInformation(context, room) {
   if (room.enemies[2]) {
     playerPosition = [25, 125]
 
-    context.font = 'bold 20px Arial';
+    context.font = 'bold 20px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'
@@ -421,7 +421,7 @@ function drawInformation(context, room) {
     context.fillRect(playerPosition[0] + 10, playerPosition[1] + 35, (room.enemies[2].health/room.enemies[2].maxHealth)*((750/3)-100), 15)
     context.strokeRect(playerPosition[0] + 10, playerPosition[1] + 35, (750/3)-100, 15)
 
-    context.font = 'bold 15px Arial';
+    context.font = 'bold 15px Fira';
     context.fillStyle = 'white'
     context.lineWidth = 2;
     context.strokeStyle = 'black'

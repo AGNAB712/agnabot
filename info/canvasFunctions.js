@@ -554,13 +554,13 @@ context.strokeRect(50, 50, 100, 100)
 const lootThing = await Canvas.loadImage(lootToDraw);
 context.drawImage(lootThing, 55, 55, 90, 90);
 
-context.font = 'bold 60px Arial';
+context.font = 'bold 60px fira';
 context.fillStyle = 'black'
 context.lineWidth = 6;
 context.strokeText(typeMap.rarity.toUpperCase(), 175, 100)
 context.fillText(typeMap.rarity.toUpperCase(), 175, 100)
 
-context.font = 'bold 40px Arial';
+context.font = 'bold 40px fira';
 context.lineWidth = 2;
 context.strokeText(typeMap.name, 175, 140)
 context.fillText(typeMap.name, 175, 140)
