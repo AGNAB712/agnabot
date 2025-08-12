@@ -1,6 +1,5 @@
 /.env
 json.sqlite
-/info/googleServiceAccount.json
 data.json
 /node_modules
 /website/json.sqlite
