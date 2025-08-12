@@ -51,7 +51,7 @@ async function work(message, args, bot, client) {
 
       embed.setImage(`attachment://workimage.png`)*/
       
-      message.reply({ embeds: [embed], files: [file] });
+      message.reply({ embeds: [embed] });
       const cooldownDuration = 60000;
       const expirationTime = Date.now() + cooldownDuration;
       cooldowns.set(playerID, expirationTime);
