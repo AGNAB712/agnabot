@@ -70,13 +70,13 @@ setGlobalVar('lockdown', false)
 let minecraftchat
 let replit = true;
 let replitText = 'error';
-if (process.env.PM2_HOME) {
+/*if (process.env.PM2_HOME) {
 replit = true;
 replitText = 'strats sent this'
 } else {
 replit = false
 replitText = 'agnab sent this'
-}
+}*/
 
 let drive
 

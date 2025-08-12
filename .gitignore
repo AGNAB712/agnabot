@@ -1,8 +1,5 @@
 /.env
-json.sqlite
-data.json
 /node_modules
-/website/json.sqlite
 /temp.mp3
 /output.dfpwm
 /.vs
