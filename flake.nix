@@ -1,5 +1,5 @@
 {
-  description = "agnabot dev environment";
+  description = "agnabot discord bot";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -20,10 +20,43 @@
         pkg-config
         sqlite
       ];
+    };
 
-      shellHook = ''
-        echo "node dev shell loaded"
-        node -v
+    packages.${system}.default = pkgs.buildNpmPackage {
+      pname = "agnabot";
+      version = "git";
+
+      src = self;
+
+      npmDepsHash = "sha256-REPLACE-ME";
+
+      nativeBuildInputs = with pkgs; [
+        python3
+        gnumake
+        pkg-config
+      ];
+
+      buildInputs = with pkgs; [
+        sqlite
+      ];
+
+      propagatedBuildInputs = with pkgs; [
+        nodejs_24
+        sqlite
+      ];
+
+      installPhase = ''
+        runHook preInstall
+
+        mkdir -p $out/app
+        cp -r . $out/app
+
+        mkdir -p $out/bin
+        makeWrapper ${pkgs.nodejs_24}/bin/node \
+          $out/bin/agnabot \
+          --add-flags "$out/app/index.js"
+
+        runHook postInstall
       '';
     };
   };
