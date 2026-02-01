@@ -29,7 +29,6 @@ const { marriageImage, podium, fetchProfilePicture, balance, petImage } = requir
 
 const { google } = require('googleapis');
 const credentials = require('./info/googleServiceAccount.json')
-const os = require('os')
 
 
 
