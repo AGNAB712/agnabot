@@ -1,28 +1,34 @@
 {
-  description = "agnabot nix flake";
+  description = "agnabot flake";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-  outputs = { self, nixpkgs }: let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs { inherit system; };
-    nodeDeps = import ./node-packages.nix { inherit pkgs; };
-  in {
-    packages.${system}.default = pkgs.stdenv.mkDerivation {
-      pname = "agnabot";
-      version = "1.0.0";
-
-      src = ./.;
-
-      nativeBuildInputs = [ pkgs.nodejs pkgs.yarn ];
-
-      buildInputs = [ nodeDeps.nodePackages ];
-
-      # we don’t need to compile anything manually
-      installPhase = ''
-        mkdir -p $out/bin
-        cp -r ./* $out/
-      '';
-    };
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
+
+  outputs = { self, nixpkgs, ... }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+      nodePackages = import ./node-packages.nix {
+        inherit pkgs;
+        fetchurl = pkgs.fetchurl;
+        fetchgit = pkgs.fetchgit;
+        stdenv = pkgs.stdenv;
+        lib = pkgs.lib;
+        nix-gitignore = pkgs.nix-gitignore;
+      };
+    in {
+      packages.${system}.agnabot = nodePackages.default;
+
+      nixosModules.homeserver = { config, pkgs, ... }: {
+        systemd.services.agnabot = {
+          enable = true;
+          description = "agnabot";
+          serviceConfig = {
+            ExecStart = "${nodePackages.default}/bin/agnabot";
+            Restart = "always";
+          };
+        };
+      };
+    };
 }
