@@ -3,8 +3,15 @@ require("dotenv").config();
 const { Client, GatewayIntentBits, Partials, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
 const fs = require('fs');
 const { QuickDB } = require("quick.db");
-const db = new QuickDB();
+const dataDir =
+  process.env.AGNABOT_DATA_DIR ??
+  path.join(os.homedir(), ".local/share/agnabot")
 
+fs.mkdirSync(dataDir, { recursive: true })
+
+const db = new QuickDB({
+  filePath: path.join(dataDir, "json.sqlite")
+})
 //require misc functions
 const { autoReact } = require('./info/autoReactions.js')
 const { getGlobalVar, setGlobalVar } = require('./info/editGlobalJson.js')
