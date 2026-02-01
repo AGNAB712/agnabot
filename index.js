@@ -1,8 +1,24 @@
 //requirements
 require("dotenv").config();
 const { Client, GatewayIntentBits, Partials, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
-const fs = require('fs');
-const path = require('path');
+const { QuickDB: OriginalQuickDB } = require("quick.db")
+const path = require("path")
+const fs = require("fs")
+const os = require("os")
+
+const dataDir =
+  process.env.AGNABOT_DATA_DIR ??
+  path.join(os.homedir(), ".local/share/agnabot")
+fs.mkdirSync(dataDir, { recursive: true })
+
+// override QuickDB to always use absolute path
+require.cache[require.resolve("quick.db")].exports.QuickDB = class QuickDB extends OriginalQuickDB {
+  constructor(options = {}) {
+    options.filePath = options.filePath || path.join(dataDir, "json.sqlite")
+    super(options)
+  }
+}
+
 
 //require misc functions
 const { autoReact } = require('./info/autoReactions.js')
@@ -15,21 +31,8 @@ const { google } = require('googleapis');
 const credentials = require('./info/googleServiceAccount.json')
 const os = require('os')
 
-//quickdb
-const { QuickDB } = require("quick.db");
-const dataDir =
-  process.env.AGNABOT_DATA_DIR ??
-  path.join(os.homedir(), ".local/share/agnabot")
 
-console.log('cwd =', process.cwd())
-console.log('dataDir =', dataDir)
-console.log('filePath =', path.join(dataDir, 'json.sqlite'))  
 
-fs.mkdirSync(dataDir, { recursive: true })
-
-const db = new QuickDB({
-  filePath: path.join(dataDir, "json.sqlite")
-})
 
 //import commands
 const commands = {}
