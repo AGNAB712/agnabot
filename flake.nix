@@ -1,63 +1,27 @@
 {
-  description = "agnabot discord bot";
+  description = "agnabot nix flake";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  outputs = { self, nixpkgs }:
-  let
+  outputs = { self, nixpkgs }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; };
+    nodeDeps = import ./node-packages.nix { inherit pkgs; };
   in {
-    devShells.${system}.default = pkgs.mkShell {
-      packages = with pkgs; [
-        nodejs_24
-        nodePackages.npm
-        python3
-        gnumake
-        gcc
-        pkg-config
-        sqlite
-      ];
-    };
-
-    packages.${system}.default = pkgs.buildNpmPackage {
+    packages.${system}.default = pkgs.stdenv.mkDerivation {
       pname = "agnabot";
-      version = "git";
+      version = "1.0.0";
 
-      src = self;
+      src = ./.;
 
-      npmDepsHash = "sha256-qTaCqBYDcFspNhtrm4hLDlfCg6808W9WNyFt/ejZnhY=";
-      dontNpmBuild = true;
+      nativeBuildInputs = [ pkgs.nodejs pkgs.yarn ];
 
-      nativeBuildInputs = with pkgs; [
-        python3
-        gnumake
-        pkg-config
-      ];
+      buildInputs = [ nodeDeps.nodePackages ];
 
-      buildInputs = with pkgs; [
-        sqlite
-      ];
-
-      propagatedBuildInputs = with pkgs; [
-        nodejs_24
-        sqlite
-      ];
-
+      # we don’t need to compile anything manually
       installPhase = ''
-        runHook preInstall
-
-        mkdir -p $out/app
-        cp -r . $out/app
-
         mkdir -p $out/bin
-        makeWrapper ${pkgs.nodejs_24}/bin/node \
-          $out/bin/agnabot \
-          --add-flags "$out/app/index.js"
-
-        runHook postInstall
+        cp -r ./* $out/
       '';
     };
   };
