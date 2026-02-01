@@ -28,7 +28,8 @@
 
       src = self;
 
-      npmDepsHash = "sha256-vv8VMscYT+UUX/R6W8envd8XC5ceXXfb03j14JlNMpI=";
+      npmDepsHash = "sha256-qTaCqBYDcFspNhtrm4hLDlfCg6808W9WNyFt/ejZnhY=";
+      dontNpmBuild = true;
 
       nativeBuildInputs = with pkgs; [
         python3
