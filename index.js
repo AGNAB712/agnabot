@@ -21,6 +21,10 @@ const dataDir =
   process.env.AGNABOT_DATA_DIR ??
   path.join(os.homedir(), ".local/share/agnabot")
 
+console.log('cwd =', process.cwd())
+console.log('dataDir =', dataDir)
+console.log('filePath =', path.join(dataDir, 'json.sqlite'))  
+
 fs.mkdirSync(dataDir, { recursive: true })
 
 const db = new QuickDB({
