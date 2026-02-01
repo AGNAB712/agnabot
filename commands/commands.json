@@ -1,54 +1,9 @@
 {
   "commands": {
-    "sudo": {
-      "category": "git",
-      "description": "sudowoodo (executes command in 24/7 command prompt)",
-      "syntax": "a.sudo (command)"
-    },
-    "fetch": {
-      "category": "git",
-      "description": "fetches git status",
-      "syntax": "a.fetch"
-    },
-    "pull": {
-      "category": "git",
-      "description": "pulls from github! wow",
-      "syntax": "a.pull"
-    },
-    "reload": {
-      "category": "git",
-      "description": "reloads the bot",
-      "syntax": "a.reload"
-    },
-    "giveartifact": {
-      "category": "admin",
-      "description": "gives an artifact of rarity uber",
-      "syntax": "a.giveartifact (artifact name)"
-    },
     "lock": {
       "category": "admin",
       "description": "locks down or unlocks the bot",
       "syntax": "a.lockdown"
-    },
-    "mcsudo": {
-      "category": "minecraft",
-      "description": "makes the minecraft bot say something",
-      "syntax": "a.mcsudo (text)"
-    },
-    "whitelist": {
-      "category": "minecraft",
-      "description": "makes a request to whitelist you on the minecraft server",
-      "syntax": "a.whitelist (minecraft username CASE SENSITIVE)"
-    },
-    "verify": {
-      "category": "minecraft",
-      "description": "links your minecraft account to agnabot",
-      "syntax": "a.verify"
-    },
-    "mc": {
-      "category": "minecraft",
-      "description": "gets the total amount of minecraft characters",
-      "syntax": "a.verify"
     },
     "lb": {
       "category": "economy",
@@ -260,41 +215,6 @@
       "category": "fun",
       "description": "translates something 100 times and then gives back the answer\nits kinda slow (sorry)",
       "syntax": "a.badtranslate (text)"
-    },
-    "chai": {
-      "category": "fun",
-      "description": "character ai for agnabot",
-      "syntax": "a.chai (text)"
-    },
-    "resetchai": {
-      "category": "admin",
-      "description": "resets character ai just in case it gets freaky",
-      "syntax": "a.resetchai"
-    },
-    "switchchai": {
-      "category": "admin",
-      "description": "switches current chai personality",
-      "syntax": "a.switchchai"
-    },
-    "addchai": {
-      "category": "admin",
-      "description": "adds a custom chai personality from id",
-      "syntax": "a.addchai"
-    },
-    "chairegister": {
-      "category": "admin",
-      "description": "gives the channel it's run in it's own chai client (like a.hotel chai but for any channel)",
-      "syntax": "a.chairegister"
-    },
-    "chaiconversation": {
-      "category": "admin",
-      "description": "switches chai to conversation by id",
-      "syntax": "a.chaiconversation (conversation id)"
-    },
-    "chaitest": {
-      "category": "admin",
-      "description": "general purpose test command",
-      "syntax": "a.chaitest"
     },
     "dungeons": {
       "category": "fun",

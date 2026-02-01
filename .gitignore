@@ -3,6 +3,7 @@
 /temp.mp3
 /output.dfpwm
 /.vs
+/json.sqlite
 .replit
 replit.nix
 /temp.pcm

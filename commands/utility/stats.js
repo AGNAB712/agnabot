@@ -38,20 +38,6 @@ petText =
 `
 }
 
-let minecraftText = 'Linked account: ❌ \n(use a.verify to link your minecraft account)'
-const minecraftUser = await db.get(message.author.id+'.mc')
-if (minecraftUser) {
-minecraftText = 
-`
-Linked account: ✅
-Minecraft username: ${minecraftUser}
-Player head:
-`
-const mcUserId = await fetch(`https://api.mojang.com/users/profiles/minecraft/${minecraftUser}`)
-.then(data => data.json())
-.then(player => player.id)
-statEmbed.setImage(`https://minotar.net/helm/${mcUserId}.png`)
-}
 
 let fishingText = '**Has fishing rod: ❌** \n*(buy a fishing rod from the shop)*'
 const fishingExists = await db.get(message.author.id+'.fish')
@@ -94,8 +80,6 @@ statEmbed.setDescription(`
 ${petText}
 *~----------------------------FISHING-----------------------------------~*
 ${fishingText}
-*~----------------------------MINECRAFT-----------------------------------~*
-${minecraftText}
 
 `)
 
