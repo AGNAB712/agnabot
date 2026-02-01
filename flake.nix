@@ -13,7 +13,7 @@
       pname = "agnabot";
       version = "1.0.0";
       src = ./.;
-      npmDepsHash = "sha256-qTaCqBYDcFspNhtrm4hLDlfCg6808W9WNyFt/ejZnhY=";
+      npmDepsHash = "sha256-69POC5/vwmhTfv8wygJS2goOG2VEeEl1xMAuv9EiqbQ=";
     };
   };
 }
