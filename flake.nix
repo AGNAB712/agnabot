@@ -10,7 +10,10 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       # import the node2nix-generated packages
-      nodePackages = import ./node-packages.nix { inherit pkgs; };
+      nodePackages = import ./node-packages.nix {
+        inherit (pkgs) nodeEnv fetchurl fetchgit stdenv lib;
+        nix-gitignore = pkgs.nix-gitignore;
+        };
     in {
       # deployable package
       packages.${system} = {
