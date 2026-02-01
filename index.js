@@ -1,23 +1,12 @@
 //requirements
 require("dotenv").config();
 const { Client, GatewayIntentBits, Partials, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
-const { QuickDB: OriginalQuickDB } = require("quick.db")
+const { QuickDB } = require("quick.db")
 const path = require("path")
 const fs = require("fs")
 const os = require("os")
 
-const dataDir =
-  process.env.AGNABOT_DATA_DIR ??
-  path.join(os.homedir(), ".local/share/agnabot")
-fs.mkdirSync(dataDir, { recursive: true })
-
-// override QuickDB to always use absolute path
-require.cache[require.resolve("quick.db")].exports.QuickDB = class QuickDB extends OriginalQuickDB {
-  constructor(options = {}) {
-    options.filePath = options.filePath || path.join(dataDir, "json.sqlite")
-    super(options)
-  }
-}
+const db = new QuickDB()
 
 
 //require misc functions

@@ -1,5 +1,5 @@
-2025-08-12T20:49:29.231Z - Uncaught Exception: Authentication token is invalid
-Error: Authentication token is invalid
-    at Client.authenticateWithToken (C:\agnabot\node_modules\node_characterai\client.js:235:15)
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
-    at async createClient (C:\agnabot\commands\chaiMaster.js:21:2)
+2026-02-01T18:25:28.558Z - Uncaught Exception: Cannot read properties of null (reading 'length')
+TypeError: Cannot read properties of null (reading 'length')
+    at updateCategoryName (/home/agnab/agnabot/info/generalFunctions.js:113:63)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async Client.<anonymous> (/home/agnab/agnabot/index.js:102:3)
