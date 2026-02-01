@@ -1,7 +1,6 @@
 //requirements
-const Discord = require('discord.js');
 require("dotenv").config();
-const { ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, Partials, ActivityType, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebHookClient, AttachmentBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, PermissionsBitField, EmbedBuilder } = require("discord.js");
 const fs = require('fs');
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
@@ -39,17 +38,18 @@ readJSONFile('./commands/commands.json', (err, result) => {
 let lastmessage;
 
 //client intents and partials
-const client = new Discord.Client({ intents: [
-  Discord.GatewayIntentBits.Guilds,
-  Discord.GatewayIntentBits.GuildMessages,
-  Discord.GatewayIntentBits.MessageContent,
-  Discord.GatewayIntentBits.GuildMembers,
-  Discord.GatewayIntentBits.GuildMessageReactions,
-  Discord.GatewayIntentBits.GuildVoiceStates,
-  Discord.GatewayIntentBits.DirectMessageTyping,
-  Discord.GatewayIntentBits.DirectMessages,
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.DirectMessages,
   ],
-  partials: [Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
   disableMentions: 'everyone'
 })
 
