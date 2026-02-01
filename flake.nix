@@ -18,6 +18,10 @@
         nix-gitignore = pkgs.nix-gitignore;
       };
     in {
-      packages.${system}.agnabot = nodePackages.agnabot;
+      packages.${system} = {
+        agnabot = nodePackages.agnabot;
+      };
+      # this exposes it directly as self.packages.${system}.agnabot
+      defaultPackage.${system} = nodePackages.agnabot;
     };
 }
