@@ -18,17 +18,6 @@
         nix-gitignore = pkgs.nix-gitignore;
       };
     in {
-      packages.${system}.agnabot = nodePackages.default;
-
-      nixosModules.homeserver = { config, pkgs, ... }: {
-        systemd.services.agnabot = {
-          enable = true;
-          description = "agnabot";
-          serviceConfig = {
-            ExecStart = "${nodePackages.default}/bin/agnabot";
-            Restart = "always";
-          };
-        };
-      };
+      packages.${system}.agnabot = nodePackages.agnabot;
     };
 }
