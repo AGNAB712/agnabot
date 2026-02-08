@@ -13,7 +13,6 @@ async function inventory(message, args, bot, client) {
   const me = await db.get(message.author.id)
   if (!me.inv) {return message.reply('**<:AgnabotX:1153460434691698719> ||** you dont have an inventory')}
   const myCoolEmbed = objectPage(me.inv, 0)
-  //const myCoolEmbed = objectPage(funnyObject, 0)
 
   const nextButton = new ButtonBuilder()
     .setCustomId('next')

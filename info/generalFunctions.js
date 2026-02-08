@@ -135,31 +135,23 @@ const getSpaces = (text, spaces) => {
 }
 
 
-function objectPage(testmap, page) {
+function objectPage(inventory, page) {
   let testEmbed = new EmbedBuilder()
     .setTitle('placeholder')
     .setColor('#235218')
 
-  for (const property in testmap) {
-    if (testmap[property] == 0 || testmap[property] < 0 || testmap[property]?.count == 0) {delete testmap[property]}
-    if (property == 'undefined') {delete testmap[property]}
+  for (i = 0; i < inventory.length; i++) {
+    if (inventory[i].quantity <= 0) {delete inventory[i]}
   }
 
-  const pages = Math.ceil(testmap.size / 3)
-  const inventoryArray = Object.keys(testmap);
+  const pages = Math.ceil(inventory.length / 3)
   let curPage = page
   let description = 'Inventory:\n'
 
   for (let i = curPage * 3; i < (curPage * 3) + 3; i++) {
-    if (!inventoryArray[i]) {description += ''} else {
-
-    if (inventoryFormats.hasOwnProperty(inventoryArray[i])) {
-      const myFormat = inventoryFormats[inventoryArray[i]]
-      description += `${(inventoryArray.indexOf(inventoryArray[i]) + 1)}. ${myFormat.emoji} \`${myFormat.title}:${getSpaces(myFormat.title, 20)+testmap[inventoryArray[i]]} - ${itemWorth[inventoryArray[i]]}ꬰ\`\n`;
-    } else {
-      description += `${inventoryArray.indexOf(inventoryArray[i]) + 1}. \❔ \`Unknown (${inventoryArray[i]}):     ${testmap[inventoryArray[i]]}\` \n`
-    }
-
+    if (inventory[i]) {
+      const beginningText = `${inventory[i].shopLabel}: ${inventory[i].quantity}` 
+      description += `${i+1}. ${inventory[i].emoji} \`${beginningText}${getSpaces(beginningText, 20)} - ${inventory[i].value}ꬰ\`\n`;
     }
   }
 

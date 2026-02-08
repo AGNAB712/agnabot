@@ -1,19 +1,30 @@
+const { AgnabotItem } = require('./itemclass.js')
+
+const listOfItems =
+{
+	ttspass: new AgnabotItem('ttspass', 100).setEmoji('🎟️').setShopDescription('(one time a.tts usage)').setLabel('TTS Pass').setIsInShop(true),
+	weddingring: new AgnabotItem('weddingring', 10000).setEmoji('💍').setShopDescription('(you can propose to someone with this)').setLabel('Wedding Ring').setIsInShop(true),
+	dungeonkey: new AgnabotItem('dungeonkey', 5000).setEmoji('\<:dungeonkey:1254915382129590362>').setShopDescription('(allows one dungeon run)').setLabel('Dungeon Key').setIsInShop(true),
+}
+
 const buyArray = 
 [
 { label: 'Cancel', description: 'deletes this menu', value: 'cancel', emoji: '1153460434691698719' }, 
-{ label: 'HOTEL', description: '5,000 AGNABUCKS \n(buys a hotel, use a.hotel buy!)', value: 'hotel', emoji: '1180755217126543420' }, 
 { label: 'PET', description: '1,000 AGNABUCKS \n(buys a pet)', value: 'pet', emoji: '1180752541097668708' }, 
 { label: 'FISHING ROD', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '1181067287889977425' },
 { label: 'AGNAB premium', description: '10,000 AGNABUCKS \n(access to secret chat + 25% boost to a.work)', value: 'premium', emoji: '1195599625239941232' }, 
 { label: 'Thermonuclear bomb', description: '1,000 AGNABUCKS \n(mention someone and they get muted for a minute)', value: 'bomb', emoji: '💣' }, 
 { label: 'Rigged slot machine', description: '5,000 AGNABUCKS \n(increases the chance of you winning in double or nothing to 60%)', value: 'rigged', emoji: '🎰' },
-{ label: 'TTS pass', description: '100 AGNABUCKS \n(one time a.tts usage)', value: 'tts', emoji: '🎟️' }, 
-{ label: 'Speechbubble', description: '200 AGNABUCKS \n(buys a random speechbubble from the speechbubble pool', value: 'speechbubble', emoji: '🗨️' }, 
 { label: 'Child labor', description: '[money] AGNABUCKS \n(one agnabuck every 5 minuto per level)', value: 'child', emoji: '🚸' }, 
-{ label: 'Wedding ring', description: '10,000 AGNABUCKS \n(you can propose to someone Yipee)', value: 'ring', emoji: '💍' },
 { label: 'Avacado', description: '100,000 AGNABUCKS (literally just an avacado)', value: 'avacado', emoji: '1155948289305362542' },
-{ label: 'Dungeon Key', description: '5,000 AGNABUCKS \n(allows one dungeon run)', value: 'dungeonkey', emoji: '1254915382129590362' }
 ]
+
+for (const currentItem of Object.values(listOfItems)) {
+	if (currentItem.isInShop) {
+		console.log(currentItem)
+		buyArray.push({ label: currentItem.shopLabel, description: currentItem.shopDescription, value: currentItem.name, emoji: currentItem.emoji })
+	}
+}
 
 const inventoryFormats = {
 	rings: { emoji: "\💍", title: "Wedding rings" },
@@ -44,5 +55,5 @@ const itemWorth = {
 }
 
 module.exports = {
-	buyArray, inventoryFormats, itemWorth
+	buyArray, inventoryFormats, itemWorth, listOfItems
 }

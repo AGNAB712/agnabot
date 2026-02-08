@@ -74,7 +74,7 @@ setGlobalVar('savecount', 0)
 setGlobalVar('lockdown', false)
 
 let minecraftchat
-let replit = true;
+let replit = false;
 let replitText = 'error';
 /*if (process.env.PM2_HOME) {
 replit = true;

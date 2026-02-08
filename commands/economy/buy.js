@@ -4,8 +4,9 @@ const { exec } = require('child_process');
 const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const { hasArtifact, getRandomInt } = require('../../info/generalFunctions.js')
-const { buyArray, inventoryFormats, itemWorth } = require('../../info/buyMap.js')
+const { buyArray, inventoryFormats, itemWorth, listOfItems } = require('../../info/buyMap.js')
 const { workArray } = require('../../info/agnabot_work_texts.js')
+const { AgnabotItem, incrementItem } = require('../../info/itemclass.js')
 const db = new QuickDB();
 
 const cooldowns = new Map()
@@ -22,11 +23,11 @@ const defaultPet = {
 async function buy(message, args, bot, client) {
 
     let children = await db.get(message.author.id+".children")
-  if (!children) {
-    childrenPrice = 1000
-  } else {
-    childrenPrice = 5000 * children
-  }
+    if (!children) {
+      childrenPrice = 1000
+    } else {
+      childrenPrice = 5000 * children
+    }
 
 
     const curbal = await db.get(message.author.id+'.a');
@@ -118,48 +119,6 @@ case 'hotel':
   message.reply('**<:AgnabotX:1153460434691698719> ||**you already have a room dude')
 }
 break;
-  
-case 'cocaine':
-if (curbal > 10000) {
-await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 10000));
-message.reply('https://cdn.discordapp.com/attachments/831714424658198532/1119014960127811655/Martin_Cabello_-_Cocaina_No_Flour_Original_video_online-video-cutter.com.mp4')
-const reminderTime = Date.now() + 60 * 24 * 60 * 1000; 
-await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
-
-const role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
-message.member.roles.add(role);
-} else {
-message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-}
-break;
-
-case 'meth':
-    if (curbal > 1000) {
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 1000));
-    message.reply('**<:AgnabotCheck:1153525610665214094> ||** high as shit brah')
-    const reminderTime = Date.now() + 60 * 60 * 1000; 
-    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
-    
-    const role= message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
-    message.member.roles.add(role);
-      } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-    }
-break;
-
-case 'alcohol':
-    if (curbal > 100) {
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100));
-    message.reply('**<:AgnabotCheck:1153525610665214094> ||** i too am also a crippling alcoholic')
-    const reminderTime = Date.now() + 1 * 60 * 1000; 
-    await db.set(`reminder_` + message.author.id , parseInt(reminderTime));
-    
-    const role = message.member.guild.roles.cache.find(role => role.name === "high as shit brah");
-    message.member.roles.add(role);
-      } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-    }
-break;
 
 case 'premium':
     if (curbal > 10000) {
@@ -214,66 +173,6 @@ case 'rigged':
     }
 break;
 
-case 'tts':
-    if (curbal > 100) {
-
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 100));
-    const passes = await db.get(message.author.id+'.inv.ttspasses');
-
-    await db.set(message.author.id+'.inv.ttspasses', passes + 1);
-    if (!passes) {await db.set(message.author.id+'.inv.ttspasses', 1);}
-
-    message.reply(`**<:AgnabotCheck:1153525610665214094> ||** wow this will certainly not get annoying\nyou have ${await db.get(message.author.id+'.inv.ttspasses')} tts passes`)
-
-    
-
-      } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-    }
-break;
-
-case 'speechbubble':
-    if (curbal > 200) {
-
-    const channel = client.channels.cache.get('1085289780901842996');
-    const messages = await channel.messages.fetch();
-    const attachments = messages.filter((msg) => msg.attachments.size > 0 || msg.content.includes('https'));
-
-    if (attachments.size === 0) {
-      return console.log('No attachments found in the channel.');
-    }
-
-    const randomMessage = attachments.random();
-
-    if (randomMessage.content.includes('https')) {
-      if (randomMessage.author.id !== '1107764918293372989') {
-        const words = randomMessage.content.split(' ');
-        message.reply(`**<:AgnabotCheck:1153525610665214094> ||** congrats you are now the new owner of this stupid thing ${words[0]}`)
-        client.channels.cache.get('1085289780901842996').send(`${words[0]} ${message.author.username}`)
-        randomMessage.delete();
-      } else {
-
-      const words = randomMessage.content.split(' ');
-      message.reply(`**<:AgnabotCheck:1153525610665214094> ||** congrats you are now the new owner of this stupid thing ${words[0]}`)
-      randomMessage.edit(`${words[0]} ${message.author.username}`)
-    }
-    } else {
-      if (randomMessage.author.id !== '1107764918293372989') {
-      message.reply(`**<:AgnabotCheck:1153525610665214094> ||** congrats you are now the new owner of this stupid thing ${randomMessage.attachments.first().url}`)
-      client.channels.cache.get('1085289780901842996').send(`${randomMessage.attachments.first().url} ${message.author.username}`)
-      randomMessage.delete();
-      } else {
-      message.reply(`**<:AgnabotCheck:1153525610665214094> ||** congrats you are now the new owner of this stupid thing ${randomMessage.attachments.first().url}`)
-      randomMessage.edit(`${randomMessage.attachments.first().url} ${message.author.username}`)
-    }
-    }
-  await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 200));
-  
-  } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-  }
-break;
-
 case 'child':
     if (curbal > childrenPrice-1) {
 
@@ -297,25 +196,6 @@ case 'child':
     }
 break;
 
-case 'ring':
-    if (curbal > 10000) {
-
-    let rings = await db.get(message.author.id+'.inv.rings')
-    console.log(!rings)
-
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 10000));
-    await db.set(message.author.id+'.inv.rings', rings + 1);
-    if (!rings) {await db.set(message.author.id+'.inv.rings', 1)}
-
-    
-
-  message.reply('**<:AgnabotCheck:1153525610665214094> ||** congrats Yipee')
-
-      } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-    }
-break;
-
 case 'fish':
     if (curbal > 5000) {
     let rings = await db.get(message.author.id+'.fish')
@@ -323,9 +203,7 @@ case 'fish':
     await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 5000));
     await db.set(message.author.id+'.fish', { level: 0, exp: 0, expLevel: 100 });
 
-    
-
-    message.reply('**<:AgnabotCheck:1153525610665214094> ||** this feature is currently a wip btw')
+    message.reply('**<:AgnabotCheck:1153525610665214094> ||** wow fishing time')
 
       } else {
     message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
@@ -343,59 +221,18 @@ case 'avacado':
     }
 break;
 
-case 'dungeonkey':
-    if (curbal > 5000) {
-      message.reply({ content: '**<:AgnabotCheck:1153525610665214094> ||** Key bought! Use a.dungeon and enter a dungeon to use it Oooooo fancy' })
-      await db.add(message.author.id+'.inv.dungeonkeys', 1);
-      await db.sub(message.author.id+'.a', 5000);
-    
+
+default:
+    const itemToBuy = listOfItems[confirmation.values[0]]
+    if (curbal > itemToBuy.value) {
+
+      await db.sub(message.author.id+'.a', itemToBuy.value);
+      await incrementItem(message.author.id, itemToBuy, 1)
+      message.reply(`**<:AgnabotCheck:1153525610665214094> ||** wow cool you bought a ${itemToBuy.shopLabel}`)
+
     } else {
       message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
     }
-break;
-
-case 'head':
-    if (curbal > 25000) {
-    try {
-    if (!await isMinecraftOnline()) return message.reply('**<:AgnabotX:1153460434691698719> ||** server offline, sorry')
-    const mcUsername = await db.get(message.author.id+'.mc')
-    const playersOnline = Object.keys(bot.players)
-    if (!playersOnline.includes(mcUsername)) return message.reply('**<:AgnabotX:1153460434691698719> ||** get on the server first')
-    bot.chat(`/give ${mcUsername} minecraft:player_head{SkullOwner:${mcUsername}}`)
-    message.reply('**<:AgnabotCheck:1153525610665214094> ||** it should be in your inventory now')
-    await db.set(message.author.id+'.a', parseInt(parseInt(curbal) - 25000));
-    
-  } catch (e) {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** sorry an error occured')
-  }
-    } else {
-    message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-    }
-break;
-
-case 'name':
-if (curbal > 50000) {
-const mcUsername = await db.get(message.author.id+'.mc')
-if (!await isMinecraftOnline()) return message.reply('**<:AgnabotX:1153460434691698719> ||** server offline, sorry')
-if (!mcUsername) return message.reply('**<:AgnabotX:1153460434691698719> ||** link your account first with a.verify')
-const playersOnline = Object.keys(bot.players)
-if (!playersOnline.includes(mcUsername)) return message.reply('**<:AgnabotX:1153460434691698719> ||** get on the server first')
-message.reply('**<:AgnabotCheck:1153525610665214094> ||** cool, now say the hex code')
-const msg_filter = (m) => m.author.id === message.author.id;
-const collected = await message.channel.awaitMessages({ filter: msg_filter, max: 1 });
-  
-if (isvalidhexcode(collected.first().content)) {
-message.reply('**<:AgnabotCheck:1153525610665214094> ||** CONGRATS it worked')
-bot.chat(`wow ${mcUsername} just set their color to something else CONGRATS`)
-bot.chat(`/chatformathex ${mcUsername} ${collected.first().content}`)
-
-} else {
-  return message.reply('**<:AgnabotX:1153460434691698719> ||** not a valid hex code')
-}
-
-} else {
-message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')
-}
 break;
 
 }

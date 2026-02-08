@@ -1,5 +1,9 @@
-2026-02-01T18:25:28.558Z - Uncaught Exception: Cannot read properties of null (reading 'length')
-TypeError: Cannot read properties of null (reading 'length')
-    at updateCategoryName (/home/agnab/agnabot/info/generalFunctions.js:113:63)
+2026-02-08T07:23:48.368Z - Uncaught Exception: Unknown Message
+DiscordAPIError[10008]: Unknown Message
+    at handleErrors (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:762:13)
     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-    at async Client.<anonymous> (/home/agnab/agnabot/index.js:102:3)
+    at async SequentialHandler.runRequest (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:1163:23)
+    at async SequentialHandler.queueRequest (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:994:14)
+    at async _REST.request (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:1307:22)
+    at async GuildMessageManager.edit (/home/agnab/agnabot/node_modules/discord.js/src/managers/MessageManager.js:255:15)
+    at async Object.buy (/home/agnab/agnabot/commands/economy/buy.js:242:3)
