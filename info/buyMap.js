@@ -4,7 +4,7 @@ const buyArray =
 { label: 'HOTEL', description: '5,000 AGNABUCKS \n(buys a hotel, use a.hotel buy!)', value: 'hotel', emoji: '1180755217126543420' }, 
 { label: 'PET', description: '1,000 AGNABUCKS \n(buys a pet)', value: 'pet', emoji: '1180752541097668708' }, 
 { label: 'FISHING ROD', description: '5,000 AGNABUCKS (unlocks fishing)', value: 'fish', emoji: '1181067287889977425' },
-{ label: 'AGNAB premium', description: '10,000 AGNABUCKS \n(access to secret chat + 25% boost to a.work)', value: 'premium', emoji: '1120846837436399718' }, 
+{ label: 'AGNAB premium', description: '10,000 AGNABUCKS \n(access to secret chat + 25% boost to a.work)', value: 'premium', emoji: '1195599625239941232' }, 
 { label: 'Thermonuclear bomb', description: '1,000 AGNABUCKS \n(mention someone and they get muted for a minute)', value: 'bomb', emoji: '💣' }, 
 { label: 'Rigged slot machine', description: '5,000 AGNABUCKS \n(increases the chance of you winning in double or nothing to 60%)', value: 'rigged', emoji: '🎰' },
 { label: 'TTS pass', description: '100 AGNABUCKS \n(one time a.tts usage)', value: 'tts', emoji: '🎟️' }, 
