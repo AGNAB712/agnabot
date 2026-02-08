@@ -30,19 +30,19 @@ const playerID = message.author.id;
     let bonus = 0
 
     try {
-    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Agnabian Royalty (Level 50)').id)) {
+    if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'LEVEL 50 - Agnabian Royalty').id)) {
     bonus = 100
     
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'Master Agnabian (Level 35)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'LEVEL 40 - Master Agnabian').id)) {
     bonus = 75
     
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'True Agnabian (Level 25)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'LEVEL 30 - Loyal Agnabian').id)) {
     bonus = 50
     
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Novice (Level 15)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'LEVEL 20 - Agnab Enthusiast').id)) {
     bonus = 30
     
-    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'AGNAB Enthusiast (Level 10)').id)) {
+    } else if (member.roles.cache.has(message.guild.roles.cache.find(role => role.name === 'LEVEL 10 - Agnab Novice').id)) {
     bonus = 20
     
     } else {
