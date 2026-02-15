@@ -5,6 +5,14 @@ const listOfItems =
 	ttspass: new AgnabotItem('ttspass', 100).setEmoji('🎟️').setShopDescription('(one time a.tts usage)').setLabel('TTS Pass').setIsInShop(true),
 	weddingring: new AgnabotItem('weddingring', 10000).setEmoji('💍').setShopDescription('(you can propose to someone with this)').setLabel('Wedding Ring').setIsInShop(true),
 	dungeonkey: new AgnabotItem('dungeonkey', 5000).setEmoji('\<:dungeonkey:1254915382129590362>').setShopDescription('(allows one dungeon run)').setLabel('Dungeon Key').setIsInShop(true),
+	commonfish: new AgnabotItem('commonfish', 500).setEmoji('\<:common:1165126466258862171>').setShopDescription('(common reward from fishing)').setLabel('Common Fish').setIsInShop(false),
+	trashfish: new AgnabotItem('trash', 10).setEmoji('\<:trash:1165126468649615391>').setShopDescription('(trash reward from fishing)').setLabel('Fishing Trash').setIsInShop(false),
+	rarefish: new AgnabotItem('rarefish', 2500).setEmoji('\<:rare:1165126462622416937>').setShopDescription('(rare reward from fishing)').setLabel('Rare Fish').setIsInShop(false),
+	legendaryfish: new AgnabotItem('legendaryfish', 5000).setEmoji('\<:legendary:1165126464782487632>').setShopDescription('(legendary reward from fishing)').setLabel('Legendary Fish').setIsInShop(false),
+	artifact: new AgnabotItem('artifact', 10000).setEmoji('\<:AgnabotFish:1181067287889977425>').setShopDescription('(very cool reward from fishing)').setLabel('Artifact').setIsInShop(false),
+	copper: new AgnabotItem('copper', 100).setEmoji('\<:copper_treasure:1258133703742193756>').setShopDescription('(copper reward from dungeons)').setLabel('Copper').setIsInShop(false),
+	silver: new AgnabotItem('silver', 1000).setEmoji('\<:silver_treasure:1258133709517750354>').setShopDescription('(silver reward from dungeons)').setLabel('Silver').setIsInShop(false),
+	gold: new AgnabotItem('gold', 2500).setEmoji('\<:gold_treasure:1258133707043373076>').setShopDescription('(best reward from dungeons)').setLabel('Gold').setIsInShop(false),
 }
 
 const buyArray = 

@@ -74,7 +74,7 @@ setGlobalVar('savecount', 0)
 setGlobalVar('lockdown', false)
 
 let minecraftchat
-let replit = false;
+let replit = true;
 let replitText = 'error';
 /*if (process.env.PM2_HOME) {
 replit = true;
@@ -192,8 +192,16 @@ if (me?.websiteData != user) {
   }
 
 //test command
-if (command === 'test') {
-  updatePets()
+if (command === 'test' && message.author.id == 765581160755363840) {
+  const all = await db.all()
+
+    for (const entry of all) {
+      const value = entry.value.inv
+      if (value) {
+        console.log("inventory:", value)
+        await db.set(entry.id+'.inv', [])
+      }
+    }
 }
 
 if (command === 'categoryupdate') {

@@ -55,5 +55,14 @@ async function decrementItem(id, item, amount) {
     }
     await db.set(id+'.inv', currentInv)
 }
+async function hasItem(id, item) {
+    const currentInv = await db.get(id+'.inv')
+    const existing = currentInv.find(i => i.name === item.name)
+    if (existing) {
+        return existing.quantity
+    } else {
+        return 0
+    }
+}
 
-module.exports = { AgnabotItem, incrementItem, decrementItem }
+module.exports = { AgnabotItem, incrementItem, decrementItem, hasItem }

@@ -3,6 +3,8 @@ const fs = require("fs")
 const missingImage = './images/dungeons/missing.png'
 const { getRandomInt } = require('../generalFunctions.js')
 const dungeonCanvas = require("./dungeonsCanvas.js")
+const { AgnabotItem, incrementItem } = require('../itemclass.js')
+const { listOfItems } = require('../buyMap.js')
 const roomTypes = [
 	{ chance: 5, type: "treasure" }, //5%
 	{ chance: 30, type: "empty" }, //25%
@@ -547,10 +549,11 @@ async function endGame(dungeon) {
 
 	dungeon.allPlayers.forEach(async (player) => {
 		const idToGive = player.id
-		
-		await db.add(idToGive+'.inv.copper', (lootToGive.copper * dungeon.lootLevel))
-		await db.add(idToGive+'.inv.silver', (lootToGive.silver * dungeon.lootLevel))
-		await db.add(idToGive+'.inv.gold', (lootToGive.gold * dungeon.lootLevel))
+
+		console.log(idToGive, listOfItems["copper"], (lootToGive.copper * dungeon.lootLevel))
+		await incrementItem(idToGive, listOfItems["copper"], (lootToGive.copper * dungeon.lootLevel))
+		await incrementItem(idToGive, listOfItems["silver"], (lootToGive.silver * dungeon.lootLevel))
+		await incrementItem(idToGive, listOfItems["gold"], (lootToGive.gold * dungeon.lootLevel))
 
 		const xpToGive = (roomsCompleted * 10) * (Math.floor(dungeon.level / 5) + 1)
 		const currentPlayerStats = await db.get(idToGive+'.dungeons')

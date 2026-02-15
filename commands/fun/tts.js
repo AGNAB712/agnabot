@@ -4,12 +4,15 @@ const { exec } = require('child_process');
 const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const { hasArtifact, getRandomInt, isNumeric, validUserId } = require('../../info/generalFunctions.js')
+const { AgnabotItem, incrementItem, decrementItem, hasItem } = require('../../info/itemclass.js')
+const { listOfItems } = require('../../info/buyMap.js')
+
 const { workArray } = require('../../info/agnabot_work_texts.js')
 const db = new QuickDB();
 
 async function tts(message, args, bot, client) {
 
-  const passes = await db.get(message.author.id+'.inv.ttspasses');
+  const passes = hasItem(message.author.id, listOfItems['ttspass']);
   const text = args.join(' ')
 
   if (!passes || passes === 0) {
@@ -20,7 +23,7 @@ async function tts(message, args, bot, client) {
   }
 
   await message.channel.send({content: `${text}`, tts: true});
-  await db.set(message.author.id+'.inv.ttspasses', passes - 1);
+  decrementItem(message.author.id, listOfItems['ttspass'], 1)
 
 }
 

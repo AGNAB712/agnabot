@@ -4,6 +4,9 @@ const { QuickDB } = require("quick.db");
 const { getGlobalVar, setGlobalVar } = require('../../info/editGlobalJson.js')
 const { getRandomInt } = require('../../info/generalFunctions.js')
 const db = new QuickDB();
+const { AgnabotItem, incrementItem, decrementItem, hasItem } = require('../../info/itemclass.js')
+const { buyArray, inventoryFormats, itemWorth, listOfItems } = require('../../info/buyMap.js')
+
 
 const dungeonMaster = require('../../info/dungeons/dungeons.js')
 const emptyDungeon = {
@@ -159,13 +162,12 @@ async function dungeons(message, args, bot, client) {
         
       }
 
-      const inv = await db.get(message.author.id+'.inv')
-      if (inv?.dungeonkeys < 1 || !inv?.dungeonkeys) {
+      if (hasItem(message.author.id, listOfItems['dungeonkey']) < 1) {
         dungeonsMessage.edit({ content: "**<:AgnabotX:1153460434691698719> ||** you don't have any dungeon keys!", embeds: [], components: [] })
         return
-      } else {
-        await db.sub(message.author.id+'.inv.dungeonkeys', 1)
       }
+      decrementItem(message.author.id, listOfItems['dungeonkey'], 1)
+
       let footerText = "Players: "
       players.forEach((player, i) => {
         if (i === players.length - 1) {

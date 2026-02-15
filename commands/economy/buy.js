@@ -37,6 +37,7 @@ async function buy(message, args, bot, client) {
     const avacadoBought = await db.get(`${message.author.id}.avacado`)
     const verified = await db.get(`${message.author.id}.mc`)
     const hasPet = await db.get(`${message.author.id}.pet`)
+    let quantity = args[0]
 
       const select = new StringSelectMenuBuilder()
       .setCustomId('buy')
@@ -224,11 +225,12 @@ break;
 
 default:
     const itemToBuy = listOfItems[confirmation.values[0]]
-    if (curbal > itemToBuy.value) {
+    if (!quantity) {quantity = 1}
+    if (curbal > itemToBuy.value*quantity) {
 
       await db.sub(message.author.id+'.a', itemToBuy.value);
-      await incrementItem(message.author.id, itemToBuy, 1)
-      message.reply(`**<:AgnabotCheck:1153525610665214094> ||** wow cool you bought a ${itemToBuy.shopLabel}`)
+      await incrementItem(message.author.id, itemToBuy, quantity)
+      quantity == 1 ? message.reply(`**<:AgnabotCheck:1153525610665214094> ||** wow cool you bought a ${itemToBuy.shopLabel}`) : message.reply(`**<:AgnabotCheck:1153525610665214094> ||** wow cool you bought ${quantity} ${itemToBuy.shopLabel}s`)
 
     } else {
       message.reply('**<:AgnabotX:1153460434691698719> ||** no money Bitch')

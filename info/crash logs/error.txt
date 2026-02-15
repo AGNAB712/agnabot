@@ -1,9 +1,4 @@
-2026-02-08T07:23:48.368Z - Uncaught Exception: Unknown Message
-DiscordAPIError[10008]: Unknown Message
-    at handleErrors (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:762:13)
+2026-02-15T19:51:20.793Z - Uncaught Exception: Cannot read properties of undefined (reading 'inv')
+TypeError: Cannot read properties of undefined (reading 'inv')
+    at Client.<anonymous> (/home/agnab/agnabot/index.js:200:34)
     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
-    at async SequentialHandler.runRequest (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:1163:23)
-    at async SequentialHandler.queueRequest (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:994:14)
-    at async _REST.request (/home/agnab/agnabot/node_modules/@discordjs/rest/dist/index.js:1307:22)
-    at async GuildMessageManager.edit (/home/agnab/agnabot/node_modules/discord.js/src/managers/MessageManager.js:255:15)
-    at async Object.buy (/home/agnab/agnabot/commands/economy/buy.js:242:3)

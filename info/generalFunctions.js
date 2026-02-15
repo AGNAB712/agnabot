@@ -1,11 +1,13 @@
 const { PermissionsBitField, EmbedBuilder, AttachmentBuilder } = require('discord.js')
-const { buyArray, inventoryFormats, itemWorth } = require('./buyMap.js')
+const { buyArray, inventoryFormats, itemWorth, listOfItems } = require('./buyMap.js')
 const fs = require('fs')
 const { QuickDB } = require("quick.db");
 const db = new QuickDB();
 const fishingJs = require('./fishing.js')
 const { fishingImage, artifactImage, fishingLootImage } = require('./canvasFunctions.js')
 const { fishingArray, fishingLootMap, artifacts, outfitFormats } = require('./fishing.js')
+const { AgnabotItem, incrementItem } = require('./itemclass.js')
+
 
 async function hasArtifact(id, artifactName) {
 
@@ -140,9 +142,10 @@ function objectPage(inventory, page) {
     .setTitle('placeholder')
     .setColor('#235218')
 
-  for (i = 0; i < inventory.length; i++) {
-    if (inventory[i].quantity <= 0) {delete inventory[i]}
+  for (let i = 0; i < inventory.length; i++) {
+    if (inventory[i].quantity <= 0) {inventory.splice(i, 1)}
   }
+  console.log(inventory)
 
   const pages = Math.ceil(inventory.length / 3)
   let curPage = page
@@ -172,7 +175,6 @@ const randomNum = getRandomInt(99) + 1
 
 let sum = 0;
 let index = 0;
-if (message.author.id === "765581160755363840") {index = 1000}
 while (sum + percents[index] < randomNum) {
   sum += percents[index];
   index++;
@@ -181,30 +183,36 @@ while (sum + percents[index] < randomNum) {
 
 let lootToDraw
 let type
+let itemType
 let color
 let exp
 if (index == 0) {
 type = 'trash';
+itemType = 'trashfish'
 lootToDraw = fishingLootMap.trash[getRandomInt(3)]
 color = '#222222'
 exp = 10
 } else if (index == 1) {
 type = 'common';
+itemType = 'commonfish'
 lootToDraw = fishingLootMap.common[getRandomInt(3)]
 color = '#105808'
 exp = 50
 } else if (index == 2) {
 type = 'rare';
+itemType = 'rarefish'
 lootToDraw = fishingLootMap.rare[getRandomInt(3)]
 color = '#311fac'
 exp = 100
 } else if (index == 3) {
 type = 'legendary';
+itemType = 'legendaryfish'
 lootToDraw = fishingLootMap.legendary[getRandomInt(3)]
 color = '#fffc39'
 exp = 500
 } else {
 type = 'artifacts';
+itemType = 'artifact'
 lootToDraw = fishingLootMap.artifacts[getRandomInt(3)]
 color = '#4c1b4c'
 exp = 1000
@@ -229,7 +237,7 @@ await db.add(message.author.id+'.fish.exp', exp)
 }
 collected.update({ embeds: [fishingEmbed], files: [attachment], components: [] })
 
-await db.add(`${message.author.id}.inv.${type}`, 1)
+incrementItem(message.author.id, listOfItems[itemType], 1)
 
 
 
